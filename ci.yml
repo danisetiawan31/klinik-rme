@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache: true
+          cache-dependency-path: backend/go.sum
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Format check (gofmt)
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "File berikut belum di-gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      # Docker sudah tersedia default di GitHub-hosted ubuntu-latest runner,
+      # jadi test integrasi berbasis testcontainers-go (migration runner,
+      # GET /health, dan test concurrency di fitur-fitur berikutnya) bisa
+      # jalan langsung tanpa setup service Postgres terpisah.
+      - name: Test
+        run: go test -v ./...
