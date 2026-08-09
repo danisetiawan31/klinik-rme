@@ -2,11 +2,13 @@ package db_test
 
 import (
 	"context"
-	"os"
+	"errors"
 	"path/filepath"
 	"testing"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
@@ -25,7 +27,6 @@ func TestRunMigrations_NonExistentPath(t *testing.T) {
 }
 
 func TestRunMigrations_EmptyFolder(t *testing.T) {
-	// Folder exists but contains no .sql files
 	emptyDir := t.TempDir()
 
 	err := db.RunMigrations(emptyDir, "postgres://user:pass@localhost:5432/dbname?sslmode=disable")
@@ -39,7 +40,6 @@ func TestRunMigrations_RealPostgreSQL(t *testing.T) {
 
 	ctx := context.Background()
 
-	// Spin up real PostgreSQL container using testcontainers-go
 	postgresContainer, err := postgres.Run(
 		ctx,
 		"postgres:16-alpine",
@@ -61,18 +61,71 @@ func TestRunMigrations_RealPostgreSQL(t *testing.T) {
 	connStr, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
 	require.NoError(t, err, "failed to get connection string from postgres container")
 
-	// 1. Test empty root migrations directory (contains no .sql files)
+	// 1. Test running migrations from backend/migrations containing 4 auth tables
 	migrationsPath := "../../migrations"
 	err = db.RunMigrations(migrationsPath, connStr)
-	require.NoError(t, err, "RunMigrations on empty migrations folder failed")
+	require.NoError(t, err, "RunMigrations on domain migrations folder failed")
 
-	// 2. Test directory with valid .sql migration file against real Postgres container
-	tempDir := t.TempDir()
-	sqlContent := `CREATE TABLE test_schema_table (id SERIAL PRIMARY KEY, name TEXT);`
-	sqlFile := filepath.Join(tempDir, "000001_create_test_schema_table.up.sql")
-	err = os.WriteFile(sqlFile, []byte(sqlContent), 0644)
+	// 2. Connect to database to verify table structures & constraints
+	pool, err := pgxpool.New(ctx, connStr)
+	require.NoError(t, err)
+	defer pool.Close()
+
+	// Verify users table and nullable password_hash constraint
+	var userID int
+	err = pool.QueryRow(ctx, "INSERT INTO users (nama, email, password_hash) VALUES ($1, $2, $3) RETURNING id",
+		"Test User", "test@example.com", nil).Scan(&userID)
+	require.NoError(t, err, "failed to insert user with null password_hash")
+	assert.Greater(t, userID, 0)
+
+	// Verify users.email UNIQUE constraint (SQLSTATE 23505)
+	_, err = pool.Exec(ctx, "INSERT INTO users (nama, email, password_hash) VALUES ($1, $2, $3)",
+		"Duplicate User", "test@example.com", nil)
+	require.Error(t, err)
+	var pgErr *pgconn.PgError
+	require.True(t, errors.As(err, &pgErr))
+	assert.Equal(t, "23505", pgErr.Code, "expected unique_violation SQLSTATE 23505 for duplicate email")
+
+	// Verify user_roles composite PK & CHECK constraint (role IN ('petugas', 'dokter', 'admin'))
+	_, err = pool.Exec(ctx, "INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", userID, "admin")
 	require.NoError(t, err)
 
-	err = db.RunMigrations(tempDir, connStr)
-	require.NoError(t, err, "RunMigrations with valid .sql migration file failed against real Postgres container")
+	_, err = pool.Exec(ctx, "INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", userID, "admin")
+	require.Error(t, err)
+	require.True(t, errors.As(err, &pgErr))
+	assert.Equal(t, "23505", pgErr.Code, "expected unique_violation SQLSTATE 23505 for duplicate user_role PK")
+
+	_, err = pool.Exec(ctx, "INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", userID, "invalid_role")
+	require.Error(t, err)
+	require.True(t, errors.As(err, &pgErr))
+	assert.Equal(t, "23514", pgErr.Code, "expected check_violation SQLSTATE 23514 for invalid role")
+
+	// Verify user_roles FK constraint to users (SQLSTATE 23503)
+	_, err = pool.Exec(ctx, "INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", 99999, "dokter")
+	require.Error(t, err)
+	require.True(t, errors.As(err, &pgErr))
+	assert.Equal(t, "23503", pgErr.Code, "expected foreign_key_violation SQLSTATE 23503 for non-existent user_id")
+
+	// Verify sessions table FK constraint to users
+	now := time.Now()
+	_, err = pool.Exec(ctx, "INSERT INTO sessions (id_hash, user_id, created_at, expires_at, absolute_expires_at) VALUES ($1, $2, $3, $4, $5)",
+		"hash123", userID, now, now.Add(time.Hour), now.Add(24*time.Hour))
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, "INSERT INTO sessions (id_hash, user_id, created_at, expires_at, absolute_expires_at) VALUES ($1, $2, $3, $4, $5)",
+		"hash456", 99999, now, now.Add(time.Hour), now.Add(24*time.Hour))
+	require.Error(t, err)
+	require.True(t, errors.As(err, &pgErr))
+	assert.Equal(t, "23503", pgErr.Code, "expected foreign_key_violation SQLSTATE 23503 for sessions user_id")
+
+	// Verify password_tokens table FK & CHECK constraint (type IN ('invite', 'reset'))
+	_, err = pool.Exec(ctx, "INSERT INTO password_tokens (token_hash, user_id, type, expires_at) VALUES ($1, $2, $3, $4)",
+		"tokenhash123", userID, "invite", now.Add(7*24*time.Hour))
+	require.NoError(t, err)
+
+	_, err = pool.Exec(ctx, "INSERT INTO password_tokens (token_hash, user_id, type, expires_at) VALUES ($1, $2, $3, $4)",
+		"tokenhash456", userID, "invalid_type", now.Add(time.Hour))
+	require.Error(t, err)
+	require.True(t, errors.As(err, &pgErr))
+	assert.Equal(t, "23514", pgErr.Code, "expected check_violation SQLSTATE 23514 for invalid password_token type")
 }

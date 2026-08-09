@@ -9,12 +9,12 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 ### Fase 1 — Infrastruktur
 
 - [x] **1. Project scaffolding** — Go module, Gin skeleton, pgx pool, `sqlc` config, `golang-migrate` wiring (auto-run saat start), middleware error/requestId (`AGENTS.md` §7), `GET /health`.
-- [ ] **2. Auth & RBAC foundation**
-  - Migration: `users`, `sessions`, `user_roles`
-  - Session: login/logout, `GET /auth/me`, cookie `httpOnly`+`Secure`+`SameSite=Strict`
-  - Middleware RBAC (role-per-endpoint sesuai `api-contract.md`)
-  - Migration token invite/reset, integrasi Resend: `POST /admin/users` (tanpa password), `POST /auth/forgot-password`, `POST /auth/reset-password`
-  - **Seed admin pertama** (item terakhir di fase ini, butuh mekanisme invite-token di atas sudah jadi) — migration insert 1 baris admin (`password_hash` null) dari `SEED_ADMIN_EMAIL`. Startup check **wajib idempotent**: generate & print invite token ke server log (bukan email, khusus bootstrap pertama) **hanya kalau** `password_hash` admin itu masih null; skip total kalau admin sudah pernah selesai setup — supaya restart server pas development nggak spam token baru tiap kali.
+- [ ] **2. Auth & RBAC foundation** (In Progress)
+  - [x] Migration: `users`, `sessions`, `user_roles`, `password_tokens`
+  - [ ] Session: login/logout, `GET /auth/me`, cookie `httpOnly`+`Secure`+`SameSite=Strict`
+  - [ ] Middleware RBAC (role-per-endpoint sesuai `api-contract.md`)
+  - [ ] Migration token invite/reset, integrasi Resend: `POST /admin/users` (tanpa password), `POST /auth/forgot-password`, `POST /auth/reset-password`
+  - [ ] **Seed admin pertama** (item terakhir di fase ini, butuh mekanisme invite-token di atas sudah jadi) — migration insert 1 baris admin (`password_hash` null) dari `SEED_ADMIN_EMAIL`. Startup check **wajib idempotent**: generate & print invite token ke server log (bukan email, khusus bootstrap pertama) **hanya kalau** `password_hash` admin itu masih null; skip total kalau admin sudah pernah selesai setup — supaya restart server pas development nggak spam token baru tiap kali.
 - [ ] **3. Audit trail infrastructure** — migration `audit_log` + `audit_log_tail` (genesis seed), helper hash-chain (lock+insert+update 1 transaksi eksplisit), DB trigger tolak `UPDATE`/`DELETE` di `audit_log`. **Wajib selesai sebelum item 4 & 7** (retrofit audit ke transaksi yang sudah ada lebih mahal daripada built-in dari awal).
 
 ### Fase 2 — Domain inti
