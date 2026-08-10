@@ -34,3 +34,18 @@ func (q *Queries) GetRolesByUserID(ctx context.Context, userID int32) ([]string,
 	}
 	return items, nil
 }
+
+const insertUserRole = `-- name: InsertUserRole :exec
+INSERT INTO user_roles (user_id, role)
+VALUES ($1, $2)
+`
+
+type InsertUserRoleParams struct {
+	UserID int32
+	Role   string
+}
+
+func (q *Queries) InsertUserRole(ctx context.Context, arg InsertUserRoleParams) error {
+	_, err := q.db.Exec(ctx, insertUserRole, arg.UserID, arg.Role)
+	return err
+}

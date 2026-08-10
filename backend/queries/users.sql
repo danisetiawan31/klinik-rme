@@ -12,3 +12,8 @@ WHERE id = $1;
 UPDATE users
 SET password_hash = $1
 WHERE id = $2;
+
+-- name: CreateUser :one
+INSERT INTO users (nama, email)
+VALUES ($1, $2)
+RETURNING id, nama, email;

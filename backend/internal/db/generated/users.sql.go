@@ -11,6 +11,30 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const createUser = `-- name: CreateUser :one
+INSERT INTO users (nama, email)
+VALUES ($1, $2)
+RETURNING id, nama, email
+`
+
+type CreateUserParams struct {
+	Nama  string
+	Email string
+}
+
+type CreateUserRow struct {
+	ID    int32
+	Nama  string
+	Email string
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
+	row := q.db.QueryRow(ctx, createUser, arg.Nama, arg.Email)
+	var i CreateUserRow
+	err := row.Scan(&i.ID, &i.Nama, &i.Email)
+	return i, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT id, nama, email, password_hash
 FROM users

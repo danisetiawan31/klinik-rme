@@ -36,6 +36,7 @@ Fondasi otentikasi & otorisasi untuk seluruh modul — dipakai semua endpoint be
 ### Konvensi teknis yang WAJIB diikuti (sudah ditetapkan di AGENTS.md §7, jangan diulang tafsir sendiri)
 
 Password hashing (bcrypt cost 12), token generation (`crypto/rand`, 128-bit, base64url, disimpan SHA256), cookie session (`httpOnly`+`Secure`+`SameSite=Strict`, sliding expiration + hard cap 24 jam), TTL token (invite 7 hari, reset 1 jam), forgot-password selalu 200 generik + tidak pernah return token mentah, `POST /admin/users` boleh return `inviteLink` mentah (beda konteks, caller sudah admin ter-otentikasi).
+Sliding session duration: 11 jam (diperpanjang tiap request aktif), tetap dibatasi absolute_expires_at hard cap 24 jam. 11 jam dipilih supaya sliding window tetap jadi faktor pembatas nyata (jauh di bawah 24 jam, bukan mepet/dead code) — sliding ≥ absolute cap membuat parameter sliding jadi tidak pernah efektif, karena absolute_expires_at akan selalu duluan kena.
 
 ### Eksplisit DI LUAR SCOPE spec ini (jangan dikerjakan, itu item #8 nanti)
 

@@ -19,6 +19,10 @@ func setValidEnv(t *testing.T) {
 	t.Setenv("DB_PASSWORD", "secret")
 	t.Setenv("DB_NAME", "klinik_db")
 	t.Setenv("TZ", "Asia/Jakarta")
+	t.Setenv("RESEND_API_KEY", "re_123456789")
+	t.Setenv("RESEND_FROM_EMAIL", "onboarding@resend.dev")
+	t.Setenv("FRONTEND_BASE_URL", "http://localhost:4200")
+	t.Setenv("SEED_ADMIN_EMAIL", "admin@klinik.local")
 }
 
 func TestLoad_Success(t *testing.T) {
@@ -34,6 +38,10 @@ func TestLoad_Success(t *testing.T) {
 	assert.Equal(t, "secret", cfg.DBPassword)
 	assert.Equal(t, "klinik_db", cfg.DBName)
 	assert.Equal(t, "Asia/Jakarta", cfg.TZ)
+	assert.Equal(t, "re_123456789", cfg.ResendAPIKey)
+	assert.Equal(t, "onboarding@resend.dev", cfg.ResendFromEmail)
+	assert.Equal(t, "http://localhost:4200", cfg.FrontendBaseURL)
+	assert.Equal(t, "admin@klinik.local", cfg.SeedAdminEmail)
 
 	assert.Equal(t, "postgres://postgres:secret@localhost:5432/klinik_db?sslmode=disable", cfg.DSN())
 	assert.Equal(t, "Asia/Jakarta", time.Local.String())
@@ -74,6 +82,26 @@ func TestLoad_MissingRequiredEnv(t *testing.T) {
 			name:       "missing TZ",
 			unsetEnv:   "TZ",
 			errMessage: "missing required environment variable: TZ",
+		},
+		{
+			name:       "missing RESEND_API_KEY",
+			unsetEnv:   "RESEND_API_KEY",
+			errMessage: "missing required environment variable: RESEND_API_KEY",
+		},
+		{
+			name:       "missing RESEND_FROM_EMAIL",
+			unsetEnv:   "RESEND_FROM_EMAIL",
+			errMessage: "missing required environment variable: RESEND_FROM_EMAIL",
+		},
+		{
+			name:       "missing FRONTEND_BASE_URL",
+			unsetEnv:   "FRONTEND_BASE_URL",
+			errMessage: "missing required environment variable: FRONTEND_BASE_URL",
+		},
+		{
+			name:       "missing SEED_ADMIN_EMAIL",
+			unsetEnv:   "SEED_ADMIN_EMAIL",
+			errMessage: "missing required environment variable: SEED_ADMIN_EMAIL",
 		},
 	}
 

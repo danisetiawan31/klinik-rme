@@ -14,8 +14,11 @@ import (
 	"github.com/joho/godotenv"
 
 	"github.com/danisetiawan31/klinik-rme/internal/api"
+	"github.com/danisetiawan31/klinik-rme/internal/bootstrap"
 	"github.com/danisetiawan31/klinik-rme/internal/config"
 	"github.com/danisetiawan31/klinik-rme/internal/db"
+	"github.com/danisetiawan31/klinik-rme/internal/db/generated"
+	"github.com/danisetiawan31/klinik-rme/internal/mailer"
 )
 
 func main() {
@@ -45,7 +48,7 @@ func main() {
 		log.Fatalf("Fatal: Database migration failed: %v", err)
 	}
 
-	// 3. Initialize DB pool
+	// 3. Initialize DB pool & sqlc queries
 	pool, err := db.NewPool(ctx, cfg.DSN())
 	if err != nil {
 		log.Fatalf("Fatal: Failed to initialize DB pool: %v", err)
@@ -55,8 +58,19 @@ func main() {
 		pool.Close()
 	}()
 
-	// 4. Setup Gin router & HTTP Server
-	router := api.SetupRouter(pool)
+	q := dbgen.New(pool)
+
+	// 4. Run admin bootstrap seed check
+	log.Println("Running admin bootstrap check...")
+	if err := bootstrap.SeedAdmin(ctx, pool, q, cfg.SeedAdminEmail); err != nil {
+		log.Fatalf("Fatal: Admin bootstrap failed: %v", err)
+	}
+
+	// 5. Initialize Mailer service
+	resendMailer := mailer.NewResendMailer(cfg.ResendAPIKey, cfg.ResendFromEmail)
+
+	// 6. Setup Gin router & HTTP Server
+	router := api.SetupRouter(pool, resendMailer, cfg.FrontendBaseURL)
 	serverAddr := fmt.Sprintf(":%s", cfg.HTTPPort)
 	srv := &http.Server{
 		Addr:    serverAddr,
@@ -71,7 +85,7 @@ func main() {
 		}
 	}()
 
-	// 5. Wait for termination signal
+	// 7. Wait for termination signal
 	<-ctx.Done()
 	log.Println("Termination signal received. Shutting down gracefully...")
 

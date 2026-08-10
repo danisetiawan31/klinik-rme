@@ -9,20 +9,20 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 ### Fase 1 — Infrastruktur
 
 - [x] **1. Project scaffolding** — Go module, Gin skeleton, pgx pool, `sqlc` config, `golang-migrate` wiring (auto-run saat start), middleware error/requestId (`AGENTS.md` §7), `GET /health`.
-- [ ] **2. Auth & RBAC foundation** (In Progress)
+- [x] **2. Auth & RBAC foundation** (Selesai)
   - [x] Migration: `users`, `sessions`, `user_roles`, `password_tokens`
-  - [ ] Session: login/logout, `GET /auth/me`, cookie `httpOnly`+`Secure`+`SameSite=Strict`
-  - [ ] Middleware RBAC (role-per-endpoint sesuai `api-contract.md`)
-  - [ ] Migration token invite/reset, integrasi Resend: `POST /admin/users` (tanpa password), `POST /auth/forgot-password`, `POST /auth/reset-password`
-  - [ ] **Seed admin pertama** (item terakhir di fase ini, butuh mekanisme invite-token di atas sudah jadi) — migration insert 1 baris admin (`password_hash` null) dari `SEED_ADMIN_EMAIL`. Startup check **wajib idempotent**: generate & print invite token ke server log (bukan email, khusus bootstrap pertama) **hanya kalau** `password_hash` admin itu masih null; skip total kalau admin sudah pernah selesai setup — supaya restart server pas development nggak spam token baru tiap kali.
+  - [x] Session: login/logout, `GET /auth/me`, cookie `httpOnly`+`Secure`+`SameSite=Strict`
+  - [x] Middleware RBAC (role-per-endpoint sesuai `api-contract.md`)
+  - [x] Migration token invite/reset, integrasi Resend: `POST /admin/users` (tanpa password), `POST /auth/forgot-password`, `POST /auth/reset-password`
+  - [x] **Seed admin pertama** — startup check idempotent via kode Go (`internal/bootstrap/admin.go`), generate & print invite token ke server log jika `password_hash` admin masih null; skip total jika admin sudah selesai setup.
 - [ ] **3. Audit trail infrastructure** — migration `audit_log` + `audit_log_tail` (genesis seed), helper hash-chain (lock+insert+update 1 transaksi eksplisit), DB trigger tolak `UPDATE`/`DELETE` di `audit_log`. **Wajib selesai sebelum item 4 & 7** (retrofit audit ke transaksi yang sudah ada lebih mahal daripada built-in dari awal).
 
 ### Fase 2 — Domain inti
 
 - [ ] **4. Pasien** — migration `pasien` (+`version`, `deleted_at`, `consent_at`); `POST /pasien`, `GET /pasien/search` (nik+nama), `GET /pasien/:id`, `PATCH /pasien/:id` (optimistic lock); tersambung audit trail.
 - [ ] **5. Klinik & Antrian** — migration `klinik`, `queue_counter`, `kunjungan`; `GET /klinik/:id`; `POST /kunjungan` (atomic upsert counter); `GET /kunjungan/:id`, `GET /klinik/:id/antrian`; `POST /klinik/:id/panggil-berikutnya` (`FOR UPDATE SKIP LOCKED`, prioritas + `skip_count`); `POST /kunjungan/:id/tidak-hadir`.
-- [ ] **6. Realtime & Papan Antrian** *(swappable dengan 7 — cuma gantung ke item 5)* — migration `klinik.display_token_hash`; Hub WS in-memory (`gorilla/websocket`); `POST /admin/klinik/:id/display-token/regenerate`; middleware dual-auth (cookie | `X-Display-Token`); broadcast notify-then-refetch di tiap write relevan.
-- [ ] **7. Rekam Medis** *(swappable dengan 6 — gantung ke item 3 & 5)* — migration `rekam_medis`, `diagnosis`, `tindakan` (+ `uq_addendum_of_active` partial unique index); `POST /kunjungan/:id/rekam-medis`, `POST /rekam-medis/:id/addendum`; `GET /kunjungan/:id/rekam-medis` (leaf query), `GET /pasien/:id/riwayat`; tersambung audit trail; endpoint `[dokter]` only.
+- [ ] **6. Realtime & Papan Antrian** _(swappable dengan 7 — cuma gantung ke item 5)_ — migration `klinik.display_token_hash`; Hub WS in-memory (`gorilla/websocket`); `POST /admin/klinik/:id/display-token/regenerate`; middleware dual-auth (cookie | `X-Display-Token`); broadcast notify-then-refetch di tiap write relevan.
+- [ ] **7. Rekam Medis** _(swappable dengan 6 — gantung ke item 3 & 5)_ — migration `rekam_medis`, `diagnosis`, `tindakan` (+ `uq_addendum_of_active` partial unique index); `POST /kunjungan/:id/rekam-medis`, `POST /rekam-medis/:id/addendum`; `GET /kunjungan/:id/rekam-medis` (leaf query), `GET /pasien/:id/riwayat`; tersambung audit trail; endpoint `[dokter]` only.
 - [ ] **8. Admin** — `GET`/`POST /admin/users`; **`POST /admin/users/:id/resend-invite`**; **`PATCH /admin/users/:id`** (koreksi nama/email — jalur recovery kalau email user salah/tidak bisa diakses, dipakai bareng resend-invite, gantiin skema admin-set-password yang sudah dihapus); `PATCH /admin/users/:id/roles`; `GET /admin/audit-log` (+pagination), `GET /admin/audit-log/:id`.
 - [ ] **9. Laporan Harian** — ⚠️ **ditunda, diputuskan pas mulai item ini.** Shape request/response belum eksplisit di `api-contract.md` (baru sebatas "harus ada" di PRD). Tidak blocking apa pun sebelumnya — `AGENTS.md` §1 ("ambigu → tanya") sudah menjamin ini nggak kelewat diam-diam saat waktunya tiba.
 
@@ -35,7 +35,7 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 - [ ] **12. Profil / Account Settings** — halaman ganti password sendiri (`PATCH /auth/me/password`, butuh password lama — beda flow dari set-password di item 11 yang berbasis token, bukan password lama), diakses semua role setelah login.
 - [ ] **13. RealtimeService** — wrap koneksi WS, reconnect+backoff; `proxy.conf.json` dengan `"ws": true`.
 
-### Fase 2 — Domain inti *(urutan ngikutin backend, boleh diprioritaskan ulang sesuai kebutuhan demo)*
+### Fase 2 — Domain inti _(urutan ngikutin backend, boleh diprioritaskan ulang sesuai kebutuhan demo)_
 
 - [ ] **14. Pasien** — form registrasi (+consent), pencarian (nik/nama), halaman detail+riwayat ringkas, edit biodata.
 - [ ] **15. Antrian (staff-facing)** — tampilan antrian klinik, tombol panggil berikutnya, tandai tidak hadir, indikator prioritas.

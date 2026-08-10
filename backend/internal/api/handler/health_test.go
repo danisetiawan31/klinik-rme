@@ -26,7 +26,7 @@ func init() {
 }
 
 func TestHealthEndpoint_NilPool(t *testing.T) {
-	router := api.SetupRouter(nil)
+	router := api.SetupRouter(nil, nil, "")
 
 	w := httptest.NewRecorder()
 	req, _ := http.NewRequest(http.MethodGet, "/health", nil)
@@ -71,7 +71,7 @@ func TestHealthEndpoint_RealPostgreSQL(t *testing.T) {
 	pool, err := pgxpool.New(ctx, connStr)
 	require.NoError(t, err)
 
-	router := api.SetupRouter(pool)
+	router := api.SetupRouter(pool, nil, "")
 
 	// Skenario 1: DB Reachable -> 200 OK
 	t.Run("DB Reachable -> 200 OK", func(t *testing.T) {

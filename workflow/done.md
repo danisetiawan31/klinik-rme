@@ -2,30 +2,37 @@
 
 ## Scaffolding Backend — Tahap 1: Foundation
 
-- **Apa yang Dikerjakan**: Inisialisasi Go module (`github.com/danisetiawan31/klinik-rme`), struktur folder `cmd/server/`, `internal/config/`, `internal/db/`, config loader dengan validasi env vars ketat tanpa silent default, pgx pool (`pgx/v5`), graceful shutdown.
-- **Verifikasi**: `go test -v ./internal/config/...`, run `./cmd/server` tanpa env -> Fatal error `missing required environment variable`.
-- **Catatan**: Belum ada Gin & HTTP layer.
+- **Fitur**: Inisialisasi Go module, struct `cmd/server/`, `internal/config/`, `internal/db/` (pgx pool), config loader env strict, graceful shutdown.
+- **Verifikasi**: `go test -v ./internal/config/...` PASS 100%.
 
 ---
 
 ## Scaffolding Backend — Tahap 2: Data Layer Tooling
 
-- **Apa yang Dikerjakan**: Setup `sqlc.yaml` v2 (`internal/db/generated/`), folder `migrations/` & `queries/`, wrapper library `golang-migrate` (`internal/db/migration.go`) dengan URL `file://` cross-platform, pre-check file `.sql`, auto-run migrasi saat startup server, integration test `migration_test.go` via `testcontainers-go` (`postgres:16-alpine`).
-- **Verifikasi**: `sqlc generate` -> Exit code 0, `go test -v ./internal/db/...` -> PASS 100%, `go vet ./...` -> PASS.
-- **Catatan**: Pre-check direktori & file `.sql` mencegah error swallow pada path yang salah.
+- **Fitur**: Config `sqlc.yaml` v2, `golang-migrate` wrapper dengan pre-check `.sql`, auto-run migrasi startup, integration test `testcontainers-go`.
+- **Verifikasi**: `sqlc generate` PASS, `go test -v ./internal/db/...` PASS 100%, `go vet ./...` PASS.
 
 ---
 
 ## Scaffolding Backend — Tahap 3: HTTP Layer
 
-- **Apa yang Dikerjakan**: Setup Gin skeleton di `internal/api/router.go`, middleware `RequestID` (UUID v4 per request), middleware `ErrorHandler` & `GlobalRecovery` (format `{ "error": { "code", "message", "requestId" } }` tanpa bocor raw error/credentials), endpoint `GET /health` (200 OK / 503 Service Unavailable), graceful shutdown HTTP server (timeout 5s).
-- **Verifikasi**: `go test -v ./internal/api/...` -> PASS 100%, `go vet ./...` -> PASS.
-- **Catatan**: `context.WithTimeout(c.Request.Context(), 2*time.Second)` di `/health` untuk fail-fast saat DB menggantung/retry koneksi.
+- **Fitur**: Gin router, middleware `RequestID`, `ErrorHandler` & `GlobalRecovery` (amplas raw error), endpoint `GET /health` (dual route `/health` & `/api/v1/health`), graceful shutdown (5s).
+- **Verifikasi**: `go test -v ./internal/api/...` PASS 100%, `go vet ./...` PASS.
 
 ---
 
-## Auth & RBAC Foundation — Tahap 1: Skema & Helper Keamanan Inti
+## Auth & RBAC Foundation — Tahap 1-5 (Selesai Penuh)
 
-- **Apa yang Dikerjakan**: Migrasi 4 tabel (`users`, `user_roles`, `sessions`, `password_tokens`), package `internal/auth/` (`bcrypt` cost 12 & mapping `ErrMismatchedHashAndPassword`, `token` crypto/rand 128-bit & SHA256 hex), query sqlc dasar (`users`, `user_roles`, `sessions`), integration test `migration_test.go` via `testcontainers-go` menguji migrasi domain & constraint DB (`UNIQUE`, `FK`, `CHECK`, `NULLABLE`).
-- **Verifikasi**: `go test -v ./internal/auth/...` -> PASS 100%, `go test -v ./internal/db/...` -> PASS 100%, `go vet ./...` -> PASS.
-- **Catatan**: `CHECK` constraint `role` & `type` dipasang di DB; `sqlc.yaml` disesuaikan ke `schema: "migrations/*.up.sql"` agar menyaring `.down.sql` (`DROP TABLE`).
+- **Tahap 1 (Skema & Helper)**: Migrasi 4 tabel (`users`, `user_roles`, `sessions`, `password_tokens`), package `internal/auth/` (`bcrypt` cost 12, `token` crypto/rand 128-bit, SHA256 hex).
+- **Tahap 2 (Session & RBAC)**: Middleware `Authenticate` (sliding 2h, hard cap 24h, cookie `httpOnly`+`SameSite=Strict`+`isSecure` kondisional), middleware `RequireRole`, endpoint `POST /auth/login` (identical 401), `POST /auth/logout`, `GET /auth/me`, `PATCH /auth/me/password`.
+- **Tahap 3 (Invite, Forgot/Reset, Resend)**: Resend Go SDK (`v3.12.0`, timeout 10s), `POST /admin/users` (transaksi DB `pool.Begin` atomic, error mapping 23514->400, 23505->409), `POST /auth/forgot-password` (selalu 200 generik, log token mentah), `POST /auth/reset-password` (atomic token update).
+- **Tahap 4 (Seed Admin Bootstrap)**: Startup check idempotent via Go (`internal/bootstrap/admin.go`), insert admin (`password_hash=NULL`) & role, generate & log invite token jika password NULL, skip total jika password terisi.
+- **Tahap 5 (Integrasi & Regresi Menyeluruh)**: Test E2E `TestAuthAndRBACFoundation_FullLifecycleE2E` (skenario a-m berurutan dalam 1 container Postgres), regresi penuh `go test -v ./...` & `go vet ./...` PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- `CHECK` constraint dipasang di DB (`user_roles.role`, `password_tokens.type`).
+- `sqlc.yaml` schema disesuaikan ke `"migrations/*.up.sql"`.
+- `InsertPasswordToken` disederhanakan 4 parameter (drop `created_at`, DB `DEFAULT now()`).
+- Seed admin diimplementasikan sebagai kode Go startup (bukan migration file) karena bergantung env `SEED_ADMIN_EMAIL`.
+- Cookie `isSecure` di-set kondisional (`TLS != nil || X-Forwarded-Proto == "https"`).

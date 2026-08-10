@@ -8,13 +8,17 @@ import (
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     int
-	DBUser     string
-	DBPassword string
-	DBName     string
-	TZ         string
-	HTTPPort   string
+	DBHost          string
+	DBPort          int
+	DBUser          string
+	DBPassword      string
+	DBName          string
+	TZ              string
+	HTTPPort        string
+	ResendAPIKey    string
+	ResendFromEmail string
+	FrontendBaseURL string
+	SeedAdminEmail  string
 }
 
 // Load reads environment variables and strictly validates mandatory variables.
@@ -60,6 +64,26 @@ func Load() (*Config, error) {
 	}
 	time.Local = loc
 
+	resendAPIKey := os.Getenv("RESEND_API_KEY")
+	if resendAPIKey == "" {
+		return nil, fmt.Errorf("missing required environment variable: RESEND_API_KEY")
+	}
+
+	resendFromEmail := os.Getenv("RESEND_FROM_EMAIL")
+	if resendFromEmail == "" {
+		return nil, fmt.Errorf("missing required environment variable: RESEND_FROM_EMAIL")
+	}
+
+	frontendBaseURL := os.Getenv("FRONTEND_BASE_URL")
+	if frontendBaseURL == "" {
+		return nil, fmt.Errorf("missing required environment variable: FRONTEND_BASE_URL")
+	}
+
+	seedAdminEmail := os.Getenv("SEED_ADMIN_EMAIL")
+	if seedAdminEmail == "" {
+		return nil, fmt.Errorf("missing required environment variable: SEED_ADMIN_EMAIL")
+	}
+
 	httpPort := os.Getenv("PORT")
 	if httpPort == "" {
 		httpPort = os.Getenv("HTTP_PORT")
@@ -69,13 +93,17 @@ func Load() (*Config, error) {
 	}
 
 	cfg := &Config{
-		DBHost:     host,
-		DBPort:     port,
-		DBUser:     user,
-		DBPassword: password,
-		DBName:     dbname,
-		TZ:         tz,
-		HTTPPort:   httpPort,
+		DBHost:          host,
+		DBPort:          port,
+		DBUser:          user,
+		DBPassword:      password,
+		DBName:          dbname,
+		TZ:              tz,
+		HTTPPort:        httpPort,
+		ResendAPIKey:    resendAPIKey,
+		ResendFromEmail: resendFromEmail,
+		FrontendBaseURL: frontendBaseURL,
+		SeedAdminEmail:  seedAdminEmail,
 	}
 
 	return cfg, nil
