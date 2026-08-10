@@ -8,6 +8,24 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type AuditLog struct {
+	ID           int32
+	TabelTarget  string
+	RecordID     int32
+	ActorUserID  int32
+	Aksi         string
+	BeforeData   []byte
+	AfterData    []byte
+	HashEntry    string
+	PreviousHash string
+	CreatedAt    pgtype.Timestamptz
+}
+
+type AuditLogTail struct {
+	ID       int32
+	LastHash string
+}
+
 type PasswordToken struct {
 	TokenHash  string
 	UserID     int32

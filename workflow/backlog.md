@@ -15,7 +15,7 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
   - [x] Middleware RBAC (role-per-endpoint sesuai `api-contract.md`)
   - [x] Migration token invite/reset, integrasi Resend: `POST /admin/users` (tanpa password), `POST /auth/forgot-password`, `POST /auth/reset-password`
   - [x] **Seed admin pertama** — startup check idempotent via kode Go (`internal/bootstrap/admin.go`), generate & print invite token ke server log jika `password_hash` admin masih null; skip total jika admin sudah selesai setup.
-- [ ] **3. Audit trail infrastructure** — migration `audit_log` + `audit_log_tail` (genesis seed), helper hash-chain (lock+insert+update 1 transaksi eksplisit), DB trigger tolak `UPDATE`/`DELETE` di `audit_log`. **Wajib selesai sebelum item 4 & 7** (retrofit audit ke transaksi yang sudah ada lebih mahal daripada built-in dari awal).
+- [x] **3. Audit trail infrastructure** (Selesai) — migration `audit_log` + `audit_log_tail` (genesis seed `SHA256('klinik-rme-genesis')`), helper hash-chain `internal/audit/` (`LockAuditLogTail FOR UPDATE` + insert + update 1 transaksi caller), DB trigger tolak `UPDATE`/`DELETE` di `audit_log`.
 
 ### Fase 2 — Domain inti
 

@@ -36,3 +36,15 @@
 - `InsertPasswordToken` disederhanakan 4 parameter (drop `created_at`, DB `DEFAULT now()`).
 - Seed admin diimplementasikan sebagai kode Go startup (bukan migration file) karena bergantung env `SEED_ADMIN_EMAIL`.
 - Cookie `isSecure` di-set kondisional (`TLS != nil || X-Forwarded-Proto == "https"`).
+
+---
+
+## Audit Trail Infrastructure — Tahap 1-3 (Selesai Penuh)
+
+- **Tahap 1 (Migration & Trigger)**: Migrasi `audit_log_tail` (CHECK id=1, genesis seed `SHA256('klinik-rme-genesis')`) & `audit_log` (polymorphic `record_id`, FK `actor_user_id`), PL/pgSQL function & trigger `BEFORE UPDATE OR DELETE` raising exception (`audit_log is append-only`).
+- **Tahap 2 (Helper Hash-Chain)**: Package `internal/audit/` dengan fungsi `Record(...)`, locking `LockAuditLogTail` (`FOR UPDATE`), kalkulasi SHA256 hex hash dari struct JSON `auditHashInput`, insert `audit_log`, update `audit_log_tail.last_hash` di transaksi milik caller.
+- **Tahap 3 (Verifikasi Trigger & Regresi Menyeluruh)**: Test integrasi 6 skenario (single call, sequential linkage, 10-goroutine concurrency serialization, robustness formula, nil `beforeData`, dan trigger protection pada row buatan aplikasi asli). Regresi penuh `go test -v ./...` & `go vet ./...` PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- Sesuai spec 100%, tidak ada deviasi.
