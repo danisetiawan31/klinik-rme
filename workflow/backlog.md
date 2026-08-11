@@ -19,7 +19,7 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 
 ### Fase 2 — Domain inti
 
-- [ ] **4. Pasien** — migration `pasien` (+`version`, `deleted_at`, `consent_at`); `POST /pasien`, `GET /pasien/search` (nik+nama), `GET /pasien/:id`, `PATCH /pasien/:id` (optimistic lock); tersambung audit trail.
+- [x] **4. Pasien** (Selesai) — migration `pasien` (+`version`, `deleted_at`, `consent_at`); `POST /pasien`, `GET /pasien/search` (nik+nama), `GET /pasien/:id`, `PATCH /pasien/:id` (optimistic lock); tersambung audit trail.
 - [ ] **5. Klinik & Antrian** — migration `klinik`, `queue_counter`, `kunjungan`; `GET /klinik/:id`; `POST /kunjungan` (atomic upsert counter); `GET /kunjungan/:id`, `GET /klinik/:id/antrian`; `POST /klinik/:id/panggil-berikutnya` (`FOR UPDATE SKIP LOCKED`, prioritas + `skip_count`); `POST /kunjungan/:id/tidak-hadir`.
 - [ ] **6. Realtime & Papan Antrian** _(swappable dengan 7 — cuma gantung ke item 5)_ — migration `klinik.display_token_hash`; Hub WS in-memory (`gorilla/websocket`); `POST /admin/klinik/:id/display-token/regenerate`; middleware dual-auth (cookie | `X-Display-Token`); broadcast notify-then-refetch di tiap write relevan.
 - [ ] **7. Rekam Medis** _(swappable dengan 6 — gantung ke item 3 & 5)_ — migration `rekam_medis`, `diagnosis`, `tindakan` (+ `uq_addendum_of_active` partial unique index); `POST /kunjungan/:id/rekam-medis`, `POST /rekam-medis/:id/addendum`; `GET /kunjungan/:id/rekam-medis` (leaf query), `GET /pasien/:id/riwayat`; tersambung audit trail; endpoint `[dokter]` only.

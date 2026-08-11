@@ -59,6 +59,18 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 		{
 			adminProtected.POST("/users", handler.CreateUser(pool, q, emailSender, frontendBaseURL))
 		}
+
+		// Pasien routes (requires valid session cookie + appropriate role per endpoint)
+		pasienGroup := apiV1.Group("/pasien")
+		if q != nil {
+			pasienGroup.Use(middleware.Authenticate(q))
+		}
+		{
+			pasienGroup.POST("", middleware.RequireRole("petugas", "admin"), handler.CreatePasien(pool, q))
+			pasienGroup.GET("/search", middleware.RequireRole("petugas", "dokter", "admin"), handler.SearchPasien(q))
+			pasienGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), handler.GetPasienByID(q))
+			pasienGroup.PATCH("/:id", middleware.RequireRole("petugas", "admin"), handler.UpdatePasien(pool, q))
+		}
 	}
 
 	return r

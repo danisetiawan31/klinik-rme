@@ -175,7 +175,7 @@ Genesis: `audit_log_tail` diseed 1 baris awal dengan `last_hash = SHA256('klinik
 
 **Wajib satu transaksi eksplisit**: [perubahan data bisnis] + [lock tail] + [insert audit_log] + [update tail] wajib dalam satu `BEGIN...COMMIT`. Tidak boleh ada write bisnis yang commit sebelum audit entry-nya ikut commit — ini alasan awal PostgreSQL-only dipilih (bukan split DB), jadi tidak boleh dilonggarkan di level kode.
 
-**Scope audit log**: berlaku untuk `rekam_medis` (create & addendum) dan edit biodata `pasien`. **Tidak berlaku** untuk `queue_counter` maupun perubahan status `queue_entries` (klaim, skip, no-show) — operasi antrian sengaja dikecualikan dari audit trail supaya paralelisme `SKIP LOCKED` di klaim antrian tidak ikut ter-serialize oleh lock `audit_log_tail` (`FOR UPDATE`). Atribusi klaim (`dokter_id`, `dipanggil_at`) sudah cukup terekam langsung di kolom `queue_entries`, tidak perlu hash-chain.
+**Scope audit log**: berlaku untuk `rekam_medis` (create & addendum) dan `pasien` (create & edit biodata). **Tidak berlaku** untuk `queue_counter` maupun perubahan status `queue_entries` (klaim, skip, no-show) — operasi antrian sengaja dikecualikan dari audit trail supaya paralelisme `SKIP LOCKED` di klaim antrian tidak ikut ter-serialize oleh lock `audit_log_tail` (`FOR UPDATE`). Atribusi klaim (`dokter_id`, `dipanggil_at`) sudah cukup terekam langsung di kolom `queue_entries`, tidak perlu hash-chain.
 
 DB trigger tolak `UPDATE`/`DELETE` langsung di tabel `audit_log` (tamper-evident, bukan tamper-proof).
 

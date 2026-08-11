@@ -48,3 +48,18 @@
 **Catatan Deviasi & Keputusan Teknis**:
 
 - Sesuai spec 100%, tidak ada deviasi.
+
+---
+
+## Pasien — Tahap 1-3 (Selesai Penuh)
+
+- **Tahap 1 (Migration & Query Dasar)**: Migration `pasien` (`id`, `nik` nullable tanpa unique, `nama`, `tanggal_lahir`, `jenis_kelamin` CHECK IN ('L','P'), `alamat`, `no_telp`, `consent_at` NOT NULL, `version` DEFAULT 1, `deleted_at` nullable). Query sqlc (`InsertPasien`, `GetPasienByID`, `GetPasienByIDIncludingDeleted`, `SearchPasien` NIK exact + nama ILIKE + AND + pagination + deleted_at IS NULL, `UpdatePasienOptimistic`).
+- **Tahap 2 (Endpoint & Audit Integration)**: Endpoint `POST /pasien` [petugas, admin] (consent=true mandatory -> 400 CONSENT_REQUIRED, audit `aksi='create'`), `GET /pasien/search` [petugas, dokter, admin], `GET /pasien/:id` [petugas, dokter, admin] (riwayatKunjunganRingkas: []), `PATCH /pasien/:id` [petugas, admin] (optimistic lock version matching, silent ignore consent/consentAt, audit `aksi='update'` snapshot before/after).
+- **Tahap 3 (Integrasi & Regresi Menyeluruh)**: Test E2E `TestPasienFullLifecycle_E2E` (skenario a-h berurutan dalam container Postgres terisolasi khusus, assert strict hash-chain linkage `row2.previous_hash == row1.hash_entry`), Concurrency test optimistic lock (2 parallel PATCH 1 success 200, 1 fail 409), regresi penuh `go test -v ./...` & `go vet ./...` PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- Pre-fetch `GetPasienByID` pada `PATCH /pasien/:id` dilakukan di LUAR transaksi sebelum `pool.Begin`. Tetap 100% aman karena atomic check `WHERE id = $1 AND version = $2` pada `UpdatePasienOptimistic` (di dalam transaksi) tetap menjadi penjaga akhir race condition, menggunakan `req.Version` dari client (bukan dari hasil pre-fetch).
+- Penanganan 0 rows returned dari `UpdatePasienOptimistic`: alih-alih mengasumsikan 409 secara langsung, handler mengeksekusi `q.GetPasienByIDIncludingDeleted(ctx, int32(id))` untuk membedakan secara presisi antara HTTP 404 (`PASIEN_NOT_FOUND` — pasien tidak ada / ter-soft-delete) vs HTTP 409 (`OPTIMISTIC_LOCK_FAILED` — konflik versi). Ini mengantisipasi jika kelak ada fitur soft-delete pasien di masa mendatang.
+- Warning duplikasi NIK adalah tanggung jawab FE pre-submission check (`GET /pasien/search?nik=`). Backend `POST /pasien` sengaja menerima NIK ganda tanpa memblokir atau mengembalikan sinyal duplikasi.
+

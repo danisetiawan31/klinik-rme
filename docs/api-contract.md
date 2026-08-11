@@ -54,6 +54,7 @@ POST /admin/klinik/:id/display-token/regenerate        [admin]
 POST /pasien                              [petugas, admin]
   → { nik?, nama, tanggalLahir, jenisKelamin, alamat, noTelp, consent: bool }
   ← 201 { id, ...biodata }
+  Warning duplikasi NIK adalah pola FE pre-submission via GET /pasien/search — POST /pasien sendiri tidak membawa sinyal duplikasi apa pun, dan itu disengaja.
 
 GET  /pasien/search?nik=&nama=&page=&limit=   [petugas, dokter, admin]
   ← 200 [{ id, nik, nama, tanggalLahir }]   (nik dan nama boleh salah satu atau dua-duanya; nama = partial match — wajib ada karena pasien tanpa NIK cuma bisa dicari lewat nama)

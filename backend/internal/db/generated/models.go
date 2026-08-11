@@ -26,6 +26,19 @@ type AuditLogTail struct {
 	LastHash string
 }
 
+type Pasien struct {
+	ID           int32
+	Nik          pgtype.Text
+	Nama         string
+	TanggalLahir pgtype.Date
+	JenisKelamin string
+	Alamat       string
+	NoTelp       string
+	ConsentAt    pgtype.Timestamptz
+	Version      int32
+	DeletedAt    pgtype.Timestamptz
+}
+
 type PasswordToken struct {
 	TokenHash  string
 	UserID     int32
