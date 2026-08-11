@@ -23,6 +23,9 @@ func setValidEnv(t *testing.T) {
 	t.Setenv("RESEND_FROM_EMAIL", "onboarding@resend.dev")
 	t.Setenv("FRONTEND_BASE_URL", "http://localhost:4200")
 	t.Setenv("SEED_ADMIN_EMAIL", "admin@klinik.local")
+	t.Setenv("KLINIK_NAMA", "Klinik Sehat Utama")
+	t.Setenv("KLINIK_JAM_BUKA", "08:00")
+	t.Setenv("KLINIK_JAM_TUTUP", "17:00")
 }
 
 func TestLoad_Success(t *testing.T) {
@@ -42,6 +45,9 @@ func TestLoad_Success(t *testing.T) {
 	assert.Equal(t, "onboarding@resend.dev", cfg.ResendFromEmail)
 	assert.Equal(t, "http://localhost:4200", cfg.FrontendBaseURL)
 	assert.Equal(t, "admin@klinik.local", cfg.SeedAdminEmail)
+	assert.Equal(t, "Klinik Sehat Utama", cfg.KlinikNama)
+	assert.Equal(t, "08:00", cfg.KlinikJamBuka)
+	assert.Equal(t, "17:00", cfg.KlinikJamTutup)
 
 	assert.Equal(t, "postgres://postgres:secret@localhost:5432/klinik_db?sslmode=disable", cfg.DSN())
 	assert.Equal(t, "Asia/Jakarta", time.Local.String())
@@ -103,6 +109,21 @@ func TestLoad_MissingRequiredEnv(t *testing.T) {
 			unsetEnv:   "SEED_ADMIN_EMAIL",
 			errMessage: "missing required environment variable: SEED_ADMIN_EMAIL",
 		},
+		{
+			name:       "missing KLINIK_NAMA",
+			unsetEnv:   "KLINIK_NAMA",
+			errMessage: "missing required environment variable: KLINIK_NAMA",
+		},
+		{
+			name:       "missing KLINIK_JAM_BUKA",
+			unsetEnv:   "KLINIK_JAM_BUKA",
+			errMessage: "missing required environment variable: KLINIK_JAM_BUKA",
+		},
+		{
+			name:       "missing KLINIK_JAM_TUTUP",
+			unsetEnv:   "KLINIK_JAM_TUTUP",
+			errMessage: "missing required environment variable: KLINIK_JAM_TUTUP",
+		},
 	}
 
 	for _, tt := range tests {
@@ -136,4 +157,22 @@ func TestLoad_InvalidTZ(t *testing.T) {
 	require.Error(t, err)
 	assert.Nil(t, cfg)
 	assert.Contains(t, err.Error(), "invalid environment variable TZ")
+}
+
+func TestLoad_InvalidKlinikJamFormat(t *testing.T) {
+	setValidEnv(t)
+	t.Setenv("KLINIK_JAM_BUKA", "8:00") // missing leading zero or invalid format
+
+	cfg, err := config.Load()
+	require.Error(t, err)
+	assert.Nil(t, cfg)
+	assert.Contains(t, err.Error(), "invalid environment variable KLINIK_JAM_BUKA")
+
+	setValidEnv(t)
+	t.Setenv("KLINIK_JAM_TUTUP", "25:00") // invalid hour
+
+	cfg, err = config.Load()
+	require.Error(t, err)
+	assert.Nil(t, cfg)
+	assert.Contains(t, err.Error(), "invalid environment variable KLINIK_JAM_TUTUP")
 }

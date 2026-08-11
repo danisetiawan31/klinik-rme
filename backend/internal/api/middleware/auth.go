@@ -24,6 +24,12 @@ const (
 // and extends the sliding session expiry by 11 hours on every valid request.
 func Authenticate(q *dbgen.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		if q == nil {
+			RespondError(c, http.StatusInternalServerError, "SERVER_ERROR", "Database queries unit is not initialized", nil)
+			c.Abort()
+			return
+		}
+
 		rawToken, err := c.Cookie(SessionCookieName)
 		if err != nil || rawToken == "" {
 			RespondError(c, http.StatusUnauthorized, "UNAUTHORIZED", "Sesi tidak ditemukan atau telah berakhir", nil)

@@ -36,6 +36,7 @@
 - `InsertPasswordToken` disederhanakan 4 parameter (drop `created_at`, DB `DEFAULT now()`).
 - Seed admin diimplementasikan sebagai kode Go startup (bukan migration file) karena bergantung env `SEED_ADMIN_EMAIL`.
 - Cookie `isSecure` di-set kondisional (`TLS != nil || X-Forwarded-Proto == "https"`).
+- *Catatan Retroaktif (Refactoring Router)*: Middleware `Authenticate` awalnya dibungkus `if q != nil` di `router.go`. Saat fitur Klinik & Antrian dikembangkan, hal ini direfaktur: pengaman `q == nil` dipindahkan ke dalam fungsi `middleware.Authenticate` itu sendiri (me-return 500 SERVER_ERROR), dan pembungkus `if q != nil` di `router.go` dihapus agar pendaftaran middleware auth terjamin 100% unconditional di seluruh protected route group (`auth`, `admin`, `pasien`, `klinik`, `kunjungan`).
 
 ---
 
@@ -62,4 +63,24 @@
 - Pre-fetch `GetPasienByID` pada `PATCH /pasien/:id` dilakukan di LUAR transaksi sebelum `pool.Begin`. Tetap 100% aman karena atomic check `WHERE id = $1 AND version = $2` pada `UpdatePasienOptimistic` (di dalam transaksi) tetap menjadi penjaga akhir race condition, menggunakan `req.Version` dari client (bukan dari hasil pre-fetch).
 - Penanganan 0 rows returned dari `UpdatePasienOptimistic`: alih-alih mengasumsikan 409 secara langsung, handler mengeksekusi `q.GetPasienByIDIncludingDeleted(ctx, int32(id))` untuk membedakan secara presisi antara HTTP 404 (`PASIEN_NOT_FOUND` — pasien tidak ada / ter-soft-delete) vs HTTP 409 (`OPTIMISTIC_LOCK_FAILED` — konflik versi). Ini mengantisipasi jika kelak ada fitur soft-delete pasien di masa mendatang.
 - Warning duplikasi NIK adalah tanggung jawab FE pre-submission check (`GET /pasien/search?nik=`). Backend `POST /pasien` sengaja menerima NIK ganda tanpa memblokir atau mengembalikan sinyal duplikasi.
+- *Catatan Retroaktif (Refactoring Router)*: Refactoring registrasi middleware `Authenticate` di `router.go` secara otomatis menyempurnakan registrasi grup route `/pasien` agar terpasang secara 100% unconditional.
+
+---
+
+## Klinik & Antrian — Tahap 1-4 (Selesai Penuh)
+
+- **Tahap 1 (Migration, Seed Klinik, Query Dasar)**: Migration `000008_create_klinik`, `000009_create_queue_counter`, `000010_create_kunjungan`. Config env `KLINIK_NAMA`, `KLINIK_JAM_BUKA`, `KLINIK_JAM_TUTUP` (validasi HH:MM strict). Helper `bootstrap.SeedKlinik` (idempotent). Query sqlc (`InsertKunjungan`, `GetKunjunganByID`, `ListKunjunganByKlinikAndTanggal`, `ClaimNextKunjungan` FOR UPDATE SKIP LOCKED, `UpdateKunjunganSkip`, `UpdateKunjunganTidakHadir`). Test domain database `TestKlinikAntrianDomain_RealPostgreSQL` PASS 100%.
+- **Tahap 2 (Endpoint Non-Klaim)**: Query baru `ListKunjunganWithPasienNamaByKlinikAndTanggal` (JOIN kunjungan+pasien). Endpoint `GET /klinik/:id` [petugas, dokter, admin], `POST /kunjungan` [petugas, admin] (validasi jam tutup & pasien soft-delete, atomic upsert queue counter), `GET /kunjungan/:id` [petugas, dokter, admin], `GET /klinik/:id/antrian` [petugas, dokter, admin]. Integration test `TestKlinikAntrianEndpoints_Integration` PASS 100%.
+- **Tahap 3 (Endpoint Klaim & Resolusi + Test Konkurensi)**: Endpoint `POST /klinik/:id/panggil-berikutnya` [dokter saja] (dokterId dari session, return 204 jika antrian kosong), `POST /kunjungan/:id/lewati` [dokter saja] (status 'dipanggil' -> 'menunggu' + skipCount+1), `POST /kunjungan/:id/tidak-hadir` [dokter, admin]. Test integrasi & konkurensi `TestKlinikAntrianClaimEndpoints_Integration` (5 dokter klaim bersamaan: 0 collision, speedup ratio layer DB 3.00x) PASS 100%.
+- **Tahap 4 (Integrasi E2E Lifecycle & Regresi Menyeluruh)**: Test E2E `TestKlinikAntrianFullLifecycle_E2E` (10 skenario a-j berurutan dalam container Postgres terisolasi khusus: registrasi pasien, pendaftaran antrian normal vs prioritas, panggil prioritas duluan, lewati, panggil ulang prioritas via tie-breaker `is_priority DESC`, resolusi tidak-hadir admin, verifikasi kondisi akhir antrian, dan verifikasi DB langsung 0 row `audit_log` tercatat). Regresi penuh `go test -v -p 1 ./...` & `go vet ./...` PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- Endpoint `POST /kunjungan/:id/lewati` [dokter] ditambahkan ke `docs/api-contract.md` oleh user untuk menangani skenario pasien dipanggil tidak muncul di ruang periksa (status kembali ke `'menunggu'`, `skip_count` bertambah 1).
+- Seed klinik diimplementasikan sebagai fungsi Go startup (`bootstrap.SeedKlinik`) di `internal/bootstrap/klinik.go`, bukan migration file, karena nilainya dinamis bergantung pada environment variable.
+- Refactoring `router.go`: menghapus pembungkus `if q != nil` pada pendaftaran middleware `Authenticate` dan memindahkan nil-check internal ke dalam `middleware.Authenticate` (me-return `500 SERVER_ERROR`). Perubahan ini berlaku retroaktif menyempurnakan grup route Auth & RBAC Foundation dan Pasien agar pendaftaran middleware auth terjamin 100% unconditional.
+- Fix infrastruktur DB pool: menyetel `config.MaxConns = 20` secara eksplisit pada `internal/db/db.go` (`NewPool`) untuk menjamin throughput konkurensi paralel non-blocking pada pengujian SKIP LOCKED.
+- Optimasi skema DB: menambahkan index komposit `idx_kunjungan_klinik_tanggal_status` pada tabel `kunjungan` dan constraint `ON DELETE CASCADE` pada FK `queue_counter → klinik` sebagai bentuk *defensive engineering*.
+- Pengecualian audit trail: operasi `kunjungan`, `klinik`, dan `queue_counter` secara eksplisit dikecualikan dari `audit.Record` agar tidak memicu lock contention pada `audit_log_tail`. Terverifikasi murni 0 row audit log tercatat di test E2E (skenario j).
+
 

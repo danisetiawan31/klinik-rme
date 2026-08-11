@@ -66,7 +66,13 @@ func main() {
 		log.Fatalf("Fatal: Admin bootstrap failed: %v", err)
 	}
 
-	// 5. Initialize Mailer service
+	// 5. Run klinik bootstrap seed check
+	log.Println("Running klinik bootstrap check...")
+	if err := bootstrap.SeedKlinik(ctx, pool, q, cfg); err != nil {
+		log.Fatalf("Fatal: Klinik bootstrap failed: %v", err)
+	}
+
+	// 6. Initialize Mailer service
 	resendMailer := mailer.NewResendMailer(cfg.ResendAPIKey, cfg.ResendFromEmail)
 
 	// 6. Setup Gin router & HTTP Server

@@ -88,6 +88,10 @@ POST /klinik/:id/panggil-berikutnya                [dokter]
   ← 200 { id, nomorAntrian, pasienNama, dokterId, dipanggilAt } | 204 kalau antrian kosong
   dokterId dari session (bukan body/params), tanggal = hari ini dari jam server. Petugas tidak bisa memanggil pasien.
 
+POST /kunjungan/:id/lewati                         [dokter]
+  ← 200 { id, status: "menunggu", skipCount } | 409 kalau status kunjungan bukan "dipanggil"
+  Dipakai dokter saat pasien yang dipanggil tidak muncul di ruang periksa — kembali ke antrian (bukan hilang), skip_count bertambah untuk tie-breaker urutan panggil berikutnya.
+
 POST /kunjungan/:id/tidak-hadir                    [dokter, admin]
   ← 200 { id, status: "tidak_hadir" }
   Dipakai saat penutupan hari untuk pasien yang berkali-kali di-skip dan tidak pernah kembali.

@@ -41,9 +41,7 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 
 		// Authenticated Auth routes (requires valid session cookie)
 		authProtected := apiV1.Group("/auth")
-		if q != nil {
-			authProtected.Use(middleware.Authenticate(q))
-		}
+		authProtected.Use(middleware.Authenticate(q))
 		{
 			authProtected.POST("/logout", handler.Logout(pool, q))
 			authProtected.GET("/me", handler.Me(q))
@@ -52,24 +50,40 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 
 		// Admin routes (requires valid session cookie + admin role)
 		adminProtected := apiV1.Group("/admin")
-		if q != nil {
-			adminProtected.Use(middleware.Authenticate(q))
-			adminProtected.Use(middleware.RequireRole("admin"))
-		}
+		adminProtected.Use(middleware.Authenticate(q))
+		adminProtected.Use(middleware.RequireRole("admin"))
 		{
 			adminProtected.POST("/users", handler.CreateUser(pool, q, emailSender, frontendBaseURL))
 		}
 
 		// Pasien routes (requires valid session cookie + appropriate role per endpoint)
 		pasienGroup := apiV1.Group("/pasien")
-		if q != nil {
-			pasienGroup.Use(middleware.Authenticate(q))
-		}
+		pasienGroup.Use(middleware.Authenticate(q))
 		{
 			pasienGroup.POST("", middleware.RequireRole("petugas", "admin"), handler.CreatePasien(pool, q))
 			pasienGroup.GET("/search", middleware.RequireRole("petugas", "dokter", "admin"), handler.SearchPasien(q))
 			pasienGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), handler.GetPasienByID(q))
 			pasienGroup.PATCH("/:id", middleware.RequireRole("petugas", "admin"), handler.UpdatePasien(pool, q))
+		}
+
+		// Klinik & Antrian routes (requires valid session cookie + appropriate role per endpoint)
+		klinikAntrianH := handler.NewKlinikAntrianHandler(pool)
+
+		klinikGroup := apiV1.Group("/klinik")
+		klinikGroup.Use(middleware.Authenticate(q))
+		{
+			klinikGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetKlinikByID)
+			klinikGroup.GET("/:id/antrian", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetAntrianKlinik)
+			klinikGroup.POST("/:id/panggil-berikutnya", middleware.RequireRole("dokter"), klinikAntrianH.PanggilBerikutnya)
+		}
+
+		kunjunganGroup := apiV1.Group("/kunjungan")
+		kunjunganGroup.Use(middleware.Authenticate(q))
+		{
+			kunjunganGroup.POST("", middleware.RequireRole("petugas", "admin"), klinikAntrianH.CreateKunjungan)
+			kunjunganGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetKunjunganByID)
+			kunjunganGroup.POST("/:id/lewati", middleware.RequireRole("dokter"), klinikAntrianH.Lewati)
+			kunjunganGroup.POST("/:id/tidak-hadir", middleware.RequireRole("dokter", "admin"), klinikAntrianH.TidakHadir)
 		}
 	}
 
