@@ -48,3 +48,10 @@ UPDATE kunjungan
 SET status = 'tidak_hadir'
 WHERE id = $1 AND status IN ('menunggu', 'dipanggil')
 RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+
+-- name: UpdateKunjunganSelesai :one
+UPDATE kunjungan
+SET status = 'selesai'
+WHERE id = $1
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+

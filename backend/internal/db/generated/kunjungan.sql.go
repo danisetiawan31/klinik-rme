@@ -220,6 +220,33 @@ func (q *Queries) ListKunjunganWithPasienNamaByKlinikAndTanggal(ctx context.Cont
 	return items, nil
 }
 
+const updateKunjunganSelesai = `-- name: UpdateKunjunganSelesai :one
+UPDATE kunjungan
+SET status = 'selesai'
+WHERE id = $1
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at
+`
+
+func (q *Queries) UpdateKunjunganSelesai(ctx context.Context, id int32) (Kunjungan, error) {
+	row := q.db.QueryRow(ctx, updateKunjunganSelesai, id)
+	var i Kunjungan
+	err := row.Scan(
+		&i.ID,
+		&i.PasienID,
+		&i.KlinikID,
+		&i.DokterID,
+		&i.TanggalKunjungan,
+		&i.NomorAntrian,
+		&i.IsPriority,
+		&i.PriorityReason,
+		&i.SkipCount,
+		&i.Status,
+		&i.DipanggilAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updateKunjunganSkip = `-- name: UpdateKunjunganSkip :one
 UPDATE kunjungan
 SET status = 'menunggu', skip_count = skip_count + 1

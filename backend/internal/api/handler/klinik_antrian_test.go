@@ -102,7 +102,7 @@ func TestKlinikAntrianEndpoints_Integration(t *testing.T) {
 	cfg := &config.Config{
 		KlinikNama:     "Klinik Sehat Utama",
 		KlinikJamBuka:  "08:00",
-		KlinikJamTutup: "17:00",
+		KlinikJamTutup: "23:59",
 	}
 	err = bootstrap.SeedKlinik(ctx, pool, q, cfg)
 	require.NoError(t, err)

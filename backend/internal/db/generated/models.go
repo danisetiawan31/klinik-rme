@@ -26,6 +26,13 @@ type AuditLogTail struct {
 	LastHash string
 }
 
+type Diagnosis struct {
+	ID           int32
+	RekamMedisID int32
+	KodeIcd      pgtype.Text
+	Deskripsi    string
+}
+
 type Klinik struct {
 	ID       int32
 	Nama     string
@@ -76,12 +83,32 @@ type QueueCounter struct {
 	LastNumber int32
 }
 
+type RekamMedi struct {
+	ID               int32
+	KunjunganID      int32
+	DokterID         int32
+	Keluhan          string
+	HasilPemeriksaan string
+	IsAddendum       bool
+	AddendumOf       pgtype.Int4
+	AlasanAddendum   pgtype.Text
+	DeletedAt        pgtype.Timestamptz
+	CreatedAt        pgtype.Timestamptz
+}
+
 type Session struct {
 	IDHash            string
 	UserID            int32
 	CreatedAt         pgtype.Timestamptz
 	ExpiresAt         pgtype.Timestamptz
 	AbsoluteExpiresAt pgtype.Timestamptz
+}
+
+type Tindakan struct {
+	ID           int32
+	RekamMedisID int32
+	Jenis        string
+	Deskripsi    string
 }
 
 type User struct {

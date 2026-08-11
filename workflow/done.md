@@ -36,7 +36,7 @@
 - `InsertPasswordToken` disederhanakan 4 parameter (drop `created_at`, DB `DEFAULT now()`).
 - Seed admin diimplementasikan sebagai kode Go startup (bukan migration file) karena bergantung env `SEED_ADMIN_EMAIL`.
 - Cookie `isSecure` di-set kondisional (`TLS != nil || X-Forwarded-Proto == "https"`).
-- *Catatan Retroaktif (Refactoring Router)*: Middleware `Authenticate` awalnya dibungkus `if q != nil` di `router.go`. Saat fitur Klinik & Antrian dikembangkan, hal ini direfaktur: pengaman `q == nil` dipindahkan ke dalam fungsi `middleware.Authenticate` itu sendiri (me-return 500 SERVER_ERROR), dan pembungkus `if q != nil` di `router.go` dihapus agar pendaftaran middleware auth terjamin 100% unconditional di seluruh protected route group (`auth`, `admin`, `pasien`, `klinik`, `kunjungan`).
+- _Catatan Retroaktif (Refactoring Router)_: Middleware `Authenticate` awalnya dibungkus `if q != nil` di `router.go`. Saat fitur Klinik & Antrian dikembangkan, hal ini direfaktur: pengaman `q == nil` dipindahkan ke dalam fungsi `middleware.Authenticate` itu sendiri (me-return 500 SERVER_ERROR), dan pembungkus `if q != nil` di `router.go` dihapus agar pendaftaran middleware auth terjamin 100% unconditional di seluruh protected route group (`auth`, `admin`, `pasien`, `klinik`, `kunjungan`).
 
 ---
 
@@ -63,7 +63,7 @@
 - Pre-fetch `GetPasienByID` pada `PATCH /pasien/:id` dilakukan di LUAR transaksi sebelum `pool.Begin`. Tetap 100% aman karena atomic check `WHERE id = $1 AND version = $2` pada `UpdatePasienOptimistic` (di dalam transaksi) tetap menjadi penjaga akhir race condition, menggunakan `req.Version` dari client (bukan dari hasil pre-fetch).
 - Penanganan 0 rows returned dari `UpdatePasienOptimistic`: alih-alih mengasumsikan 409 secara langsung, handler mengeksekusi `q.GetPasienByIDIncludingDeleted(ctx, int32(id))` untuk membedakan secara presisi antara HTTP 404 (`PASIEN_NOT_FOUND` — pasien tidak ada / ter-soft-delete) vs HTTP 409 (`OPTIMISTIC_LOCK_FAILED` — konflik versi). Ini mengantisipasi jika kelak ada fitur soft-delete pasien di masa mendatang.
 - Warning duplikasi NIK adalah tanggung jawab FE pre-submission check (`GET /pasien/search?nik=`). Backend `POST /pasien` sengaja menerima NIK ganda tanpa memblokir atau mengembalikan sinyal duplikasi.
-- *Catatan Retroaktif (Refactoring Router)*: Refactoring registrasi middleware `Authenticate` di `router.go` secara otomatis menyempurnakan registrasi grup route `/pasien` agar terpasang secara 100% unconditional.
+- _Catatan Retroaktif (Refactoring Router)_: Refactoring registrasi middleware `Authenticate` di `router.go` secara otomatis menyempurnakan registrasi grup route `/pasien` agar terpasang secara 100% unconditional.
 
 ---
 
@@ -80,7 +80,23 @@
 - Seed klinik diimplementasikan sebagai fungsi Go startup (`bootstrap.SeedKlinik`) di `internal/bootstrap/klinik.go`, bukan migration file, karena nilainya dinamis bergantung pada environment variable.
 - Refactoring `router.go`: menghapus pembungkus `if q != nil` pada pendaftaran middleware `Authenticate` dan memindahkan nil-check internal ke dalam `middleware.Authenticate` (me-return `500 SERVER_ERROR`). Perubahan ini berlaku retroaktif menyempurnakan grup route Auth & RBAC Foundation dan Pasien agar pendaftaran middleware auth terjamin 100% unconditional.
 - Fix infrastruktur DB pool: menyetel `config.MaxConns = 20` secara eksplisit pada `internal/db/db.go` (`NewPool`) untuk menjamin throughput konkurensi paralel non-blocking pada pengujian SKIP LOCKED.
-- Optimasi skema DB: menambahkan index komposit `idx_kunjungan_klinik_tanggal_status` pada tabel `kunjungan` dan constraint `ON DELETE CASCADE` pada FK `queue_counter → klinik` sebagai bentuk *defensive engineering*.
+- Optimasi skema DB: menambahkan index komposit `idx_kunjungan_klinik_tanggal_status` pada tabel `kunjungan` dan constraint `ON DELETE CASCADE` pada FK `queue_counter → klinik` sebagai bentuk _defensive engineering_.
 - Pengecualian audit trail: operasi `kunjungan`, `klinik`, dan `queue_counter` secara eksplisit dikecualikan dari `audit.Record` agar tidak memicu lock contention pada `audit_log_tail`. Terverifikasi murni 0 row audit log tercatat di test E2E (skenario j).
 
+---
 
+## Rekam Medis — Tahap 1-5 (Selesai Penuh)
+
+- **Tahap 1 (Migration, Query dasar, Extend Audit Aksi)**: Migration `000011_create_rekam_medis`, `000012_create_diagnosis`, `000013_create_tindakan`, `000014_extend_audit_log_aksi` (`aksi IN ('create','update','addendum')`). Partial unique index `uq_addendum_of_active` & `uq_rekam_medis_root_per_kunjungan`. Query sqlc (`rekam_medis.sql`, `diagnosis.sql`, `tindakan.sql`).
+- **Tahap 2 (POST /kunjungan/:id/rekam-medis & Transisi Status Kunjungan)**: Endpoint `POST /kunjungan/:id/rekam-medis` [dokter saja] (body `keluhan`, `hasilPemeriksaan`, `diagnosis[]`, `tindakan[]`). Transaksi atomic: insert `rekam_medis` -> `UPDATE kunjungan SET status='selesai'` -> `audit.Record(aksi='create')`. Reactive 409 pada duplikasi root record.
+- **Tahap 3 (POST /rekam-medis/:id/addendum & Backend Merge Strategy)**: Endpoint `POST /rekam-medis/:id/addendum` [dokter saja] (`alasanAddendum` mandatory). Logika merge backend: absent keys carry-over dari parent, `[]` dikosongkan. Transaksi atomic insert leaf baru -> `audit.Record(aksi='addendum')`. Reactive 409 pada konflik `uq_addendum_of_active`.
+- **Tahap 4 (GET /kunjungan/:id/rekam-medis & GET /pasien/:id/riwayat)**: Endpoint `GET /kunjungan/:id/rekam-medis` [dokter saja] (leaf query traversal `NOT EXISTS` + `deleted_at IS NULL`) & `GET /pasien/:id/riwayat` [dokter saja] (list kunjungan ber-rekam-medis).
+- **Tahap 5 (Integrasi E2E Lifecycle, Test Konkurensi & Regresi Menyeluruh)**: Test konkurensi `TestRekamMedisAddendum_Concurrency` (2 goroutines addendum bersamaan: 1 sukses 201, 1 gagal 409 via constraint `uq_addendum_of_active`), Test E2E `TestRekamMedisFullLifecycle_E2E` (skenario a-j berurutan: auth, pasien, kunjungan, panggil antrian, create RM awal, addendum 1 & 2, fetch leaf/riwayat, RBAC non-dokter 403, audit log linkage). Regresi penuh `go test -v -p 1 ./...` & `go vet ./...` PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- Extension constraint `audit_log.aksi` via migration `000014_extend_audit_log_aksi` (`CHECK (aksi IN ('create', 'update', 'addendum'))`).
+- Dual partial unique index: `uq_addendum_of_active` (max 1 addendum aktif per parent) & `uq_rekam_medis_root_per_kunjungan` (max 1 root record per kunjungan).
+- Backend merge strategy: pointer/nullable-aware types (`*[]DiagnosisInput`, `*[]TindakanInput`, `*string`) untuk membedakan "absent key" (carry-over) vs "array kosong `[]`" (dikosongkan).
+- RBAC Enforcement: Seluruh endpoint Rekam Medis terisolasi [dokter] saja. Role non-dokter me-return 403 FORBIDDEN.
+- Audit compliance: Addendum dicatat dengan `aksi='addendum'` (bukan 'create'/'update').

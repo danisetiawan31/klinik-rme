@@ -63,6 +63,7 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 			pasienGroup.POST("", middleware.RequireRole("petugas", "admin"), handler.CreatePasien(pool, q))
 			pasienGroup.GET("/search", middleware.RequireRole("petugas", "dokter", "admin"), handler.SearchPasien(q))
 			pasienGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), handler.GetPasienByID(q))
+			pasienGroup.GET("/:id/riwayat", middleware.RequireRole("dokter"), handler.GetRiwayatRekamMedisPasien(q))
 			pasienGroup.PATCH("/:id", middleware.RequireRole("petugas", "admin"), handler.UpdatePasien(pool, q))
 		}
 
@@ -82,8 +83,16 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 		{
 			kunjunganGroup.POST("", middleware.RequireRole("petugas", "admin"), klinikAntrianH.CreateKunjungan)
 			kunjunganGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetKunjunganByID)
+			kunjunganGroup.GET("/:id/rekam-medis", middleware.RequireRole("dokter"), handler.GetRekamMedisKunjungan(q))
 			kunjunganGroup.POST("/:id/lewati", middleware.RequireRole("dokter"), klinikAntrianH.Lewati)
 			kunjunganGroup.POST("/:id/tidak-hadir", middleware.RequireRole("dokter", "admin"), klinikAntrianH.TidakHadir)
+			kunjunganGroup.POST("/:id/rekam-medis", middleware.RequireRole("dokter"), handler.CreateRekamMedisAwal(pool, q))
+		}
+
+		rekamMedisGroup := apiV1.Group("/rekam-medis")
+		rekamMedisGroup.Use(middleware.Authenticate(q))
+		{
+			rekamMedisGroup.POST("/:id/addendum", middleware.RequireRole("dokter"), handler.CreateAddendum(pool, q))
 		}
 	}
 
