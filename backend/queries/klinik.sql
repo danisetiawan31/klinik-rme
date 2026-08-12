@@ -15,3 +15,15 @@ WHERE id = $1;
 SELECT id, nama, jam_buka, jam_tutup
 FROM klinik
 LIMIT 1;
+
+-- name: UpdateKlinikDisplayTokenHash :one
+UPDATE klinik
+SET display_token_hash = $1
+WHERE id = $2
+RETURNING *;
+
+-- name: GetKlinikDisplayTokenHash :one
+SELECT display_token_hash
+FROM klinik
+WHERE id = $1;
+

@@ -59,7 +59,7 @@ func TestKlinikAntrianDomain_RealPostgreSQL(t *testing.T) {
 
 	// 1. Verifikasi Migration & DB Constraints
 	t.Run("Migration & DB Constraints Verification", func(t *testing.T) {
-		// Table klinik exists and has no display_token_hash column yet
+		// Table klinik exists and has display_token_hash column (added in migration 000015)
 		var columnExists bool
 		err := pool.QueryRow(ctx, `
 			SELECT EXISTS (
@@ -67,7 +67,7 @@ func TestKlinikAntrianDomain_RealPostgreSQL(t *testing.T) {
 				WHERE table_name = 'klinik' AND column_name = 'display_token_hash'
 			)`).Scan(&columnExists)
 		require.NoError(t, err)
-		assert.False(t, columnExists, "klinik table must NOT have display_token_hash column in Tahap 1")
+		assert.True(t, columnExists, "klinik table must have display_token_hash column")
 
 		// CHECK status kunjungan (must be waiting/dipanggil/selesai/tidak_hadir)
 		// Inserting with invalid status must fail

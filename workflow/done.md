@@ -100,3 +100,15 @@
 - Backend merge strategy: pointer/nullable-aware types (`*[]DiagnosisInput`, `*[]TindakanInput`, `*string`) untuk membedakan "absent key" (carry-over) vs "array kosong `[]`" (dikosongkan).
 - RBAC Enforcement: Seluruh endpoint Rekam Medis terisolasi [dokter] saja. Role non-dokter me-return 403 FORBIDDEN.
 - Audit compliance: Addendum dicatat dengan `aksi='addendum'` (bukan 'create'/'update').
+
+---
+
+## Realtime & Papan Antrian — Tahap 1: Migration + Hub Core (Selesai)
+
+- **Tahap 1 (Migration & Hub Core)**: Migration `000015_add_display_token_hash_to_klinik` (`ALTER TABLE klinik ADD COLUMN display_token_hash TEXT NULL`). Query sqlc `UpdateKlinikDisplayTokenHash` & `GetKlinikDisplayTokenHash`. Package `internal/realtime/` (struct `Client`, `Hub` with single goroutine event loop `Run(ctx)`, unbuffered channel safe unregister, non-blocking broadcast, & `closed` channel guard against post-shutdown deadlock).
+- **Verifikasi**: `TestHub_Concurrency` (25 goroutines, 1250 ops: zero race/panic, state map match 100%), `TestHub_NonBlockingBroadcast` (fast unregister of slow client), `TestHub_GracefulShutdown` & `TestHub_PostShutdownCalls` (zero deadlock/hang pasca shutdown), `TestRealtimeMigrationAndQueries_RealPostgreSQL` (Postgres 16) PASS 100%, `go vet ./...` PASS.
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- **Defensive Post-Shutdown Deadlock Guard**: Channel `h.closed` ditambahkan ke `Hub` dan dipasang pada `select` case method publik (`RegisterClient`, `UnregisterClient`, `BroadcastToKlinik`). Jika dipanggil setelah `Hub.Run(ctx)` exit (saat server graceful shutdown), panggilan method publik return instan (no-op) tanpa blocking/deadlock.
+

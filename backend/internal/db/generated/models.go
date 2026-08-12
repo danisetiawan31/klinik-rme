@@ -34,10 +34,11 @@ type Diagnosis struct {
 }
 
 type Klinik struct {
-	ID       int32
-	Nama     string
-	JamBuka  pgtype.Time
-	JamTutup pgtype.Time
+	ID               int32
+	Nama             string
+	JamBuka          pgtype.Time
+	JamTutup         pgtype.Time
+	DisplayTokenHash pgtype.Text
 }
 
 type Kunjungan struct {

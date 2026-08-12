@@ -28,9 +28,16 @@ FROM klinik
 WHERE id = $1
 `
 
-func (q *Queries) GetKlinikByID(ctx context.Context, id int32) (Klinik, error) {
+type GetKlinikByIDRow struct {
+	ID       int32
+	Nama     string
+	JamBuka  pgtype.Time
+	JamTutup pgtype.Time
+}
+
+func (q *Queries) GetKlinikByID(ctx context.Context, id int32) (GetKlinikByIDRow, error) {
 	row := q.db.QueryRow(ctx, getKlinikByID, id)
-	var i Klinik
+	var i GetKlinikByIDRow
 	err := row.Scan(
 		&i.ID,
 		&i.Nama,
@@ -40,15 +47,35 @@ func (q *Queries) GetKlinikByID(ctx context.Context, id int32) (Klinik, error) {
 	return i, err
 }
 
+const getKlinikDisplayTokenHash = `-- name: GetKlinikDisplayTokenHash :one
+SELECT display_token_hash
+FROM klinik
+WHERE id = $1
+`
+
+func (q *Queries) GetKlinikDisplayTokenHash(ctx context.Context, id int32) (pgtype.Text, error) {
+	row := q.db.QueryRow(ctx, getKlinikDisplayTokenHash, id)
+	var display_token_hash pgtype.Text
+	err := row.Scan(&display_token_hash)
+	return display_token_hash, err
+}
+
 const getSingleKlinik = `-- name: GetSingleKlinik :one
 SELECT id, nama, jam_buka, jam_tutup
 FROM klinik
 LIMIT 1
 `
 
-func (q *Queries) GetSingleKlinik(ctx context.Context) (Klinik, error) {
+type GetSingleKlinikRow struct {
+	ID       int32
+	Nama     string
+	JamBuka  pgtype.Time
+	JamTutup pgtype.Time
+}
+
+func (q *Queries) GetSingleKlinik(ctx context.Context) (GetSingleKlinikRow, error) {
 	row := q.db.QueryRow(ctx, getSingleKlinik)
-	var i Klinik
+	var i GetSingleKlinikRow
 	err := row.Scan(
 		&i.ID,
 		&i.Nama,
@@ -70,14 +97,46 @@ type InsertKlinikParams struct {
 	JamTutup pgtype.Time
 }
 
-func (q *Queries) InsertKlinik(ctx context.Context, arg InsertKlinikParams) (Klinik, error) {
+type InsertKlinikRow struct {
+	ID       int32
+	Nama     string
+	JamBuka  pgtype.Time
+	JamTutup pgtype.Time
+}
+
+func (q *Queries) InsertKlinik(ctx context.Context, arg InsertKlinikParams) (InsertKlinikRow, error) {
 	row := q.db.QueryRow(ctx, insertKlinik, arg.Nama, arg.JamBuka, arg.JamTutup)
+	var i InsertKlinikRow
+	err := row.Scan(
+		&i.ID,
+		&i.Nama,
+		&i.JamBuka,
+		&i.JamTutup,
+	)
+	return i, err
+}
+
+const updateKlinikDisplayTokenHash = `-- name: UpdateKlinikDisplayTokenHash :one
+UPDATE klinik
+SET display_token_hash = $1
+WHERE id = $2
+RETURNING id, nama, jam_buka, jam_tutup, display_token_hash
+`
+
+type UpdateKlinikDisplayTokenHashParams struct {
+	DisplayTokenHash pgtype.Text
+	ID               int32
+}
+
+func (q *Queries) UpdateKlinikDisplayTokenHash(ctx context.Context, arg UpdateKlinikDisplayTokenHashParams) (Klinik, error) {
+	row := q.db.QueryRow(ctx, updateKlinikDisplayTokenHash, arg.DisplayTokenHash, arg.ID)
 	var i Klinik
 	err := row.Scan(
 		&i.ID,
 		&i.Nama,
 		&i.JamBuka,
 		&i.JamTutup,
+		&i.DisplayTokenHash,
 	)
 	return i, err
 }

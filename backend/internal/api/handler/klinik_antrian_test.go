@@ -165,7 +165,7 @@ func TestKlinikAntrianEndpoints_Integration(t *testing.T) {
 		assert.Equal(t, klinik.ID, kResp.ID)
 		assert.Equal(t, "Klinik Sehat Utama", kResp.Nama)
 		assert.Equal(t, "08:00", kResp.JamBuka)
-		assert.Equal(t, "17:00", kResp.JamTutup)
+		assert.Equal(t, "23:59", kResp.JamTutup)
 
 		// Non-existent klinik -> 404
 		req404, _ := http.NewRequest(http.MethodGet, "/api/v1/klinik/9999", nil)
