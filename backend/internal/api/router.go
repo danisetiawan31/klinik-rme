@@ -69,6 +69,9 @@ func SetupRouter(pool *pgxpool.Pool, hub *realtime.Hub, emailSender mailer.Email
 			adminProtected.PATCH("/users/:id/roles", handler.UpdateUserRoles(pool, q))
 			adminProtected.POST("/users/:id/resend-invite", handler.ResendInvite(pool, q, emailSender, frontendBaseURL))
 			adminProtected.POST("/klinik/:id/display-token/regenerate", displayTokenH.RegenerateDisplayToken)
+
+			adminProtected.GET("/audit-log", handler.ListAuditLogs(q))
+			adminProtected.GET("/audit-log/:id", handler.GetAuditLogByID(q))
 		}
 
 		// Pasien routes (requires valid session cookie + appropriate role per endpoint)

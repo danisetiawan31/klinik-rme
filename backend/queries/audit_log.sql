@@ -23,3 +23,18 @@ INSERT INTO audit_log (
 UPDATE audit_log_tail
 SET last_hash = $1
 WHERE id = 1;
+
+-- name: ListAuditLogs :many
+SELECT id, tabel_target, record_id, actor_user_id, aksi, created_at
+FROM audit_log
+WHERE (sqlc.narg('tabel_target')::text IS NULL OR tabel_target = sqlc.narg('tabel_target'))
+  AND (sqlc.narg('record_id')::int IS NULL OR record_id = sqlc.narg('record_id'))
+  AND (sqlc.narg('actor_user_id')::int IS NULL OR actor_user_id = sqlc.narg('actor_user_id'))
+ORDER BY id DESC
+LIMIT $1 OFFSET $2;
+
+-- name: GetAuditLogByID :one
+SELECT id, tabel_target, record_id, actor_user_id, aksi, before_data, after_data, hash_entry, created_at
+FROM audit_log
+WHERE id = $1;
+

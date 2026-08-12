@@ -129,6 +129,22 @@
 **Catatan Deviasi & Keputusan Teknis**:
 - Sesuai spec 100%, tidak ada deviasi.
 
+---
+
+## Fitur Admin — Tahap 1-4 (Selesai)
+
+- **Tahap 1 (User Management Dasar)**: Endpoint `GET /admin/users` (list user + roles dengan pagination `page`/`limit`), `PATCH /admin/users/:id` (partial update nama/email dengan reactive 409 conflict check), dan `POST /admin/users/:id/resend-invite` (invalidasi token invite lama `consumed_at = now()` & generate token 128-bit baru dalam 1 transaksi DB, kirim email via Resend best-effort setelah commit).
+- **Tahap 2 (Roles Management)**: Endpoint `PATCH /admin/users/:id/roles` (full replace roles dalam 1 transaksi DB). Input deduplication otomatis (`dedupeStringSlice`), validasi roles non-kosong (400 `ROLES_CANNOT_BE_EMPTY`), mutual exclusion admin + dokter (400 `MUTUAL_EXCLUSION_ROLES`), dan last-admin guard pre-check (400 `LAST_ADMIN_GUARD` cegah sistem kehilangan admin terakhir). Real-time RBAC enforcement (middleware `RequireRole` query fresh DB tiap request).
+- **Tahap 3 (Audit Log Read)**: Endpoint `GET /admin/audit-log` (list summary audit log tanpa `beforeData`/`afterData`, filter optional `tabelTarget`, `recordId`, `actorId`, pagination) dan `GET /admin/audit-log/:id` (detail lengkap audit log termasuk JSONB `beforeData`/`afterData` dan `hashEntry`). Filter int invalid (`?recordId=abc`) diabaikan secara aman sebagai filter tanpa error 500.
+- **Tahap 4 (Integrasi E2E Lifecycle & Regresi Penuh)**: Test suite E2E `TestAdminFullLifecycle_E2E` memverifikasi alur penuh langkah a-h (login admin, GET users, PATCH user, resend invite + invalidasi token lama, PATCH roles & pembuktian real-time RBAC tanpa re-login, LAST_ADMIN_GUARD, GET audit log list & detail). Regresi penuh `go test -v -p 1 ./...` dan `go vet ./...` PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+- **Input Role Deduplication**: Array role input di `PATCH /admin/users/:id/roles` dideduplikasi otomatis sebelum validasi & insert untuk mencegah pelanggaran constraint komposit PK `(user_id, role)` (`23505 unique_violation`).
+- **Resend Invite Transactionality**: Invalidasi token lama & insert token invite baru dieksekusi dalam 1 transaksi DB eksplisit. Dispatch email dilakukan best-effort setelah commit untuk mencegah kegagalan SMTP menggagalkan transaksi DB.
+- **Robust Pre-check Last-Admin Guard**: Penghitungan jumlah admin aktif dilakukan secara preemptive (`q.CountUsersWithRole(ctx, "admin")`) khusus di operasi PATCH roles karena operasi ini tergolong jarang dan tidak concurrency-sensitive.
+- **Safety Handling Query Parameters**: Parameter integer optional pada list audit log (`recordId`, `actorId`) mengabaikan string non-numerik (seperti `abc`) sehingga fallback menjadi un-filtered secara aman tanpa menyebabkan error DB/500.
+
+
 
 
 

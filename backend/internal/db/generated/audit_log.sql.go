@@ -11,6 +11,41 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const getAuditLogByID = `-- name: GetAuditLogByID :one
+SELECT id, tabel_target, record_id, actor_user_id, aksi, before_data, after_data, hash_entry, created_at
+FROM audit_log
+WHERE id = $1
+`
+
+type GetAuditLogByIDRow struct {
+	ID          int32
+	TabelTarget string
+	RecordID    int32
+	ActorUserID int32
+	Aksi        string
+	BeforeData  []byte
+	AfterData   []byte
+	HashEntry   string
+	CreatedAt   pgtype.Timestamptz
+}
+
+func (q *Queries) GetAuditLogByID(ctx context.Context, id int32) (GetAuditLogByIDRow, error) {
+	row := q.db.QueryRow(ctx, getAuditLogByID, id)
+	var i GetAuditLogByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.TabelTarget,
+		&i.RecordID,
+		&i.ActorUserID,
+		&i.Aksi,
+		&i.BeforeData,
+		&i.AfterData,
+		&i.HashEntry,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const insertAuditLog = `-- name: InsertAuditLog :exec
 INSERT INTO audit_log (
     tabel_target,
@@ -52,6 +87,66 @@ func (q *Queries) InsertAuditLog(ctx context.Context, arg InsertAuditLogParams) 
 		arg.CreatedAt,
 	)
 	return err
+}
+
+const listAuditLogs = `-- name: ListAuditLogs :many
+SELECT id, tabel_target, record_id, actor_user_id, aksi, created_at
+FROM audit_log
+WHERE ($3::text IS NULL OR tabel_target = $3)
+  AND ($4::int IS NULL OR record_id = $4)
+  AND ($5::int IS NULL OR actor_user_id = $5)
+ORDER BY id DESC
+LIMIT $1 OFFSET $2
+`
+
+type ListAuditLogsParams struct {
+	Limit       int32
+	Offset      int32
+	TabelTarget pgtype.Text
+	RecordID    pgtype.Int4
+	ActorUserID pgtype.Int4
+}
+
+type ListAuditLogsRow struct {
+	ID          int32
+	TabelTarget string
+	RecordID    int32
+	ActorUserID int32
+	Aksi        string
+	CreatedAt   pgtype.Timestamptz
+}
+
+func (q *Queries) ListAuditLogs(ctx context.Context, arg ListAuditLogsParams) ([]ListAuditLogsRow, error) {
+	rows, err := q.db.Query(ctx, listAuditLogs,
+		arg.Limit,
+		arg.Offset,
+		arg.TabelTarget,
+		arg.RecordID,
+		arg.ActorUserID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAuditLogsRow
+	for rows.Next() {
+		var i ListAuditLogsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.TabelTarget,
+			&i.RecordID,
+			&i.ActorUserID,
+			&i.Aksi,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const lockAuditLogTail = `-- name: LockAuditLogTail :one

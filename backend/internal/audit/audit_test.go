@@ -296,7 +296,6 @@ func TestAuditTrailHelper_RealPostgreSQL(t *testing.T) {
 	t.Run("4. Robustness of Hash Formula Test", func(t *testing.T) {
 		tx1, err := pool.Begin(ctx)
 		require.NoError(t, err)
-		defer func() { _ = tx1.Rollback(ctx) }()
 
 		// Pair 1: before="A|B", after="C"
 		before1 := json.RawMessage(`"A|B"`)
@@ -307,10 +306,11 @@ func TestAuditTrailHelper_RealPostgreSQL(t *testing.T) {
 		var hash1 string
 		err = tx1.QueryRow(ctx, "SELECT hash_entry FROM audit_log WHERE record_id = 301").Scan(&hash1)
 		require.NoError(t, err)
+		err = tx1.Commit(ctx)
+		require.NoError(t, err)
 
 		tx2, err := pool.Begin(ctx)
 		require.NoError(t, err)
-		defer func() { _ = tx2.Rollback(ctx) }()
 
 		// Pair 2: before="A", after="B|C"
 		before2 := json.RawMessage(`"A"`)
@@ -320,6 +320,8 @@ func TestAuditTrailHelper_RealPostgreSQL(t *testing.T) {
 
 		var hash2 string
 		err = tx2.QueryRow(ctx, "SELECT hash_entry FROM audit_log WHERE record_id = 302").Scan(&hash2)
+		require.NoError(t, err)
+		err = tx2.Commit(ctx)
 		require.NoError(t, err)
 
 		assert.NotEqual(t, hash1, hash2, "hashes for Pair 1 (A|B, C) and Pair 2 (A, B|C) MUST NOT collide")
