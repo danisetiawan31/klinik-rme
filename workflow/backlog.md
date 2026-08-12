@@ -30,7 +30,7 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 
 ### Fase 1 — Fondasi
 
-- [ ] **10. Project scaffolding** — Angular CLI (standalone, Vitest, Tailwind v4), struktur folder `core/features/shared` (`AGENTS.md` §8), `environment.ts`, HTTP interceptor (`withCredentials`, handle `401`, parse `error.code`/`message`).
+- [x] **10. Project scaffolding** — Angular CLI (standalone, Vitest, Tailwind v4), struktur folder `core/features/shared` (`AGENTS.md` §8), `environment.ts`, HTTP interceptor (`withCredentials`, handle `401`, parse `error.code`/`message`).
 - [ ] **11. Auth pages & guard** — halaman login, set-password (dipakai invite & reset, entrypoint beda link), forgot-password; resolver `GET /auth/me` di-scope staff route (bukan global); route guard per role.
 - [ ] **12. Profil / Account Settings** — halaman ganti password sendiri (`PATCH /auth/me/password`, butuh password lama — beda flow dari set-password di item 11 yang berbasis token, bukan password lama), diakses semua role setelah login.
 - [ ] **13. RealtimeService** — wrap koneksi WS, reconnect+backoff; `proxy.conf.json` dengan `"ws": true`.

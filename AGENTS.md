@@ -51,7 +51,11 @@ Instruksi kerja untuk AI coding agent (Antigravity). Dibaca otomatis sebelum mel
 
 ## 6. Update done.md
 
-Setelah 1 langkah kecil selesai, test lolos, DAN user sudah approve — tambahkan entry ke `workflow/done.md`: apa yang dikerjakan, file yang berubah, cara verifikasi, dan "Catatan" untuk penyimpangan/improvisasi (§4).
+Setelah 1 langkah kecil selesai, test lolos, DAN user sudah approve — tambahkan entry log:
+- Jika perubahan berada di folder `backend/`, catat entry ke `workflow/done_be.md`.
+- Jika perubahan berada di folder `frontend/`, catat entry ke `workflow/done_fe.md`.
+
+Informasi yang dicatat meliputi: apa yang dikerjakan, file yang berubah, cara verifikasi, dan "Catatan" untuk penyimpangan/improvisasi (§4). Format entry tetap konsisten seperti sebelumnya.
 
 ## 7. Konvensi Kode — Backend
 
@@ -145,6 +149,7 @@ src/app/
 **Styling & testing**
 
 - Tailwind v4.
+- UI primitives: spartan/ui (spartan.ng) — headless (Angular CDK) + style Tailwind di-copy-paste lewat spartan CLI, bukan npm package tertutup. Tambah komponen baru via CLI spartan sesuai kebutuhan tiap fitur, jangan reinvent dari nol.
 - Styling mengacu ke `docs/design.md`.
 - Test file co-located (`*.spec.ts` di sebelah komponen), default Angular CLI + Vitest.
 
