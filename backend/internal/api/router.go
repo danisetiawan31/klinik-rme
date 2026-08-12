@@ -66,6 +66,7 @@ func SetupRouter(pool *pgxpool.Pool, hub *realtime.Hub, emailSender mailer.Email
 			adminProtected.GET("/users", handler.ListUsers(q))
 			adminProtected.POST("/users", handler.CreateUser(pool, q, emailSender, frontendBaseURL))
 			adminProtected.PATCH("/users/:id", handler.UpdateUser(q))
+			adminProtected.PATCH("/users/:id/roles", handler.UpdateUserRoles(pool, q))
 			adminProtected.POST("/users/:id/resend-invite", handler.ResendInvite(pool, q, emailSender, frontendBaseURL))
 			adminProtected.POST("/klinik/:id/display-token/regenerate", displayTokenH.RegenerateDisplayToken)
 		}

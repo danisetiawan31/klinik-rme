@@ -421,4 +421,154 @@ func TestAdminCreateUser_Integration(t *testing.T) {
 
 		assert.Equal(t, http.StatusForbidden, w.Code)
 	})
+
+	// --- PATCH /admin/users/:id/roles Test Cases ---
+
+	t.Run("Success - Update Roles Biasa (petugas -> dokter)", func(t *testing.T) {
+		body, _ := json.Marshal(handler.UpdateUserRolesRequest{
+			Roles: []string{"dokter"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", staffID), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		var resp handler.UserRolesResponse
+		err := json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+
+		assert.Equal(t, staffID, resp.ID)
+		assert.Equal(t, []string{"dokter"}, resp.Roles)
+
+		// Verify roles in DB
+		rolesInDB, err := q.GetRolesByUserID(ctx, staffID)
+		require.NoError(t, err)
+		assert.Equal(t, []string{"dokter"}, rolesInDB)
+	})
+
+	t.Run("Success - Deduplicate Roles Input ([\"dokter\", \"dokter\"] -> [\"dokter\"])", func(t *testing.T) {
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{"dokter", "dokter"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", staffID), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		var resp handler.UserRolesResponse
+		err := json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+
+		assert.Equal(t, []string{"dokter"}, resp.Roles)
+	})
+
+	t.Run("Failure - Roles Kosong [] -> 400 ROLES_CANNOT_BE_EMPTY", func(t *testing.T) {
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", staffID), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		var errResp middleware.ErrorEnvelope
+		err := json.Unmarshal(w.Body.Bytes(), &errResp)
+		require.NoError(t, err)
+		assert.Equal(t, "ROLES_CANNOT_BE_EMPTY", errResp.Error.Code)
+	})
+
+	t.Run("Failure - Mutual Exclusion admin + dokter -> 400 MUTUAL_EXCLUSION_ROLES", func(t *testing.T) {
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{"admin", "dokter"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", staffID), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		var errResp middleware.ErrorEnvelope
+		err := json.Unmarshal(w.Body.Bytes(), &errResp)
+		require.NoError(t, err)
+		assert.Equal(t, "MUTUAL_EXCLUSION_ROLES", errResp.Error.Code)
+	})
+
+	t.Run("Failure - Last Admin Guard (cuma 1 admin di sistem, hapus role admin) -> 400 LAST_ADMIN_GUARD", func(t *testing.T) {
+		// Currently adminID is the ONLY admin in system
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{"petugas"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", adminID), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusBadRequest, w.Code)
+		var errResp middleware.ErrorEnvelope
+		err := json.Unmarshal(w.Body.Bytes(), &errResp)
+		require.NoError(t, err)
+		assert.Equal(t, "LAST_ADMIN_GUARD", errResp.Error.Code)
+	})
+
+	t.Run("Success - Demote Admin ketika ada 2+ Admin di sistem", func(t *testing.T) {
+		// Seed admin kedua (adminID2)
+		var adminID2 int32
+		_ = pool.QueryRow(ctx, "INSERT INTO users (nama, email, password_hash) VALUES ($1, $2, $3) RETURNING id",
+			"Admin Kedua", "admin2@test.com", passHash).Scan(&adminID2)
+		_, _ = pool.Exec(ctx, "INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", adminID2, "admin")
+
+		// Sekarang ada 2 admin di sistem. Demote adminID2 ke petugas.
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{"petugas"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", adminID2), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		var resp handler.UserRolesResponse
+		err := json.Unmarshal(w.Body.Bytes(), &resp)
+		require.NoError(t, err)
+		assert.Equal(t, []string{"petugas"}, resp.Roles)
+	})
+
+	t.Run("Failure - User Not Found 404 (PATCH /admin/users/:id/roles)", func(t *testing.T) {
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{"petugas"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, "/api/v1/admin/users/99999/roles", bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusNotFound, w.Code)
+		var errResp middleware.ErrorEnvelope
+		err := json.Unmarshal(w.Body.Bytes(), &errResp)
+		require.NoError(t, err)
+		assert.Equal(t, "USER_NOT_FOUND", errResp.Error.Code)
+	})
+
+	t.Run("Failure - Non-Admin 403 Forbidden (PATCH /admin/users/:id/roles)", func(t *testing.T) {
+		body, _ := json.Marshal(map[string]interface{}{
+			"roles": []string{"petugas"},
+		})
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodPatch, fmt.Sprintf("/api/v1/admin/users/%d/roles", staffID), bytes.NewBuffer(body))
+		req.Header.Set("Content-Type", "application/json")
+		req.AddCookie(staffCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusForbidden, w.Code)
+	})
 }

@@ -9,6 +9,29 @@ import (
 	"context"
 )
 
+const countUsersWithRole = `-- name: CountUsersWithRole :one
+SELECT COUNT(*)
+FROM user_roles
+WHERE role = $1
+`
+
+func (q *Queries) CountUsersWithRole(ctx context.Context, role string) (int64, error) {
+	row := q.db.QueryRow(ctx, countUsersWithRole, role)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const deleteUserRolesByUserID = `-- name: DeleteUserRolesByUserID :exec
+DELETE FROM user_roles
+WHERE user_id = $1
+`
+
+func (q *Queries) DeleteUserRolesByUserID(ctx context.Context, userID int32) error {
+	_, err := q.db.Exec(ctx, deleteUserRolesByUserID, userID)
+	return err
+}
+
 const getRolesByUserID = `-- name: GetRolesByUserID :many
 SELECT role
 FROM user_roles

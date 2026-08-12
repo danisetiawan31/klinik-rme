@@ -251,6 +251,151 @@ func ResendInvite(pool *pgxpool.Pool, q *dbgen.Queries, emailSender mailer.Email
 	}
 }
 
+type UpdateUserRolesRequest struct {
+	Roles []string `json:"roles" binding:"required"`
+}
+
+type UserRolesResponse struct {
+	ID    int32    `json:"id"`
+	Roles []string `json:"roles"`
+}
+
+func dedupeStringSlice(input []string) []string {
+	seen := make(map[string]bool, len(input))
+	result := make([]string, 0, len(input))
+	for _, item := range input {
+		if !seen[item] {
+			seen[item] = true
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+// UpdateUserRoles handles PATCH /api/v1/admin/users/:id/roles [admin]
+func UpdateUserRoles(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idParam := c.Param("id")
+		idParsed, err := strconv.Atoi(idParam)
+		if err != nil || idParsed <= 0 {
+			middleware.RespondError(c, http.StatusBadRequest, "BAD_REQUEST", "ID pengguna tidak valid", err)
+			return
+		}
+		userID := int32(idParsed)
+
+		var req UpdateUserRolesRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			middleware.RespondError(c, http.StatusBadRequest, "BAD_REQUEST", "Format input tidak valid", err)
+			return
+		}
+
+		dedupedRoles := dedupeStringSlice(req.Roles)
+		ctx := c.Request.Context()
+
+		// 1. Cek user exist di DB (404 jika tidak ditemukan)
+		_, err = q.GetUserByID(ctx, userID)
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				middleware.RespondError(c, http.StatusNotFound, "USER_NOT_FOUND", "Pengguna tidak ditemukan", err)
+				return
+			}
+			middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal mengambil data pengguna", err)
+			return
+		}
+
+		// 2. Cek roles kosong (400 jika [])
+		if len(dedupedRoles) == 0 {
+			middleware.RespondError(c, http.StatusBadRequest, "ROLES_CANNOT_BE_EMPTY", "Minimal 1 peranan harus dipilih", nil)
+			return
+		}
+
+		// 3. Cek mutual exclusion: "admin" DAN "dokter" tidak boleh sekaligus
+		hasAdmin := false
+		hasDokter := false
+		for _, r := range dedupedRoles {
+			if r == "admin" {
+				hasAdmin = true
+			}
+			if r == "dokter" {
+				hasDokter = true
+			}
+		}
+		if hasAdmin && hasDokter {
+			middleware.RespondError(c, http.StatusBadRequest, "MUTUAL_EXCLUSION_ROLES", "Peranan admin dan dokter tidak boleh dimiliki sekaligus oleh satu pengguna", nil)
+			return
+		}
+
+		// 4. Cek last-admin guard (pre-check)
+		currentRoles, err := q.GetRolesByUserID(ctx, userID)
+		if err != nil {
+			middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal mengambil peranan pengguna", err)
+			return
+		}
+		currentlyIsAdmin := false
+		for _, r := range currentRoles {
+			if r == "admin" {
+				currentlyIsAdmin = true
+				break
+			}
+		}
+
+		if currentlyIsAdmin && !hasAdmin {
+			adminCount, err := q.CountUsersWithRole(ctx, "admin")
+			if err != nil {
+				middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal menghitung jumlah admin di sistem", err)
+				return
+			}
+			if adminCount <= 1 {
+				middleware.RespondError(c, http.StatusBadRequest, "LAST_ADMIN_GUARD", "Tidak dapat menghapus peranan admin terakhir di sistem", nil)
+				return
+			}
+		}
+
+		// 5. Eksekusi replace roles dalam 1 transaksi eksplisit
+		tx, err := pool.Begin(ctx)
+		if err != nil {
+			middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal menginisialisasi transaksi database", err)
+			return
+		}
+		defer func() {
+			_ = tx.Rollback(ctx)
+		}()
+
+		qtx := q.WithTx(tx)
+
+		if err := qtx.DeleteUserRolesByUserID(ctx, userID); err != nil {
+			middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal menghapus peranan lama pengguna", err)
+			return
+		}
+
+		for _, role := range dedupedRoles {
+			err = qtx.InsertUserRole(ctx, dbgen.InsertUserRoleParams{
+				UserID: userID,
+				Role:   role,
+			})
+			if err != nil {
+				var pgErr *pgconn.PgError
+				if errors.As(err, &pgErr) && pgErr.Code == "23514" {
+					middleware.RespondError(c, http.StatusBadRequest, "BAD_REQUEST", "Peranan tidak valid", err)
+					return
+				}
+				middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal menambahkan peranan pengguna baru", err)
+				return
+			}
+		}
+
+		if err := tx.Commit(ctx); err != nil {
+			middleware.RespondError(c, http.StatusInternalServerError, "INTERNAL_SERVER_ERROR", "Gagal menyimpan transaksi peranan pengguna", err)
+			return
+		}
+
+		c.JSON(http.StatusOK, UserRolesResponse{
+			ID:    userID,
+			Roles: dedupedRoles,
+		})
+	}
+}
+
 
 // CreateUser handles POST /api/v1/admin/users [admin]
 func CreateUser(pool *pgxpool.Pool, q *dbgen.Queries, emailSender mailer.EmailSender, frontendBaseURL string) gin.HandlerFunc {
