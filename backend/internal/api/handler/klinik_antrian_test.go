@@ -110,7 +110,7 @@ func TestKlinikAntrianEndpoints_Integration(t *testing.T) {
 	klinik, err := q.GetSingleKlinik(ctx)
 	require.NoError(t, err)
 
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	petugasCookie, _ := createKlinikAntrianTestUser(t, ctx, pool, q, "petugas.antrian@test.com", []string{"petugas"})
 	dokterCookie, _ := createKlinikAntrianTestUser(t, ctx, pool, q, "dokter.antrian@test.com", []string{"dokter"})

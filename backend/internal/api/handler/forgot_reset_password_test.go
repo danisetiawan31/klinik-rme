@@ -63,7 +63,7 @@ func TestForgotAndResetPassword_Integration(t *testing.T) {
 	q := dbgen.New(pool)
 	mockMailer := mailer.NewMockMailer(false)
 	frontendBaseURL := "http://localhost:4200"
-	router := api.SetupRouter(pool, mockMailer, frontendBaseURL)
+	router := api.SetupRouter(pool, nil, mockMailer, frontendBaseURL)
 
 	// Seed existing user
 	passHash, _ := auth.Hash("OldPassword!123")

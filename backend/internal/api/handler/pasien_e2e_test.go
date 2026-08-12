@@ -58,7 +58,7 @@ func TestPasienFullLifecycle_E2E(t *testing.T) {
 	defer pool.Close()
 
 	q := dbgen.New(pool)
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// Step a: Setup authenticated sessions for role petugas and role dokter using helper
 	petugasCookie, petugasUser := createTestUserWithSession(t, ctx, pool, q, "petugas.e2e@klinik.com", []string{"petugas"})

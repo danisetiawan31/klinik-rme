@@ -15,17 +15,24 @@ import (
 
 	"github.com/danisetiawan31/klinik-rme/internal/api/middleware"
 	dbgen "github.com/danisetiawan31/klinik-rme/internal/db/generated"
+	"github.com/danisetiawan31/klinik-rme/internal/realtime"
 )
 
 type KlinikAntrianHandler struct {
 	pool *pgxpool.Pool
 	q    *dbgen.Queries
+	hub  *realtime.Hub
 }
 
-func NewKlinikAntrianHandler(pool *pgxpool.Pool) *KlinikAntrianHandler {
+func NewKlinikAntrianHandler(pool *pgxpool.Pool, hub *realtime.Hub) *KlinikAntrianHandler {
+	var q *dbgen.Queries
+	if pool != nil {
+		q = dbgen.New(pool)
+	}
 	return &KlinikAntrianHandler{
 		pool: pool,
-		q:    dbgen.New(pool),
+		q:    q,
+		hub:  hub,
 	}
 }
 
@@ -184,6 +191,10 @@ func (h *KlinikAntrianHandler) CreateKunjungan(c *gin.Context) {
 	if err != nil {
 		middleware.RespondError(c, http.StatusInternalServerError, "SERVER_ERROR", "Gagal membuat kunjungan", err)
 		return
+	}
+
+	if h.hub != nil {
+		h.hub.BroadcastToKlinik(klinik.ID)
 	}
 
 	c.JSON(http.StatusCreated, CreateKunjunganResponse{
@@ -362,6 +373,10 @@ func (h *KlinikAntrianHandler) PanggilBerikutnya(c *gin.Context) {
 		dipanggilAtStr = claimed.DipanggilAt.Time.Format(time.RFC3339)
 	}
 
+	if h.hub != nil {
+		h.hub.BroadcastToKlinik(claimed.KlinikID)
+	}
+
 	c.JSON(http.StatusOK, PanggilBerikutnyaResponse{
 		ID:           claimed.ID,
 		NomorAntrian: claimed.NomorAntrian,
@@ -395,6 +410,10 @@ func (h *KlinikAntrianHandler) Lewati(c *gin.Context) {
 		return
 	}
 
+	if h.hub != nil {
+		h.hub.BroadcastToKlinik(updated.KlinikID)
+	}
+
 	c.JSON(http.StatusOK, UpdateSkipResponse{
 		ID:        updated.ID,
 		Status:    updated.Status,
@@ -424,6 +443,10 @@ func (h *KlinikAntrianHandler) TidakHadir(c *gin.Context) {
 		}
 		middleware.RespondError(c, http.StatusInternalServerError, "SERVER_ERROR", "Gagal mengubah status kunjungan menjadi tidak hadir", err)
 		return
+	}
+
+	if h.hub != nil {
+		h.hub.BroadcastToKlinik(updated.KlinikID)
 	}
 
 	c.JSON(http.StatusOK, UpdateTidakHadirResponse{

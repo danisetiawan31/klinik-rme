@@ -85,7 +85,7 @@ func TestCreateRekamMedisAwal_Integration(t *testing.T) {
 
 	todayDate := pgtype.Date{Time: time.Now(), Valid: true}
 
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// Helper to create a test kunjungan
 	createTestKunjungan := func(noAntrian int32) dbgen.Kunjungan {

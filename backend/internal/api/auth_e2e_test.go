@@ -82,7 +82,7 @@ func TestAuthAndRBACFoundation_FullLifecycleE2E(t *testing.T) {
 	frontendBaseURL := "http://localhost:4200"
 	adminEmail := "admin.e2e@klinik.local"
 
-	router := api.SetupRouter(pool, mockMailer, frontendBaseURL)
+	router := api.SetupRouter(pool, nil, mockMailer, frontendBaseURL)
 
 	var adminRawInviteToken string
 	var adminCookie *http.Cookie

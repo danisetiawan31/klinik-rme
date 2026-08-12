@@ -105,7 +105,7 @@ func TestDisplayTokenAndDualAuth_Integration(t *testing.T) {
 	err = bootstrap.SeedKlinik(ctx, pool, q, cfg)
 	require.NoError(t, err)
 
-	router := api.SetupRouter(pool, nil, "http://localhost:4200")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:4200")
 
 	adminCookie, _ := createDisplayTokenTestUser(t, ctx, pool, q, "admin_dt@klinik.id", []string{"admin"})
 	dokterCookie, _ := createDisplayTokenTestUser(t, ctx, pool, q, "dokter_dt@klinik.id", []string{"dokter"})

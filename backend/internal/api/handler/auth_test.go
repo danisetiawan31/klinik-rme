@@ -75,7 +75,7 @@ func TestAuthEndpoints_Integration(t *testing.T) {
 
 	ctx := context.Background()
 	q := dbgen.New(pool)
-	router := api.SetupRouter(pool, nil, "http://localhost:4200")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:4200")
 
 	// Seed test users
 	plainPassword := "ValidPassword!123"

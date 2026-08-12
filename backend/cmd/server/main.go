@@ -19,6 +19,7 @@ import (
 	"github.com/danisetiawan31/klinik-rme/internal/db"
 	"github.com/danisetiawan31/klinik-rme/internal/db/generated"
 	"github.com/danisetiawan31/klinik-rme/internal/mailer"
+	"github.com/danisetiawan31/klinik-rme/internal/realtime"
 )
 
 func main() {
@@ -72,11 +73,14 @@ func main() {
 		log.Fatalf("Fatal: Klinik bootstrap failed: %v", err)
 	}
 
-	// 6. Initialize Mailer service
+	// 6. Initialize Realtime Hub & Mailer service
+	hub := realtime.NewHub()
+	go hub.Run(ctx)
+
 	resendMailer := mailer.NewResendMailer(cfg.ResendAPIKey, cfg.ResendFromEmail)
 
-	// 6. Setup Gin router & HTTP Server
-	router := api.SetupRouter(pool, resendMailer, cfg.FrontendBaseURL)
+	// 7. Setup Gin router & HTTP Server
+	router := api.SetupRouter(pool, hub, resendMailer, cfg.FrontendBaseURL)
 	serverAddr := fmt.Sprintf(":%s", cfg.HTTPPort)
 	srv := &http.Server{
 		Addr:    serverAddr,

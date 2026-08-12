@@ -62,7 +62,7 @@ func TestAdminCreateUser_Integration(t *testing.T) {
 	q := dbgen.New(pool)
 	mockMailer := mailer.NewMockMailer(false)
 	frontendBaseURL := "http://localhost:4200"
-	router := api.SetupRouter(pool, mockMailer, frontendBaseURL)
+	router := api.SetupRouter(pool, nil, mockMailer, frontendBaseURL)
 
 	// Seed admin user and staff user
 	passHash, _ := auth.Hash("Password!123")
@@ -180,7 +180,7 @@ func TestAdminCreateUser_Integration(t *testing.T) {
 
 	t.Run("Resend Fail -> User Creation Still Succeeds (201 Created)", func(t *testing.T) {
 		failMailer := mailer.NewMockMailer(true)
-		failRouter := api.SetupRouter(pool, failMailer, frontendBaseURL)
+		failRouter := api.SetupRouter(pool, nil, failMailer, frontendBaseURL)
 
 		reqBody, _ := json.Marshal(handler.CreateAdminUserRequest{
 			Nama:  "User Best Effort",

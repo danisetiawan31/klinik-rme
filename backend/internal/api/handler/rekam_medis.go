@@ -17,6 +17,7 @@ import (
 	"github.com/danisetiawan31/klinik-rme/internal/api/middleware"
 	"github.com/danisetiawan31/klinik-rme/internal/audit"
 	dbgen "github.com/danisetiawan31/klinik-rme/internal/db/generated"
+	"github.com/danisetiawan31/klinik-rme/internal/realtime"
 )
 
 type CreateDiagnosisItemRequest struct {
@@ -76,7 +77,7 @@ type AddendumResponse struct {
 }
 
 // CreateRekamMedisAwal handles POST /api/v1/kunjungan/:id/rekam-medis [dokter]
-func CreateRekamMedisAwal(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc {
+func CreateRekamMedisAwal(pool *pgxpool.Pool, q *dbgen.Queries, hub *realtime.Hub) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
 		kunjunganID, err := strconv.Atoi(idParam)
@@ -136,7 +137,7 @@ func CreateRekamMedisAwal(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc 
 		ctx := c.Request.Context()
 
 		// Cek kunjungan exist
-		_, err = q.GetKunjunganByID(ctx, int32(kunjunganID))
+		kunjungan, err := q.GetKunjunganByID(ctx, int32(kunjunganID))
 		if err != nil {
 			if errors.Is(err, pgx.ErrNoRows) {
 				middleware.RespondError(c, http.StatusNotFound, "KUNJUNGAN_NOT_FOUND", "Kunjungan tidak ditemukan", err)
@@ -171,7 +172,7 @@ func CreateRekamMedisAwal(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc 
 		if err != nil {
 			var pgErr *pgconn.PgError
 			if errors.As(err, &pgErr) && pgErr.Code == "23505" {
-				middleware.RespondError(c, http.StatusConflict, "REKAM_MEDIS_ALREADY_EXISTS", "Rekam medis awal untuk kunjungan ini sudah ada", err)
+				middleware.RespondError(c, http.StatusConflict, "REKAM_MEDIS_ALREADY_EXISTS", "Rekam medis awal untuk kunjungan me-refer ke kunjungan ini sudah ada", err)
 				return
 			}
 			middleware.RespondError(c, http.StatusInternalServerError, "SERVER_ERROR", "Gagal menyimpan rekam medis", err)
@@ -269,6 +270,10 @@ func CreateRekamMedisAwal(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc 
 		if err := tx.Commit(ctx); err != nil {
 			middleware.RespondError(c, http.StatusInternalServerError, "SERVER_ERROR", "Gagal commit transaksi", err)
 			return
+		}
+
+		if hub != nil {
+			hub.BroadcastToKlinik(kunjungan.KlinikID)
 		}
 
 		c.JSON(http.StatusCreated, RekamMedisResponse{

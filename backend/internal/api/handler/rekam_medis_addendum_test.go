@@ -86,7 +86,7 @@ func TestCreateAddendum_Integration(t *testing.T) {
 	require.NoError(t, err)
 
 	todayDate := pgtype.Date{Time: time.Now(), Valid: true}
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// Helper to setup a parent rekam medis via HTTP
 	createParentRM := func(noAntrian int32) (dbgen.Kunjungan, handler.RekamMedisResponse) {

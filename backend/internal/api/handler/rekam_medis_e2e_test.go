@@ -67,7 +67,7 @@ func TestRekamMedisFullLifecycle_E2E(t *testing.T) {
 	`).Scan(&klinikID)
 	require.NoError(t, err)
 
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// Skenario a: Setup sesi petugas & dokter
 	var petugasCookie *http.Cookie

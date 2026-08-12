@@ -110,7 +110,7 @@ func TestPasienEndpoints_Integration(t *testing.T) {
 	defer pool.Close()
 
 	q := dbgen.New(pool)
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// Create test users for authentication & authorization check
 	petugasCookie, petugasUser := createTestUserWithSession(t, ctx, pool, q, "petugas@test.com", []string{"petugas"})

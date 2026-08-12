@@ -8,10 +8,11 @@ import (
 	"github.com/danisetiawan31/klinik-rme/internal/api/middleware"
 	"github.com/danisetiawan31/klinik-rme/internal/db/generated"
 	"github.com/danisetiawan31/klinik-rme/internal/mailer"
+	"github.com/danisetiawan31/klinik-rme/internal/realtime"
 )
 
 // SetupRouter initializes and configures the Gin engine with middlewares and routes.
-func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBaseURL string) *gin.Engine {
+func SetupRouter(pool *pgxpool.Pool, hub *realtime.Hub, emailSender mailer.EmailSender, frontendBaseURL string) *gin.Engine {
 	r := gin.New()
 
 	// Global middlewares
@@ -22,6 +23,14 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 	healthHandler := handler.Health(pool)
 	r.GET("/health", healthHandler)
 	r.GET("/api/v1/health", healthHandler)
+
+	// WebSocket endpoint (tanpa prefix /api/v1 sesuai docs/api-contract.md)
+	// Memakai DualAuth + RequireRole (keterangan: RequireRole di-bypass jika authChannel=="display-token")
+	if pool != nil {
+		qTmp := dbgen.New(pool)
+		wsH := handler.NewWSHandler(hub, qTmp)
+		r.GET("/ws", middleware.DualAuth(qTmp), middleware.RequireRole("petugas", "dokter", "admin"), wsH.ServeWS)
+	}
 
 	// Instantiate sqlc queries generator
 	var q *dbgen.Queries
@@ -70,7 +79,7 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 		}
 
 		// Klinik & Antrian routes
-		klinikAntrianH := handler.NewKlinikAntrianHandler(pool)
+		klinikAntrianH := handler.NewKlinikAntrianHandler(pool, hub)
 
 		// GET /klinik/:id/antrian mendukung Dual-Auth (cookie staff OR X-Display-Token / ?displayToken=)
 		apiV1.GET("/klinik/:id/antrian", middleware.DualAuth(q), middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetAntrianKlinik)
@@ -90,7 +99,7 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 			kunjunganGroup.GET("/:id/rekam-medis", middleware.RequireRole("dokter"), handler.GetRekamMedisKunjungan(q))
 			kunjunganGroup.POST("/:id/lewati", middleware.RequireRole("dokter"), klinikAntrianH.Lewati)
 			kunjunganGroup.POST("/:id/tidak-hadir", middleware.RequireRole("dokter", "admin"), klinikAntrianH.TidakHadir)
-			kunjunganGroup.POST("/:id/rekam-medis", middleware.RequireRole("dokter"), handler.CreateRekamMedisAwal(pool, q))
+			kunjunganGroup.POST("/:id/rekam-medis", middleware.RequireRole("dokter"), handler.CreateRekamMedisAwal(pool, q, hub))
 		}
 
 		rekamMedisGroup := apiV1.Group("/rekam-medis")

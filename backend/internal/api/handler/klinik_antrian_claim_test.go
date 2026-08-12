@@ -74,7 +74,7 @@ func TestKlinikAntrianClaimEndpoints_Integration(t *testing.T) {
 	klinik, err := q.GetSingleKlinik(ctx)
 	require.NoError(t, err)
 
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// Users & Sessions
 	petugasCookie, _ := createKlinikAntrianTestUser(t, ctx, pool, q, "petugas.claim@test.com", []string{"petugas"})

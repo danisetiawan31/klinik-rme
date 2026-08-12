@@ -94,7 +94,7 @@ func TestGetRekamMedis_Integration(t *testing.T) {
 	require.NoError(t, err)
 
 	todayDate := pgtype.Date{Time: time.Now(), Valid: true}
-	router := api.SetupRouter(pool, nil, "http://localhost:3000")
+	router := api.SetupRouter(pool, nil, nil, "http://localhost:3000")
 
 	// 1. GET /kunjungan/:id/rekam-medis [dokter]
 	t.Run("GET_Kunjungan_RekamMedis_Returns_Latest_Leaf_After_Multiple_Addendums", func(t *testing.T) {
