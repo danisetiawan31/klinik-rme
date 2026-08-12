@@ -52,6 +52,7 @@ Instruksi kerja untuk AI coding agent (Antigravity). Dibaca otomatis sebelum mel
 ## 6. Update done.md
 
 Setelah 1 langkah kecil selesai, test lolos, DAN user sudah approve — tambahkan entry log:
+
 - Jika perubahan berada di folder `backend/`, catat entry ke `workflow/done_be.md`.
 - Jika perubahan berada di folder `frontend/`, catat entry ke `workflow/done_fe.md`.
 
@@ -92,6 +93,7 @@ Informasi yang dicatat meliputi: apa yang dikerjakan, file yang berubah, cara ve
 - WebSocket: browser API tidak bisa custom header — papan antrian kirim token via **query param** (`?displayToken=`), beda dari REST yang pakai header. Ini keterbatasan browser, tulis eksplisit di kode biar tidak ada yang "perbaiki" jadi header dan diam-diam gagal.
 - RBAC: middleware cek role terhadap tabel role-per-endpoint di `api-contract.md` — **wajib dipasang eksplisit di endpoint**, jangan diasumsikan aman karena UI menyembunyikan tombolnya.
 - Endpoint Rekam Medis: `[dokter]` saja — admin **sengaja dikecualikan** dari akses langsung (investigasi lewat `GET /admin/audit-log/:id`, bukan endpoint klinis). Ini mengurangi exposure insidental, bukan mencegah akses yang benar-benar disengaja — jangan "simplify" jadi admin akses semua.
+- Role `admin` mutually exclusive dari role `dokter` — 1 user tidak boleh punya keduanya sekaligus (kontradiksi langsung dengan alasan keamanan admin-dikecualikan-dari-rekam-medis di api-contract.md). Wajib divalidasi di `PATCH /admin/users/:id/roles`.
 - Password: bcrypt, **cost factor 12** (bukan argon2id — ekosistem Go untuk argon2id butuh handle manual salt/parameter, bcrypt sudah matang lewat `x/crypto/bcrypt`). Known limitation: bcrypt memotong input di 72 byte — bukan masalah untuk password normal, tapi jangan asumsikan input lebih panjang tervalidasi penuh.
 - **Admin tidak pernah menentukan password user.** `POST /admin/users` membuat user dengan `password_hash` **nullable**, trigger email invite via Resend (token hash di DB, TTL **7 hari**). `POST /auth/forgot-password` (publik, tanpa auth) — **selalu** return 200 generik terlepas email terdaftar atau tidak (cegah user enumeration), TTL token **1 jam**. **`forgot-password` TIDAK PERNAH mengembalikan token/link mentah di response** — beda dari endpoint admin-authenticated (`POST /admin/users`, resend-invite) yang boleh, karena caller-nya sudah admin ter-otentikasi. Konsumsi token (invite maupun reset) wajib atomic: `UPDATE ... WHERE token_hash = ? AND consumed_at IS NULL`, cek rows affected. Login wajib reject bersih untuk `password_hash` masih null — jangan coba hash-compare ke nilai kosong.
 
@@ -110,6 +112,13 @@ Informasi yang dicatat meliputi: apa yang dikerjakan, file yang berubah, cara ve
 - `@if`/`@for`/`@switch` (native control flow) — bukan `*ngIf`/`*ngFor`. Structural directive lama sudah posisi legacy di Angular saat ini, CLI generate `@if` by default.
 - `ChangeDetectionStrategy.OnPush` default di semua komponen — pasangan alami Signals, memaksimalkan fine-grained reactivity yang jadi alasan Signals dipilih. `Default` (check tiap siklus) tidak nyambung sama pilihan state management di atas.
 - **Reactive Forms wajib** (bukan template-driven) untuk form dengan array dinamis — `diagnosis[]`/`tindakan[]` di rekam medis butuh `FormArray`. Ini konsekuensi bentuk data di `api-contract.md`, bukan pilihan gaya.
+- **Penulisan styling code** DILARANG KERAS MENULISKAN HARDCODE, JADIKAN DESIGN.md SEBAGAI ACUAN
+
+- **Cek Component Registry dulu** sebelum bikin komponen baru ATAU fetch primitive baru lewat Spartan CLI/MCP. Cek docs/design.md (Component Registry) dan folder shared/. Kalau sudah ada, reuse/extend — jangan fetch ulang copy mentah yang menimpa penyesuaian tema sebelumnya.
+
+Saat fetch primitive Spartan baru (pertama kali): setelah ter-copy, verifikasi dia memakai token semantik dari docs/design.md (CSS variable), bukan warna/radius default hardcoded template. Kalau ternyata template Spartan tidak memakai token semantik sama sekali — STOP, laporkan ke user, itu keputusan arsitektur yang butuh konfirmasi eksplisit, bukan ditebak.
+
+Komponen baru (composed maupun primitive yang sudah diverifikasi) — tambahkan ke Component Registry di docs/design.md saat itu juga.
 
 **Struktur folder** — konvensi berbasis fitur, direkomendasikan kuat untuk project single-app seperti ini (bukan satu-satunya struktur valid, tapi paling proporsional & paling mudah di-onboarding Antigravity):
 

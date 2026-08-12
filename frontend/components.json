@@ -1,0 +1,9 @@
+{
+  "$schema": "https://ui.spartan.ng/schema.json",
+  "componentsPath": "src/app/shared/ui",
+  "importAlias": "@spartan-ng/helm",
+  "tailwind": {
+    "version": 4
+  },
+  "style": "vega"
+}

@@ -1,1 +1,346 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
+
+@import '@spartan-ng/brain/hlm-tailwind-preset.css';
+
+/* ─── Design tokens ─────────────────────────────────────────────────── */
+:root {
+  --color-primary: #0891b2;
+  --color-primary-hover: #0e7490;
+  --color-primary-active: #155e75;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #22d3ee;
+  --color-secondary-foreground: #0f172a;
+  --color-accent: #16a34a;
+  --color-accent-foreground: #ffffff;
+  --color-background: #f0fdfa;
+  --color-foreground: #134e4a;
+  --color-card: #ffffff;
+  --color-card-foreground: #134e4a;
+  --color-muted: #e8f1f6;
+  --color-muted-foreground: #64748b;
+  --color-border: #ccfbf1;
+  --color-input: #cbd5e1;
+  --color-ring: #0891b2;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #ffffff;
+  --color-warning: #d97706;
+  --color-warning-foreground: #431407;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  --shadow-1: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 4px 6px rgba(0, 0, 0, 0.08);
+  --shadow-3: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-4: 0 20px 25px rgba(0, 0, 0, 0.12);
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+  --easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --font-heading: 'Figtree', sans-serif;
+  --font-body: 'Noto Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ─── Base reset ─────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--color-foreground);
+  background-color: var(--color-background);
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  line-height: 1.25;
+}
+
+/* ─── Global: shared input styles ────────────────────────────────────── */
+.kl-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #0f172a;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition:
+    border-color var(--duration-base) var(--easing-standard),
+    box-shadow var(--duration-base) var(--easing-standard);
+}
+.kl-input::placeholder {
+  color: #94a3b8;
+}
+.kl-input:focus {
+  border-color: var(--color-ring);
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.15);
+}
+.kl-input:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* password wrapper — shared with SensitiveValue */
+.kl-pw-wrap {
+  position: relative;
+  width: 100%;
+}
+.kl-pw-wrap .kl-input {
+  padding-right: 40px;
+}
+.kl-pw-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: color var(--duration-fast) var(--easing-standard);
+}
+.kl-pw-toggle:hover:not(:disabled) {
+  color: #475569;
+}
+.kl-pw-toggle:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-ring);
+}
+.kl-pw-toggle:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ─── Toast animation ────────────────────────────────────────────────── */
+@keyframes kl-toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+.kl-toast-enter {
+  animation: kl-toast-in var(--duration-slow) var(--easing-standard) both;
+}
+
+/* ─── Button ─────────────────────────────────────────────────────────── */
+.kl-btn-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(8, 145, 178, 0.22);
+  transition:
+    background-color var(--duration-fast) var(--easing-standard),
+    transform var(--duration-fast) var(--easing-standard),
+    box-shadow var(--duration-fast) var(--easing-standard);
+}
+.kl-btn-primary:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+.kl-btn-primary:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+.kl-btn-primary:focus-visible {
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.3);
+}
+.kl-btn-primary:disabled {
+  background: #93c5d5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ─── Spinner ────────────────────────────────────────────────────────── */
+@keyframes kl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.kl-spinner {
+  animation: kl-spin 0.75s linear infinite;
+}
+
+/* ─── Accessibility ──────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+:root {
+  color-scheme: light;
+
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: oklch(0.21 0.006 285.885);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: oklch(0.21 0.006 285.885);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: oklch(0.705 0.015 286.067);
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.21 0.006 285.885);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.985 0 0);
+  --sidebar-primary-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.552 0.016 285.938);
+}
+
+/* ─── Override Spartan tokens → DESIGN.md teal brand ─────────────────
+   Semua komponen Spartan (hlmBtn, hlmInput, hlmCard, dst) membaca
+   variabel --primary, --border, --ring, dll dari sini.
+   Dengan override ini, seluruh komponen Spartan otomatis pakai
+   palet teal klinik tanpa perlu custom class di tiap komponen.
+──────────────────────────────────────────────────────────────────── */
+:root {
+  /* Primary → teal #0891B2 */
+  --primary:            oklch(0.554 0.135 213.6);   /* #0891B2 */
+  --primary-foreground: oklch(1 0 0);               /* #FFFFFF */
+
+  /* Background → mint #F0FDFA */
+  --background:         oklch(0.985 0.014 180.0);   /* #F0FDFA */
+  --foreground:         oklch(0.302 0.060 186.0);   /* #134E4A */
+
+  /* Card → putih bersih */
+  --card:               oklch(1 0 0);               /* #FFFFFF */
+  --card-foreground:    oklch(0.302 0.060 186.0);   /* #134E4A */
+
+  /* Popover → sama dengan card */
+  --popover:            oklch(1 0 0);
+  --popover-foreground: oklch(0.302 0.060 186.0);
+
+  /* Secondary → cyan #22D3EE */
+  --secondary:          oklch(0.830 0.115 199.0);   /* #22D3EE */
+  --secondary-foreground: oklch(0.108 0.030 264.0); /* #0F172A */
+
+  /* Muted → abu-biru ringan #E8F1F6 */
+  --muted:              oklch(0.944 0.018 220.0);   /* #E8F1F6 */
+  --muted-foreground:   oklch(0.446 0.020 240.0);   /* #64748B */
+
+  /* Accent → hijau #16A34A */
+  --accent:             oklch(0.527 0.154 145.0);   /* #16A34A */
+  --accent-foreground:  oklch(1 0 0);               /* #FFFFFF */
+
+  /* Border → teal muda #CCFBF1 */
+  --border:             oklch(0.951 0.050 180.0);   /* #CCFBF1 */
+  --input:              oklch(0.815 0.025 223.0);   /* #CBD5E1 */
+
+  /* Ring → primary teal */
+  --ring:               oklch(0.554 0.135 213.6);   /* #0891B2 */
+
+  /* Destructive → merah #DC2626 */
+  --destructive:        oklch(0.577 0.245 27.325);  /* #DC2626 */
+
+  /* Radius → DESIGN.md --radius-md = 8px = 0.5rem */
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

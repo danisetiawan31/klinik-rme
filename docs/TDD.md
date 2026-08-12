@@ -217,6 +217,7 @@ Cek `rows affected`/hasil `RETURNING` — kalau kosong, token sudah dipakai/expi
 - FE dan BE wajib serve dari origin yang sama (Nginx reverse proxy, `/api/*` → Go) — berlaku juga di local dev (Angular dev-server proxy config), bukan cuma production, karena `SameSite=Strict` diam-diam tidak mengirim cookie di request cross-origin
 - Sliding expiration (`expires_at` diperpanjang tiap request aktif) + `absolute_expires_at` (hard cap 24 jam) sebagai lapis kedua
 - RBAC: middleware cek `user_roles` terhadap role yang dibutuhkan endpoint
+- Role `admin` dan `dokter` **mutually exclusive** per user — 1 akun tidak boleh punya keduanya sekaligus. Alasan: proteksi "admin gak sengaja exposure ke data klinis" (lihat api-contract.md, catatan keamanan Rekam Medis) cuma valid selama admin dan dokter adalah orang berbeda; kalau 1 akun boleh punya keduanya, proteksi itu jadi tidak berarti buat akun tersebut. Divalidasi di layer aplikasi (bukan DB constraint) saat `PATCH /admin/users/:id/roles` — operasi ini jarang terjadi dan bukan concurrency-sensitive, jadi pre-check sebelum write aman di sini (beda kasus dari prinsip "jangan SELECT preemptive" yang berlaku untuk write path lain di dokumen ini).
 
 ### Invite & reset password (Resend)
 - Admin bikin user tanpa set password — sistem generate token invite, kirim email via Resend berisi link set-password pertama kali. `password_hash` nullable sampai diselesaikan; login wajib tolak bersih untuk akun dengan `password_hash` null, bukan mencoba hash-compare ke nilai kosong.
