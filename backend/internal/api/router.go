@@ -49,11 +49,13 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 		}
 
 		// Admin routes (requires valid session cookie + admin role)
+		displayTokenH := handler.NewDisplayTokenHandler(pool, q)
 		adminProtected := apiV1.Group("/admin")
 		adminProtected.Use(middleware.Authenticate(q))
 		adminProtected.Use(middleware.RequireRole("admin"))
 		{
 			adminProtected.POST("/users", handler.CreateUser(pool, q, emailSender, frontendBaseURL))
+			adminProtected.POST("/klinik/:id/display-token/regenerate", displayTokenH.RegenerateDisplayToken)
 		}
 
 		// Pasien routes (requires valid session cookie + appropriate role per endpoint)
@@ -67,14 +69,16 @@ func SetupRouter(pool *pgxpool.Pool, emailSender mailer.EmailSender, frontendBas
 			pasienGroup.PATCH("/:id", middleware.RequireRole("petugas", "admin"), handler.UpdatePasien(pool, q))
 		}
 
-		// Klinik & Antrian routes (requires valid session cookie + appropriate role per endpoint)
+		// Klinik & Antrian routes
 		klinikAntrianH := handler.NewKlinikAntrianHandler(pool)
+
+		// GET /klinik/:id/antrian mendukung Dual-Auth (cookie staff OR X-Display-Token / ?displayToken=)
+		apiV1.GET("/klinik/:id/antrian", middleware.DualAuth(q), middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetAntrianKlinik)
 
 		klinikGroup := apiV1.Group("/klinik")
 		klinikGroup.Use(middleware.Authenticate(q))
 		{
 			klinikGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetKlinikByID)
-			klinikGroup.GET("/:id/antrian", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetAntrianKlinik)
 			klinikGroup.POST("/:id/panggil-berikutnya", middleware.RequireRole("dokter"), klinikAntrianH.PanggilBerikutnya)
 		}
 

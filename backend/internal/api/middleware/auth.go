@@ -8,7 +8,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/danisetiawan31/klinik-rme/internal/auth"
-	"github.com/danisetiawan31/klinik-rme/internal/db/generated"
+	dbgen "github.com/danisetiawan31/klinik-rme/internal/db/generated"
 )
 
 const (
@@ -20,8 +20,57 @@ const (
 	SessionRawTokenKey      = "session_raw_token"
 )
 
+// validateStaffSession memverifikasi token sesi cookie staff, mengecek kadaluarsa,
+// mengambil data user & roles, serta memperpanjang sliding session expiry.
+// Fungsi ini direuse oleh Authenticate dan DualAuth untuk menghindari duplikasi logic.
+func validateStaffSession(c *gin.Context, q *dbgen.Queries, rawToken string) (dbgen.User, []string, string, bool) {
+	if rawToken == "" {
+		return dbgen.User{}, nil, "", false
+	}
+
+	idHash := auth.HashToken(rawToken)
+	ctx := c.Request.Context()
+
+	sess, err := q.GetSessionByIDHash(ctx, idHash)
+	if err != nil {
+		return dbgen.User{}, nil, "", false
+	}
+
+	now := time.Now()
+	// Validate against sliding expiration and hard cap absolute expiration
+	if now.After(sess.ExpiresAt.Time) || now.Equal(sess.ExpiresAt.Time) ||
+		now.After(sess.AbsoluteExpiresAt.Time) || now.Equal(sess.AbsoluteExpiresAt.Time) {
+		return dbgen.User{}, nil, "", false
+	}
+
+	user, err := q.GetUserByID(ctx, sess.UserID)
+	if err != nil {
+		return dbgen.User{}, nil, "", false
+	}
+
+	roles, err := q.GetRolesByUserID(ctx, sess.UserID)
+	if err != nil {
+		return dbgen.User{}, nil, "", false
+	}
+	if roles == nil {
+		roles = []string{}
+	}
+
+	// Extend sliding session duration by 2 hours for active valid requests
+	newExpiresAt := now.Add(2 * time.Hour)
+	_ = q.UpdateSessionExpiresAt(ctx, dbgen.UpdateSessionExpiresAtParams{
+		IDHash: idHash,
+		ExpiresAt: pgtype.Timestamptz{
+			Time:  newExpiresAt,
+			Valid: true,
+		},
+	})
+
+	return user, roles, idHash, true
+}
+
 // Authenticate verifies the session cookie, checks expiry against DB, attaches user & roles to context,
-// and extends the sliding session expiry by 11 hours on every valid request.
+// and extends the sliding session expiry by 2 hours on every valid request.
 func Authenticate(q *dbgen.Queries) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if q == nil {
@@ -37,40 +86,11 @@ func Authenticate(q *dbgen.Queries) gin.HandlerFunc {
 			return
 		}
 
-		idHash := auth.HashToken(rawToken)
-		ctx := c.Request.Context()
-
-		sess, err := q.GetSessionByIDHash(ctx, idHash)
-		if err != nil {
-			RespondError(c, http.StatusUnauthorized, "UNAUTHORIZED", "Sesi tidak ditemukan atau telah berakhir", err)
-			c.Abort()
-			return
-		}
-
-		now := time.Now()
-		// Validate against sliding expiration and hard cap absolute expiration
-		if now.After(sess.ExpiresAt.Time) || now.Equal(sess.ExpiresAt.Time) ||
-			now.After(sess.AbsoluteExpiresAt.Time) || now.Equal(sess.AbsoluteExpiresAt.Time) {
+		user, roles, idHash, ok := validateStaffSession(c, q, rawToken)
+		if !ok {
 			RespondError(c, http.StatusUnauthorized, "UNAUTHORIZED", "Sesi tidak ditemukan atau telah berakhir", nil)
 			c.Abort()
 			return
-		}
-
-		user, err := q.GetUserByID(ctx, sess.UserID)
-		if err != nil {
-			RespondError(c, http.StatusUnauthorized, "UNAUTHORIZED", "Pengguna tidak ditemukan", err)
-			c.Abort()
-			return
-		}
-
-		roles, err := q.GetRolesByUserID(ctx, sess.UserID)
-		if err != nil {
-			RespondError(c, http.StatusUnauthorized, "UNAUTHORIZED", "Gagal membaca peranan pengguna", err)
-			c.Abort()
-			return
-		}
-		if roles == nil {
-			roles = []string{}
 		}
 
 		// Attach user, roles, and session info to request context
@@ -78,16 +98,6 @@ func Authenticate(q *dbgen.Queries) gin.HandlerFunc {
 		c.Set(RolesContextKey, roles)
 		c.Set(SessionIDHashContextKey, idHash)
 		c.Set(SessionRawTokenKey, rawToken)
-
-		// Extend sliding session duration by 2 hours for every active valid request
-		newExpiresAt := now.Add(2 * time.Hour)
-		_ = q.UpdateSessionExpiresAt(ctx, dbgen.UpdateSessionExpiresAtParams{
-			IDHash: idHash,
-			ExpiresAt: pgtype.Timestamptz{
-				Time:  newExpiresAt,
-				Valid: true,
-			},
-		})
 
 		c.Next()
 	}

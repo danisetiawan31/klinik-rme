@@ -103,12 +103,17 @@
 
 ---
 
-## Realtime & Papan Antrian — Tahap 1: Migration + Hub Core (Selesai)
+## Realtime & Papan Antrian — Tahap 1-2 (Selesai)
 
-- **Tahap 1 (Migration & Hub Core)**: Migration `000015_add_display_token_hash_to_klinik` (`ALTER TABLE klinik ADD COLUMN display_token_hash TEXT NULL`). Query sqlc `UpdateKlinikDisplayTokenHash` & `GetKlinikDisplayTokenHash`. Package `internal/realtime/` (struct `Client`, `Hub` with single goroutine event loop `Run(ctx)`, unbuffered channel safe unregister, non-blocking broadcast, & `closed` channel guard against post-shutdown deadlock).
-- **Verifikasi**: `TestHub_Concurrency` (25 goroutines, 1250 ops: zero race/panic, state map match 100%), `TestHub_NonBlockingBroadcast` (fast unregister of slow client), `TestHub_GracefulShutdown` & `TestHub_PostShutdownCalls` (zero deadlock/hang pasca shutdown), `TestRealtimeMigrationAndQueries_RealPostgreSQL` (Postgres 16) PASS 100%, `go vet ./...` PASS.
+- **Tahap 1 (Migration & Hub Core)**: Migration `000015_add_display_token_hash_to_klinik`. Query sqlc `UpdateKlinikDisplayTokenHash` & `GetKlinikDisplayTokenHash`. Package `internal/realtime/` (`Client`, `Hub` single goroutine `Run(ctx)`, safe unregister, non-blocking broadcast, & guard `closed` channel).
+- **Tahap 2 (Regenerate Endpoint, Dual-Auth Middleware, Retrofit GET Antrian)**: Endpoint `POST /admin/klinik/:id/display-token/regenerate` [admin] (overwrite hash & return raw token). Middleware `DualAuth` (cookie staff vs `X-Display-Token`/`?displayToken=` + `subtle.ConstantTimeCompare`). Bypass `RequireRole` khusus `auth_channel="display-token"` (disertai komentar eksplisit). Retrofit `GET /klinik/:id/antrian` (jalur cookie: lengkap `id` & `pasienNama`; jalur display-token: terfilter publik tanpa `id` & `pasienNama`).
+- **Verifikasi**: `TestHub_Concurrency` (25 goroutines, 1250 ops PASS), `TestHub_PostShutdownCalls` (zero deadlock PASS), `TestDisplayTokenAndDualAuth_Integration` (Postgres 16, 11 subtest PASS), `go vet ./...` PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
 
-- **Defensive Post-Shutdown Deadlock Guard**: Channel `h.closed` ditambahkan ke `Hub` dan dipasang pada `select` case method publik (`RegisterClient`, `UnregisterClient`, `BroadcastToKlinik`). Jika dipanggil setelah `Hub.Run(ctx)` exit (saat server graceful shutdown), panggilan method publik return instan (no-op) tanpa blocking/deadlock.
+- **Post-Shutdown Deadlock Guard**: Guard `h.closed` pada method publik `Hub` (`RegisterClient`, `UnregisterClient`, `BroadcastToKlinik`) mencegah blocking/deadlock saat graceful shutdown server.
+- **Refactoring Shared Helper `validateStaffSession`**: Memindahkan validasi sesi cookie staff & sliding expiration ke helper terpusat `auth.go` yang direuse oleh `Authenticate` & `DualAuth`.
+- **Timing Attack Hardening**: Penggunaan `crypto/subtle.ConstantTimeCompare` pada `DualAuth` saat membandingkan hash display token.
+
+
 

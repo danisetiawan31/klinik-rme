@@ -67,6 +67,12 @@ type AntrianItemResponse struct {
 	PasienNama   string `json:"pasienNama"`
 }
 
+type AntrianItemPublicResponse struct {
+	NomorAntrian int32  `json:"nomorAntrian"`
+	Status       string `json:"status"`
+	IsPriority   bool   `json:"isPriority"`
+}
+
 func formatPgTimeHHMM(t pgtype.Time) string {
 	if !t.Valid {
 		return "00:00"
@@ -260,6 +266,20 @@ func (h *KlinikAntrianHandler) GetAntrianKlinik(c *gin.Context) {
 	})
 	if err != nil {
 		middleware.RespondError(c, http.StatusInternalServerError, "SERVER_ERROR", "Gagal mengambil daftar antrian", err)
+		return
+	}
+
+	authChannel := middleware.GetAuthChannelFromContext(c)
+	if authChannel == "display-token" {
+		publicResp := make([]AntrianItemPublicResponse, 0, len(rows))
+		for _, r := range rows {
+			publicResp = append(publicResp, AntrianItemPublicResponse{
+				NomorAntrian: r.NomorAntrian,
+				Status:       r.Status,
+				IsPriority:   r.IsPriority,
+			})
+		}
+		c.JSON(http.StatusOK, publicResp)
 		return
 	}
 
