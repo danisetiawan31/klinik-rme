@@ -76,6 +76,33 @@ func (q *Queries) GetKunjunganByID(ctx context.Context, id int32) (Kunjungan, er
 	return i, err
 }
 
+const getLaporanHarian = `-- name: GetLaporanHarian :one
+SELECT
+  COUNT(*)::int AS total_kunjungan,
+  COUNT(*) FILTER (WHERE status = 'selesai')::int AS total_selesai,
+  COUNT(*) FILTER (WHERE status = 'tidak_hadir')::int AS total_tidak_hadir
+FROM kunjungan
+WHERE klinik_id = $1 AND tanggal_kunjungan = $2
+`
+
+type GetLaporanHarianParams struct {
+	KlinikID         int32
+	TanggalKunjungan pgtype.Date
+}
+
+type GetLaporanHarianRow struct {
+	TotalKunjungan  int32
+	TotalSelesai    int32
+	TotalTidakHadir int32
+}
+
+func (q *Queries) GetLaporanHarian(ctx context.Context, arg GetLaporanHarianParams) (GetLaporanHarianRow, error) {
+	row := q.db.QueryRow(ctx, getLaporanHarian, arg.KlinikID, arg.TanggalKunjungan)
+	var i GetLaporanHarianRow
+	err := row.Scan(&i.TotalKunjungan, &i.TotalSelesai, &i.TotalTidakHadir)
+	return i, err
+}
+
 const insertKunjungan = `-- name: InsertKunjungan :one
 INSERT INTO kunjungan (
     pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status

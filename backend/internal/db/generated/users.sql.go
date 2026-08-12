@@ -11,6 +11,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const countUsers = `-- name: CountUsers :one
+SELECT COUNT(*) FROM users
+`
+
+func (q *Queries) CountUsers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, countUsers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (nama, email)
 VALUES ($1, $2)
@@ -68,6 +79,81 @@ func (q *Queries) GetUserByID(ctx context.Context, id int32) (User, error) {
 		&i.Email,
 		&i.PasswordHash,
 	)
+	return i, err
+}
+
+const listUsersWithRoles = `-- name: ListUsersWithRoles :many
+SELECT u.id, u.nama, u.email,
+       COALESCE(array_agg(ur.role ORDER BY ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}')::text[] AS roles
+FROM users u
+LEFT JOIN user_roles ur ON u.id = ur.user_id
+GROUP BY u.id, u.nama, u.email
+ORDER BY u.id ASC
+LIMIT $1 OFFSET $2
+`
+
+type ListUsersWithRolesParams struct {
+	Limit  int32
+	Offset int32
+}
+
+type ListUsersWithRolesRow struct {
+	ID    int32
+	Nama  string
+	Email string
+	Roles []string
+}
+
+func (q *Queries) ListUsersWithRoles(ctx context.Context, arg ListUsersWithRolesParams) ([]ListUsersWithRolesRow, error) {
+	rows, err := q.db.Query(ctx, listUsersWithRoles, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListUsersWithRolesRow
+	for rows.Next() {
+		var i ListUsersWithRolesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Nama,
+			&i.Email,
+			&i.Roles,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateUserBiodata = `-- name: UpdateUserBiodata :one
+UPDATE users
+SET
+    nama = COALESCE($2, nama),
+    email = COALESCE($3, email)
+WHERE id = $1
+RETURNING id, nama, email
+`
+
+type UpdateUserBiodataParams struct {
+	ID    int32
+	Nama  pgtype.Text
+	Email pgtype.Text
+}
+
+type UpdateUserBiodataRow struct {
+	ID    int32
+	Nama  string
+	Email string
+}
+
+func (q *Queries) UpdateUserBiodata(ctx context.Context, arg UpdateUserBiodataParams) (UpdateUserBiodataRow, error) {
+	row := q.db.QueryRow(ctx, updateUserBiodata, arg.ID, arg.Nama, arg.Email)
+	var i UpdateUserBiodataRow
+	err := row.Scan(&i.ID, &i.Nama, &i.Email)
 	return i, err
 }
 

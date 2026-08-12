@@ -84,3 +84,16 @@ func (q *Queries) InsertPasswordToken(ctx context.Context, arg InsertPasswordTok
 	)
 	return err
 }
+
+const invalidateActiveInviteTokensByUserID = `-- name: InvalidateActiveInviteTokensByUserID :exec
+UPDATE password_tokens
+SET consumed_at = now()
+WHERE user_id = $1
+  AND type = 'invite'
+  AND consumed_at IS NULL
+`
+
+func (q *Queries) InvalidateActiveInviteTokensByUserID(ctx context.Context, userID int32) error {
+	_, err := q.db.Exec(ctx, invalidateActiveInviteTokensByUserID, userID)
+	return err
+}

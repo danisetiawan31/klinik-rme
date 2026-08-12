@@ -18,3 +18,11 @@ WHERE user_id = $1
   AND consumed_at IS NULL
   AND expires_at > now()
 LIMIT 1;
+
+-- name: InvalidateActiveInviteTokensByUserID :exec
+UPDATE password_tokens
+SET consumed_at = now()
+WHERE user_id = $1
+  AND type = 'invite'
+  AND consumed_at IS NULL;
+

@@ -63,7 +63,10 @@ func SetupRouter(pool *pgxpool.Pool, hub *realtime.Hub, emailSender mailer.Email
 		adminProtected.Use(middleware.Authenticate(q))
 		adminProtected.Use(middleware.RequireRole("admin"))
 		{
+			adminProtected.GET("/users", handler.ListUsers(q))
 			adminProtected.POST("/users", handler.CreateUser(pool, q, emailSender, frontendBaseURL))
+			adminProtected.PATCH("/users/:id", handler.UpdateUser(q))
+			adminProtected.POST("/users/:id/resend-invite", handler.ResendInvite(pool, q, emailSender, frontendBaseURL))
 			adminProtected.POST("/klinik/:id/display-token/regenerate", displayTokenH.RegenerateDisplayToken)
 		}
 
@@ -106,6 +109,12 @@ func SetupRouter(pool *pgxpool.Pool, hub *realtime.Hub, emailSender mailer.Email
 		rekamMedisGroup.Use(middleware.Authenticate(q))
 		{
 			rekamMedisGroup.POST("/:id/addendum", middleware.RequireRole("dokter"), handler.CreateAddendum(pool, q))
+		}
+
+		laporanGroup := apiV1.Group("/laporan")
+		laporanGroup.Use(middleware.Authenticate(q))
+		{
+			laporanGroup.GET("/harian", middleware.RequireRole("petugas", "dokter", "admin"), handler.GetLaporanHarian(q))
 		}
 	}
 

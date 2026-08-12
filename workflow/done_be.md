@@ -108,7 +108,7 @@
 - **Tahap 1 (Migration & Hub Core)**: Migration `000015_add_display_token_hash_to_klinik`. Query sqlc `UpdateKlinikDisplayTokenHash` & `GetKlinikDisplayTokenHash`. Package `internal/realtime/` (`Client`, `Hub` single goroutine `Run(ctx)`, safe unregister, non-blocking broadcast, & guard `closed` channel).
 - **Tahap 2 (Regenerate Endpoint, Dual-Auth Middleware, Retrofit GET Antrian)**: Endpoint `POST /admin/klinik/:id/display-token/regenerate` [admin] (overwrite hash & return raw token). Middleware `DualAuth` (cookie staff vs `X-Display-Token`/`?displayToken=` + `subtle.ConstantTimeCompare`). Bypass `RequireRole` khusus `auth_channel="display-token"` (disertai komentar eksplisit). Retrofit `GET /klinik/:id/antrian` (jalur cookie: lengkap `id` & `pasienNama`; jalur display-token: terfilter publik tanpa `id` & `pasienNama`).
 - **Tahap 3 (Endpoint WebSocket Handler)**: Handler `GET /ws?klinikId=X` dengan Gorilla WebSocket upgrader (strict default same-origin check). Registered di root engine Gin dengan `DualAuth` + `RequireRole`. Supporting nilable `hub` pada `SetupRouter` (100% kompatibel dengan 19 call site di 15 file test).
-- **Tahap 4 (Retrofit Broadcast Trigger di 5 Endpoint)**: Mengintegrasikan `if h.hub != nil { h.hub.BroadcastToKlinik(...) }` non-blocking di 5 handler mutasi antrian (`CreateKunjungan`, `PanggilBerikutnya`, `Lewati`, `TidakHadir`, `CreateRekamMedisAwal`). `CreateAddendum` sengaja tidak disentuh (0 broadcast).
+- **Tahap 4 (Retrofit Broadcast Trigger di 5 Endpoint)**: Mengintegrasikan `if h.hub != nil { h.hub.BroadcastToKlinik(...) }` non-blocking di 5 handler mutasi antrian (`CreateKunjungan`, `PanggilBerikutnya`, `Lewati`, `TidakHadir`, ` CreateRekamMedisAwal`). `CreateAddendum` sengaja tidak disentuh (0 broadcast).
 - **Tahap 5 (E2E Lifecycle & Regresi Penuh)**: Test suite E2E `realtime_e2e_lifecycle_test.go` memverifikasi alur penuh langkah a-i (multi-client broadcast lintas channel, token lama tetap aktif di socket WS existing, disconnect handling unregister, REST vs WS behavior beda terhadap revoked token). Regresi penuh `go test -v ./...` dan `go vet ./...` PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
@@ -118,6 +118,17 @@
 - **Timing Attack Hardening**: Penggunaan `crypto/subtle.ConstantTimeCompare` pada `DualAuth` saat membandingkan hash display token.
 - **Signature `SetupRouter` Nilable Hub**: `SetupRouter` menerima `hub` nilable dengan default error fallback graceful pada `/ws`, disertai pembaruan 19 lokasi pemanggilan call site test suite.
 - **Nil-Guarded Broadcast Triggers**: Seluruh pemanggilan broadcast di 5 handler bisnis dijaga `if hub != nil` untuk mencegah panic nil-pointer dereference pada test suite lama.
+
+---
+
+## Laporan Harian — Selesai
+
+- **Fitur**: Endpoint `GET /laporan/harian?tanggal=` [petugas, dokter, admin] — rekap harian kunjungan per klinik (`totalKunjungan`, `totalSelesai`, `totalTidakHadir`). Query baru `GetLaporanHarian` (COUNT ... FILTER) di `kunjungan.sql`, resolusi klinik via `GetSingleKlinik()` (reuse pola dari `CreateKunjungan`), default `?tanggal=` ke hari ini (Asia/Jakarta) kalau kosong, validasi format `YYYY-MM-DD` eksplisit -> 400 `TANGGAL_INVALID` kalau invalid.
+- **Verifikasi**: `TestLaporanHarian_Integration` (5 skenario: mixed status, tanggal tanpa data, default hari ini, format invalid, tanpa auth) PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+- Sesuai spec 100%, tidak ada deviasi.
+
 
 
 

@@ -55,3 +55,12 @@ SET status = 'selesai'
 WHERE id = $1
 RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
 
+-- name: GetLaporanHarian :one
+SELECT
+  COUNT(*)::int AS total_kunjungan,
+  COUNT(*) FILTER (WHERE status = 'selesai')::int AS total_selesai,
+  COUNT(*) FILTER (WHERE status = 'tidak_hadir')::int AS total_tidak_hadir
+FROM kunjungan
+WHERE klinik_id = $1 AND tanggal_kunjungan = $2;
+
+
