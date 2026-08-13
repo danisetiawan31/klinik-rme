@@ -31,9 +31,10 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 ### Fase 1 — Fondasi
 
 - [x] **10. Project scaffolding** — Angular CLI (standalone, Vitest, Tailwind v4), struktur folder `core/features/shared` (`AGENTS.md` §8), `environment.ts`, HTTP interceptor (`withCredentials`, handle `401`, parse `error.code`/`message`).
-- [ ] **11. Auth pages & guard** — halaman login, set-password (dipakai invite & reset, entrypoint beda link), forgot-password; resolver `GET /auth/me` di-scope staff route (bukan global); route guard per role.
-- [ ] **12. Profil / Account Settings** — halaman ganti password sendiri (`PATCH /auth/me/password`, butuh password lama — beda flow dari set-password di item 11 yang berbasis token, bukan password lama), diakses semua role setelah login.
-- [ ] **13. RealtimeService** — wrap koneksi WS, reconnect+backoff; `proxy.conf.json` dengan `"ws": true`.
+- [x] **11. Auth Infra & Core Shell** (Selesai Penuh) — Halaman login (`/login`); auth resolver `staffAuthResolver` di-scope ke staff route; `AuthService` berbasis Signal; `roleGuard` per role; `ForbiddenComponent` (`/forbidden`); UI Shell layout (`ShellComponent` dengan sidebar desktop collapsible, mobile drawer `hlm-sheet`, header `ClinicStatusIndicator`, user menu); index route `/` (`LandingComponent` dengan shortcut per role `petugas`, `dokter`, `admin`); global timezone `Asia/Jakarta` & locale `id-ID`; 44 unit tests (100% PASS).
+- [ ] **11b. Auth Recovery pages** (Proses — Tahap 1 `forgot-password` Selesai) — Halaman forgot-password (Tahap 1 selesai, unit test 100% PASS), set-password (Tahap 2 pending).
+- [ ] **12. Profil / Account Settings** — halaman ganti password sendiri (`PATCH /auth/me/password`, butuh password lama — beda flow dari set-password di item 11b yang berbasis token, bukan password lama), diakses semua role setelah login.
+- [x] **13. RealtimeService** (Selesai Penuh) — wrap koneksi native WS (`GET /ws?klinikId=X`), Signal reactivity (`connectionStatus`, `lastUpdateAt`), exponential backoff (1s - 30s) + jitter ±20%, reconnect otomatis, `proxy.conf.json` dengan `"ws": true`, unit test (9 unit tests, 100% PASS).
 
 ### Fase 2 — Domain inti _(urutan ngikutin backend, boleh diprioritaskan ulang sesuai kebutuhan demo)_
 
