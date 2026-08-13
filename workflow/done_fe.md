@@ -12,12 +12,16 @@
 - **Environment config**: Penamaan file menggunakan default generasi dari Angular CLI v21, yaitu `environment.ts` (untuk production) dan `environment.development.ts` (untuk environment dev lokal).
 - **HTTP Interceptor**: Dibuat sebagai `HttpInterceptorFn` (functional) sesuai best practice Angular 17+ (standalone), didaftarkan via `provideHttpClient`. Interceptor akan menahan logic redirect 401 ke `/login` jika request berasal dari papan antrian (header `X-Display-Token`) atau mengarah ke public auth endpoints (`/auth/login`, `/auth/forgot-password`, `/auth/reset-password`, `/auth/me`), memberikan ruang pada masing-masing komponen untuk menangani UI error-nya sendiri.
 
-## Core Shell — Tahap 1-2 (Auth Infra & UI Shell)
+## Core Shell — Tahap 1-3 (Auth Infra, UI Shell & Testing - Selesai Penuh)
 
-- **Auth Infra & Resolver**: `staffAuthResolver` di-await pada rute root staff (`path: ''`), `AuthService` berbasis Signal mengelola state auth (`id`, `nama`, `roles[]`), `roleGuard` mengarahkan unauthenticated ke `/login` dan role-mismatch ke `/forbidden` (`DESIGN.md` §9.5). `authInterceptor` meng-attach `withCredentials: true`, mem-parse `ErrorEnvelope`, dan menangani 401. Rute publik `/papan-antrian` tetap berdiri di luar guard & shell.
-- **`ClinicStatusIndicator`**: Badge status Buka/Tutup di header staff. Status Buka menggunakan token semantik `--color-accent` (`#16A34A`) tanpa animasi pulse (restrained design `DESIGN.md` §1/§7), sedangkan status Tutup menggunakan `--color-muted-foreground` (`DESIGN.md` §9.4 — state normal penutupan hari, **bukan** merah).
+- **Auth Infra & Resolver (Tahap 1)**: `staffAuthResolver` di-await pada rute root staff (`path: ''`), `AuthService` berbasis Signal mengelola state auth (`id`, `nama`, `roles[]`), `roleGuard` mengarahkan unauthenticated ke `/login` dan role-mismatch ke `/forbidden` (`DESIGN.md` §9.5). `authInterceptor` meng-attach `withCredentials: true`, mem-parse `ErrorEnvelope`, dan menangani 401. Rute publik `/papan-antrian` tetap berdiri di luar guard & shell.
+- **UI Shell & Navigasi (Tahap 2)**: `ShellComponent` dengan sidebar desktop collapsible & mobile drawer (`hlm-sheet`), header berisi `ClinicStatusIndicator` dan menu dropdown user (avatar + logout). Dynamic navigation & shortcut card di index route `/` (`LandingComponent`) yang disesuaikan secara presisi per role (`petugas`, `dokter`, `admin`).
 - **Timezone Anchor (Asia/Jakarta)**: Pengaturan timezone global `Asia/Jakarta` dikonfigurasi secara menyeluruh pada `environment.ts` (`timezone: 'Asia/Jakarta'`), Angular `app.config.ts` (`LOCALE_ID: id-ID`, `DATE_PIPE_DEFAULT_OPTIONS`), serta helper utility `src/app/core/utils/date.utils.ts` (`getJakartaTimeString`, `formatJakartaDate`). Seluruh operasi tanggal & jam di frontend di-anchor ke waktu WIB.
-- **Verifikasi**: Build & unit test (37 tests total) PASS 100%.
+- **Suite Unit Testing (Tahap 3)**: Unit testing menyeluruh untuk seluruh komponen UI Shell:
+  - `LandingComponent` (`landing.component.spec.ts`): Memverifikasi render shortcut per role (`petugas`, `dokter`, `admin`) dengan positive & negative assertions (memastikan shortcut role lain tidak pernah muncul).
+  - `ShellComponent` (`shell.component.spec.ts`): Memverifikasi item navigasi sidebar/drawer per role dengan positive & negative assertions, serta menguji pemanggilan aksi logout.
+  - `ClinicStatusIndicatorComponent` (`clinic-status-indicator.component.spec.ts`): Regresi test untuk meng-assert penggunaan token semantik `--color-accent` (Buka) & `--color-muted-foreground` (Tutup), serta memastikan bebas dari hardcoded class `emerald` dan animasi pulse.
+- **Verifikasi**: Build & unit test (14 test files, 46 unit tests) PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
 - `ForbiddenComponent` ditempatkan di `shared/components/forbidden/` sebagai komponen infra state generik.

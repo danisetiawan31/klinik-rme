@@ -56,7 +56,7 @@ export interface NavItem {
                 <line x1="4" x2="20" y1="18" y2="18"/>
               </svg>
             </button>
-            <hlm-sheet-content *hlmSheetContent="let ctx" class="w-72 p-0 bg-[var(--color-card)] border-r border-[var(--color-border)]">
+            <hlm-sheet-content class="w-72 p-0 bg-[var(--color-card)] border-r border-[var(--color-border)]">
               <div class="p-6 border-b border-[var(--color-border)] flex items-center gap-3">
                 <div class="h-9 w-9 rounded-lg bg-[var(--color-primary)] text-[var(--color-primary-foreground)] flex items-center justify-center font-bold text-lg">
                   K
@@ -120,12 +120,12 @@ export interface NavItem {
             <button
               hlmBtn
               variant="ghost"
-              [hlmMenuTriggerFor]="userMenu"
+              [hlmDropdownMenuTrigger]="userMenu"
               class="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-[var(--color-muted)] transition-colors cursor-pointer"
               aria-label="Menu Pengguna"
             >
               <hlm-avatar size="sm" class="bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-semibold text-xs">
-                <hlm-avatar-fallback>{{ userInitial() }}</hlm-avatar-fallback>
+                <span hlmAvatarFallback>{{ userInitial() }}</span>
               </hlm-avatar>
               <span class="text-sm font-medium text-[var(--color-foreground)] hidden md:inline-block max-w-[120px] truncate">
                 {{ userName() }}
@@ -137,7 +137,7 @@ export interface NavItem {
 
             <!-- Dropdown Menu Content -->
             <ng-template #userMenu>
-              <div hlmMenu class="w-56 p-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-3)]">
+              <div hlmDropdownMenu class="w-56 p-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-3)]">
                 <div class="px-3 py-2.5 border-b border-[var(--color-border)]">
                   <p class="text-xs text-[var(--color-muted-foreground)]">Masuk sebagai</p>
                   <p class="text-sm font-semibold text-[var(--color-foreground)] truncate mt-0.5">
@@ -149,7 +149,7 @@ export interface NavItem {
                 </div>
                 <div class="py-1">
                   <button
-                    hlmMenuItem
+                    hlmDropdownMenuItem
                     (click)="logout()"
                     class="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-destructive)] hover:bg-red-50 rounded-sm cursor-pointer transition-colors"
                   >

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { HlmButton } from '@spartan-ng/helm/button';
 import { AuthService } from '../../../core/auth/auth.service';
 
 export interface NavShortcut {
@@ -13,7 +12,7 @@ export interface NavShortcut {
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink, HlmButton],
+  imports: [RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6 max-w-5xl mx-auto">
