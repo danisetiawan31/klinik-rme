@@ -18,10 +18,20 @@ export const routes: Routes = [
   {
     path: '',
     resolve: { user: staffAuthResolver },
+    loadComponent: () =>
+      import('./features/shell/shell.component').then((m) => m.ShellComponent),
     children: [
       {
+        path: '',
+        pathMatch: 'full',
+        loadComponent: () =>
+          import('./features/shell/landing/landing.component').then(
+            (m) => m.LandingComponent
+          ),
+      },
+      {
         path: 'antrian',
-        canActivate: [roleGuard('petugas', 'dokter')],
+        canActivate: [roleGuard('petugas', 'dokter', 'admin')],
         loadComponent: () =>
           import('./features/antrian/antrian-dashboard.component').then(
             (m) => m.AntrianDashboardComponent
@@ -34,11 +44,6 @@ export const routes: Routes = [
           import('./features/admin/admin-dashboard.component').then(
             (m) => m.AdminDashboardComponent
           ),
-      },
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'login',
       },
     ],
   },

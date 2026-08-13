@@ -14,7 +14,9 @@
     "module": "preserve",
     "paths": {
       "@spartan-ng/helm/button": ["./src/app/shared/ui/button/src/index.ts"],
-      "@spartan-ng/helm/utils": ["./src/app/shared/ui/utils/src/index.ts"]
+      "@spartan-ng/helm/utils": ["./src/app/shared/ui/utils/src/index.ts"],
+      "@spartan-ng/helm/dropdown-menu": ["./src/app/shared/ui/dropdown-menu/src/index.ts"],
+      "@spartan-ng/helm/sheet": ["./src/app/shared/ui/sheet/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

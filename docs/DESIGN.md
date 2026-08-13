@@ -289,12 +289,12 @@ Token tambahan, aktif hanya di scope `.papan-antrian`:
 | `DataTable`                                     | Composed  | Tabel + pagination bernomor + collapse ke card (§9.3)  | Spartan Table                               | Pasien, Antrian, Admin              | Direncanakan                                    |
 | `StatusBadge`                                   | Composed  | Badge status antrian (§9.4)                            | Spartan Badge                               | Antrian                             | Direncanakan                                    |
 | `PriorityBadge`                                 | Composed  | Badge prioritas, ikon+label (§9.4)                     | Spartan Badge                               | Antrian, Pasien                     | Direncanakan                                    |
-| `ClinicStatusIndicator`                         | Composed  | Badge buka/tutup klinik (§9.4)                         | Spartan Badge                               | App shell/header staff              | Direncanakan                                    |
+| `ClinicStatusIndicator`                         | Composed  | Badge buka/tutup klinik (§9.4)                         | Spartan Badge                               | App shell/header staff              | Selesai                                         |
 | `ConfirmDialog`                                 | Composed  | Dialog konfirmasi aksi berdampak (§9.7)                | Spartan Dialog                              | Admin, Rekam Medis                  | Direncanakan                                    |
 | `DiagnosisTindakanFormArray`                    | Composed  | Repeatable row group add/remove (§9.6)                 | Spartan Input, Select, Button + `FormArray` | Rekam Medis                         | Direncanakan                                    |
 | `AuditDiffViewer`                               | Composed  | Diff view before/after JSON (§9.9)                     | — (custom)                                  | Admin > Audit Log                   | Direncanakan                                    |
 | `ConnectionStatusIndicator`                     | Composed  | Indikator status WS (§9.10)                            | — (custom)                                  | Papan Antrian, widget antrian staff | Direncanakan                                    |
-| Button / Input / Select / Dialog / Badge / Tabs | Primitive | Primitive dasar Spartan                                | —                                           | Lintas fitur                        | Perlu verifikasi token saat fetch pertama (§10) |
+| Button / Badge / Avatar / Dropdown-Menu / Sheet | Primitive | Primitive dasar Spartan (diverifikasi §10)             | —                                           | Lintas fitur                        | Selesai                                         |
 
 ---
 
