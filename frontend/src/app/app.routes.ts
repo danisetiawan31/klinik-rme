@@ -9,6 +9,13 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/forgot-password/forgot-password.component').then(
+        (m) => m.ForgotPasswordComponent
+      ),
+  },
+  {
     path: 'forbidden',
     loadComponent: () =>
       import('./shared/components/forbidden/forbidden.component').then(

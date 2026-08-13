@@ -80,6 +80,16 @@ export class AuthService {
   }
 
   /**
+   * Send forgot-password request via POST /api/v1/auth/forgot-password [public]
+   */
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${environment.apiUrl}/auth/forgot-password`,
+      { email }
+    );
+  }
+
+  /**
    * Determine priority landing route based on roles: admin > dokter > petugas
    */
   getLandingRoute(user: UserResponse | null = this.currentUser()): string {

@@ -3,6 +3,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   effect,
   ElementRef,
   inject,
@@ -25,7 +26,7 @@ import { HlmSheetClose } from './hlm-sheet-close';
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     'data-slot': 'sheet-content',
-    '[attr.data-side]': '_sideProvider?.side()',
+    '[attr.data-side]': 'side()',
     '[attr.data-state]': 'state()',
   },
   template: `
@@ -43,6 +44,8 @@ export class HlmSheetContent {
   private readonly _stateProvider = injectExposesStateProvider({ optional: true });
   protected readonly _sideProvider = injectExposedSideProvider({ optional: true });
   public readonly state = this._stateProvider?.state ?? signal('closed');
+  public readonly side = computed(() => this._sideProvider?.side() ?? 'left');
+
   private readonly _renderer = inject(Renderer2);
   private readonly _element = inject(ElementRef);
 

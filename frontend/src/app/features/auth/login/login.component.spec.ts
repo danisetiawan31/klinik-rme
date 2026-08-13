@@ -1,6 +1,6 @@
 import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LoginComponent } from './login.component';
@@ -16,7 +16,7 @@ describe('LoginComponent', () => {
     isLoading: WritableSignal<boolean>;
     authError: WritableSignal<string | null>;
   };
-  let routerSpy: { navigate: ReturnType<typeof vi.fn> };
+  let router: Router;
 
   beforeEach(async () => {
     authErrorSignal = signal<string | null>(null);
@@ -28,15 +28,17 @@ describe('LoginComponent', () => {
       isLoading: isLoadingSignal,
       authError: authErrorSignal,
     };
-    routerSpy = { navigate: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
       providers: [
+        provideRouter([]),
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy },
       ],
     }).compileComponents();
+
+    router = TestBed.inject(Router);
+    vi.spyOn(router, 'navigate').mockImplementation(() => Promise.resolve(true));
 
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
@@ -92,6 +94,6 @@ describe('LoginComponent', () => {
       email: 'petugas@kliniksehat.id',
       password: 'password123',
     });
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/antrian']);
+    expect(router.navigate).toHaveBeenCalledWith(['/antrian']);
   });
 });

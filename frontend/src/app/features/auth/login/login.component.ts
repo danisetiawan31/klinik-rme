@@ -8,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 import { SensitiveValueComponent } from '../../../shared/components/sensitive-value/sensitive-value.component';
 import { ToastComponent } from '../../../shared/components/toast/toast.component';
@@ -17,7 +17,7 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
   selector: 'app-login',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, SensitiveValueComponent, ToastComponent],
+  imports: [ReactiveFormsModule, RouterLink, SensitiveValueComponent, ToastComponent],
   template: `
     <!-- ── Toast error top-center ── -->
     <app-toast
@@ -149,8 +149,7 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
         <!-- Forgot -->
         <div style="text-align:center; margin-top:20px;">
           <a
-            tabindex="0"
-            role="button"
+            routerLink="/forgot-password"
             style="font-family:var(--font-body);font-size:13px;font-weight:600;color:#0891B2;cursor:pointer;text-decoration:none;transition:color 150ms;"
             onmouseenter="this.style.textDecoration='underline'"
             onmouseleave="this.style.textDecoration='none'"
