@@ -33,17 +33,17 @@
 - **Modifikasi Primitive (`src/app/shared/ui/sheet/src/lib/hlm-sheet-content.ts`)**: Penyesuaian `injectExposesStateProvider` dan `injectExposedSideProvider` dari `{ host: true }` menjadi `{ optional: true }` dengan explicit fallback signals `state = this._stateProvider?.state ?? signal('closed')` dan `side = computed(() => this._sideProvider?.side() ?? 'left')`. Hal ini mencegah runtime DI error (`NG0201: No provider found`) saat `HlmSheetContent` di-render pada konteks testing/isolated host tanpa mengorbankan fungsionalitas asli di real usage.
 - **Catatan Pengembangan Modul Selanjutnya**: `DATE_PIPE_DEFAULT_OPTIONS.timezone` mengasumsikan timestamp backend membawa offset eksplisit (ISO format `Z` / `+07:00`). Saat memulai modul Antrian (`dipanggilAt`) / Audit Log (`createdAt`), wajib memverifikasi format raw response JSON backend terlebih dahulu sebelum memasang DatePipe secara masif.
 
-## Auth Recovery Pages — Tahap 1 (ForgotPasswordComponent)
+## Auth Recovery Pages — Tahap 1 & 2 (ForgotPasswordComponent & SetPasswordComponent - Selesai Penuh)
 
-- **AuthService Integration**: Menambahkan method `forgotPassword(email: string): Observable<{ message: string }>` yang mengirim HTTP POST ke `/api/v1/auth/forgot-password` dan menambahkan tipe `ForgotPasswordRequest` / `ForgotPasswordResponse` pada `auth.types.ts`.
-- **`ForgotPasswordComponent`**: Komponen standalone halaman lupa password (`src/app/features/auth/forgot-password/forgot-password.component.ts`) mengikuti styling Zona Hero (`docs/DESIGN.md`). Dilengkapi Reactive Form validasi email (`required`, `email`).
-- **Respon Generik 200 & Security**: Sesuai kebijakan keamanan cegah *user enumeration* (`AGENTS.md` §7), submit sukses akan meng-swap kartu form ke pesan sukses generik ("Jika email terdaftar, instruksi reset password telah dikirim") dengan info TTL 1 jam dan tombol CTA kembali ke `/login`.
-- **Handling Error Teknis**: Jika HTTP request mengalami kegagalan teknis (network failure/timeout/500), error ditangkap dan ditampilkan via `ToastComponent` (`type="error"`) top-center tanpa meng-swap form sehingga user dapat mencoba submit ulang.
-- **Routing & Link**: Mendaftarkan route publik top-level `path: 'forgot-password'` pada `app.routes.ts` dan menyambungkan link "Lupa password?" dari `LoginComponent`.
-- **Verifikasi**: Unit test `forgot-password.component.spec.ts` (4 unit tests) + seluruh test suite (15 test files, 50 unit tests) PASS 100%.
+- **Auth Infra & API**: Method `forgotPassword(email)` (`POST /auth/forgot-password`) & `resetPassword(token, passwordBaru)` (`POST /auth/reset-password`) di `AuthService`, plus tipe terkait di `auth.types.ts`.
+- **ForgotPasswordComponent (`/forgot-password`)**: Reactive Form email (`required`, `email`), Zona Hero (`docs/DESIGN.md`), card swap sukses generik 200 (cegah user enumeration), `ToastComponent` untuk error teknis (500/network).
+- **SetPasswordComponent (`/set-password`)**: Pembacaan query param `token`, Reactive Form (`passwordBaru` min 8 char, `konfirmasiPassword` mismatch validator), re-use `SensitiveValueComponent`. 3 Card State UI (Token Error State dengan CTA `/forgot-password`, Form State, Sukses State dengan CTA `/login`).
+- **Routing & Test**: Public routes `/forgot-password` & `/set-password` di `app.routes.ts`, link "Lupa password?" di `LoginComponent`. 9 unit tests (17 test files, 64 unit tests total) PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
-- Endpoint `/auth/forgot-password` selalu mengembalikan HTTP 200 generik untuk mencegah enumeration, sehingga notifikasi Toast `type="error"` sengaja dikhususkan untuk menangani kegagalan infrastruktur/koneksi teknis murni.
+- `routerLink="/forgot-password"` ditambahkan di `LoginComponent` sebagai entry point navigasi langsung dari halaman login.
+- Error `INVALID_TOKEN` (400) & missing token ditangani kontekstual via Card State khusus (bukan Toast), memandu user meminta link baru ke `/forgot-password`.
+- Styling murni menggunakan token semantik CSS variable (`var(...)`) tanpa hardcode warna.
 
 ---
 

@@ -16,6 +16,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'set-password',
+    loadComponent: () =>
+      import('./features/auth/set-password/set-password.component').then(
+        (m) => m.SetPasswordComponent
+      ),
+  },
+  {
     path: 'forbidden',
     loadComponent: () =>
       import('./shared/components/forbidden/forbidden.component').then(

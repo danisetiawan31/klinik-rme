@@ -90,6 +90,16 @@ export class AuthService {
   }
 
   /**
+   * Reset password via POST /api/v1/auth/reset-password [public]
+   */
+  resetPassword(token: string, passwordBaru: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/auth/reset-password`, {
+      token,
+      passwordBaru,
+    });
+  }
+
+  /**
    * Determine priority landing route based on roles: admin > dokter > petugas
    */
   getLandingRoute(user: UserResponse | null = this.currentUser()): string {

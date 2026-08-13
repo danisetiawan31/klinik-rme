@@ -20,3 +20,8 @@ export interface ForgotPasswordRequest {
 export interface ForgotPasswordResponse {
   message: string;
 }
+
+export interface ResetPasswordRequest {
+  token: string;
+  passwordBaru: string;
+}
