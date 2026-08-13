@@ -23,9 +23,8 @@ export const roleGuard = (...allowedRoles: string[]): CanActivateFn => {
       return true;
     }
 
-    // Redirect to landing route if logged in but without required role
-    const landingRoute = authService.getLandingRoute(currentUser);
-    router.navigate([landingRoute]);
+    // Redirect to /forbidden state if logged in but without required role (DESIGN.md §9.5)
+    router.navigate(['/forbidden']);
     return false;
   };
 };

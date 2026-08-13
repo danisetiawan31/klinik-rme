@@ -55,10 +55,9 @@ describe('roleGuard', () => {
     });
   });
 
-  it('should redirect to landing route and return false if currentUser lacks allowed roles', () => {
+  it('should redirect to /forbidden and return false if currentUser lacks allowed roles', () => {
     const mockUser: UserResponse = { id: 1, nama: 'Petugas', roles: ['petugas'] };
     authServiceSpy.currentUser.mockReturnValue(mockUser);
-    authServiceSpy.getLandingRoute.mockReturnValue('/antrian');
 
     const guard = roleGuard('admin');
     const route = {} as ActivatedRouteSnapshot;
@@ -67,8 +66,7 @@ describe('roleGuard', () => {
     TestBed.runInInjectionContext(() => {
       const result = guard(route, state);
       expect(result).toBe(false);
-      expect(authServiceSpy.getLandingRoute).toHaveBeenCalledWith(mockUser);
-      expect(routerSpy.navigate).toHaveBeenCalledWith(['/antrian']);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/forbidden']);
     });
   });
 });

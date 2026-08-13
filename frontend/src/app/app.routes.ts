@@ -9,6 +9,13 @@ export const routes: Routes = [
       import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
+    path: 'forbidden',
+    loadComponent: () =>
+      import('./shared/components/forbidden/forbidden.component').then(
+        (m) => m.ForbiddenComponent
+      ),
+  },
+  {
     path: '',
     resolve: { user: staffAuthResolver },
     children: [
