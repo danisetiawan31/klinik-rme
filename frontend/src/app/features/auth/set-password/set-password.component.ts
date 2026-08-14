@@ -47,59 +47,40 @@ const passwordsMatchValidator: ValidatorFn = (
 
     <!-- ── Page background (Hero Zone - DESIGN.md §1.1) ── -->
     <div
-      class="min-h-[100dvh] w-full flex flex-col items-center justify-center px-4 py-10"
-      style="
-        background-color: var(--color-background);
-        background-image: radial-gradient(ellipse 90% 55% at 50% 0%, rgba(8,145,178,0.10) 0%, transparent 65%);
-      "
+      class="min-h-[100dvh] w-full flex flex-col items-center justify-center px-4 py-10 kl-auth-bg"
     >
       <!-- ── Brand Header ── -->
       <div class="flex flex-col items-center text-center mb-8">
         <div
-          class="flex items-center justify-center mb-4"
-          style="
-            width:54px; height:54px;
-            border: 2px solid var(--color-primary);
-            border-radius: var(--radius-lg);
-            background: var(--color-card);
-            box-shadow: var(--shadow-1);
-          "
+          class="flex items-center justify-center mb-4 w-[54px] h-[54px] border-2 border-primary rounded-lg bg-card shadow-1"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
             viewBox="0 0 24 24" fill="none"
-            stroke="var(--color-primary)" stroke-width="2.5"
+            stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round"
+            class="text-primary"
             aria-hidden="true">
             <path d="M12 5v14M5 12h14"/>
           </svg>
         </div>
 
-        <p style="font-family:var(--font-heading); font-size:22px; font-weight:700; color:var(--color-primary); letter-spacing:-0.02em; line-height:1.2;">
+        <p class="font-heading text-[22px] font-bold text-primary tracking-tight leading-tight">
           Klinik Sehat
         </p>
-        <p style="font-family:var(--font-body); font-size:13px; font-weight:500; color:var(--color-muted-foreground); margin-top:3px;">
+        <p class="font-sans text-xs font-medium text-muted-foreground mt-1">
           RME &amp; Antrian
         </p>
       </div>
 
       <!-- ── Card ── -->
       <div
-        class="w-full"
-        style="
-          max-width:388px;
-          background:var(--color-card);
-          border:1px solid var(--color-border);
-          border-radius:var(--radius-lg);
-          box-shadow:var(--shadow-2);
-          padding:32px 28px 28px;
-        "
+        class="w-full max-w-[388px] bg-card border border-border rounded-lg shadow-2 p-7 sm:p-8"
       >
         @if (hasTokenError()) {
           <!-- Card State 1: Token Invalid / Expired / Missing -->
           <div class="flex flex-col items-center text-center space-y-4">
             <div
-              class="h-12 w-12 rounded-full flex items-center justify-center"
-              style="background: #FEF2F2; border: 1px solid #FCA5A5; color: var(--color-destructive);"
+              class="h-12 w-12 rounded-full flex items-center justify-center bg-muted border border-border text-destructive"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
@@ -109,24 +90,23 @@ const passwordsMatchValidator: ValidatorFn = (
             </div>
 
             <div>
-              <h1 style="font-family:var(--font-heading); font-size:18px; font-weight:700; color:var(--color-foreground);">
+              <h1 class="font-heading text-lg font-bold text-foreground">
                 Link Tidak Valid atau Kadaluarsa
               </h1>
-              <p style="font-family:var(--font-body); font-size:13px; color:var(--color-muted-foreground); line-height:1.6; margin-top:8px;">
+              <p class="font-sans text-xs text-muted-foreground leading-relaxed mt-2">
                 Link reset password atau undangan akun ini sudah tidak berlaku, expired, atau telah digunakan.
               </p>
             </div>
 
-            <div class="p-3 rounded-[var(--radius-md)] text-left w-full" style="background:var(--color-muted); border:1px solid var(--color-border);">
-              <p style="font-family:var(--font-body); font-size:12px; color:var(--color-muted-foreground); line-height:1.5;">
+            <div class="p-3 rounded-md text-left w-full bg-muted border border-border">
+              <p class="font-sans text-xs text-muted-foreground leading-relaxed">
                 Silakan minta link reset password baru melalui halaman Lupa Password.
               </p>
             </div>
 
             <a
               routerLink="/forgot-password"
-              class="kl-btn-primary w-full inline-flex justify-center items-center gap-2"
-              style="text-decoration:none; margin-top:8px;"
+              class="kl-btn-primary w-full inline-flex justify-center items-center gap-2 no-underline mt-2"
             >
               Minta Link Baru
             </a>
@@ -135,8 +115,7 @@ const passwordsMatchValidator: ValidatorFn = (
           <!-- Card State 2: Sukses Reset Password -->
           <div class="flex flex-col items-center text-center space-y-4">
             <div
-              class="h-12 w-12 rounded-full flex items-center justify-center"
-              style="background: #F0FDF4; border: 1px solid #BBF7D0; color: var(--color-accent);"
+              class="h-12 w-12 rounded-full flex items-center justify-center bg-muted border border-border text-accent"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m5 12 5 5L20 7"/>
@@ -144,35 +123,34 @@ const passwordsMatchValidator: ValidatorFn = (
             </div>
 
             <div>
-              <h1 style="font-family:var(--font-heading); font-size:18px; font-weight:700; color:var(--color-foreground);">
+              <h1 class="font-heading text-lg font-bold text-foreground">
                 Password Berhasil Diubah
               </h1>
-              <p style="font-family:var(--font-body); font-size:13px; color:var(--color-muted-foreground); line-height:1.6; margin-top:8px;">
+              <p class="font-sans text-xs text-muted-foreground leading-relaxed mt-2">
                 Password Anda telah berhasil diperbarui. Silakan masuk menggunakan password baru Anda.
               </p>
             </div>
 
             <a
               routerLink="/login"
-              class="kl-btn-primary w-full inline-flex justify-center items-center gap-2"
-              style="text-decoration:none; margin-top:8px;"
+              class="kl-btn-primary w-full inline-flex justify-center items-center gap-2 no-underline mt-2"
             >
               Masuk ke Halaman Login
             </a>
           </div>
         } @else {
           <!-- Card State 3: Active Form -->
-          <h1 style="font-family:var(--font-heading); font-size:20px; font-weight:700; color:var(--color-foreground); margin-bottom:4px;">
+          <h1 class="font-heading text-xl font-bold text-foreground mb-1">
             Atur Password Baru
           </h1>
-          <p style="font-family:var(--font-body); font-size:13px; color:var(--color-muted-foreground); line-height:1.5; margin-bottom:24px;">
+          <p class="font-sans text-xs text-muted-foreground leading-relaxed mb-6">
             Silakan buat password baru minimal 8 karakter untuk akun Anda.
           </p>
 
-          <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" novalidate style="display:flex;flex-direction:column;gap:16px;">
+          <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-4">
             <!-- Password Baru -->
-            <div style="display:flex;flex-direction:column;gap:5px;">
-              <label for="sv-password-baru" style="font-family:var(--font-body);font-size:12.5px;font-weight:600;color:var(--color-foreground);">
+            <div class="flex flex-col gap-1.5">
+              <label for="sv-password-baru" class="font-sans text-xs font-semibold text-foreground">
                 Password Baru
               </label>
               <app-sensitive-value
@@ -182,16 +160,16 @@ const passwordsMatchValidator: ValidatorFn = (
                 placeholder="Masukkan password baru (min. 8 karakter)"
               />
               @if (passwordControl.touched && passwordControl.errors?.['required']) {
-                <span style="font-size:11.5px;color:var(--color-destructive);" role="alert">Password baru wajib diisi</span>
+                <span class="text-[11.5px] text-destructive" role="alert">Password baru wajib diisi</span>
               }
               @if (passwordControl.touched && passwordControl.errors?.['minlength']) {
-                <span style="font-size:11.5px;color:var(--color-destructive);" role="alert">Password baru minimal 8 karakter</span>
+                <span class="text-[11.5px] text-destructive" role="alert">Password baru minimal 8 karakter</span>
               }
             </div>
 
             <!-- Konfirmasi Password -->
-            <div style="display:flex;flex-direction:column;gap:5px;">
-              <label for="sv-konfirmasi-password" style="font-family:var(--font-body);font-size:12.5px;font-weight:600;color:var(--color-foreground);">
+            <div class="flex flex-col gap-1.5">
+              <label for="sv-konfirmasi-password" class="font-sans text-xs font-semibold text-foreground">
                 Konfirmasi Password Baru
               </label>
               <app-sensitive-value
@@ -201,18 +179,17 @@ const passwordsMatchValidator: ValidatorFn = (
                 placeholder="Ulangi password baru"
               />
               @if (konfirmasiControl.touched && konfirmasiControl.errors?.['required']) {
-                <span style="font-size:11.5px;color:var(--color-destructive);" role="alert">Konfirmasi password wajib diisi</span>
+                <span class="text-[11.5px] text-destructive" role="alert">Konfirmasi password wajib diisi</span>
               }
               @if ((resetForm.touched || konfirmasiControl.touched) && resetForm.errors?.['passwordsMismatch'] && !konfirmasiControl.errors?.['required']) {
-                <span style="font-size:11.5px;color:var(--color-destructive);" role="alert">Konfirmasi password tidak cocok</span>
+                <span class="text-[11.5px] text-destructive" role="alert">Konfirmasi password tidak cocok</span>
               }
             </div>
 
             <!-- Submit Button -->
             <button
               type="submit"
-              class="kl-btn-primary"
-              style="margin-top:4px;"
+              class="kl-btn-primary mt-1"
               [disabled]="isLoading()"
               [attr.aria-busy]="isLoading() ? 'true' : null"
             >
@@ -229,12 +206,10 @@ const passwordsMatchValidator: ValidatorFn = (
           </form>
 
           <!-- Back to login link -->
-          <div style="text-align:center; margin-top:20px;">
+          <div class="text-center mt-5">
             <a
               routerLink="/login"
-              style="font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--color-primary);text-decoration:none;transition:color 150ms;"
-              onmouseenter="this.style.textDecoration='underline'"
-              onmouseleave="this.style.textDecoration='none'"
+              class="font-sans text-xs font-semibold text-primary hover:underline transition-colors"
             >
               &larr; Kembali ke Login
             </a>

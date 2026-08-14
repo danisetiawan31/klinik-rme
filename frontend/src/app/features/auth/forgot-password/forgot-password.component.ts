@@ -30,66 +30,48 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
 
     <!-- ── Page background (Hero Zone - DESIGN.md §1.1) ── -->
     <div
-      class="min-h-[100dvh] w-full flex flex-col items-center justify-center px-4 py-10"
-      style="
-        background-color: #F0FDFA;
-        background-image: radial-gradient(ellipse 90% 55% at 50% 0%, rgba(8,145,178,0.10) 0%, transparent 65%);
-      "
+      class="min-h-[100dvh] w-full flex flex-col items-center justify-center px-4 py-10 kl-auth-bg"
     >
       <!-- ── Brand Header ── -->
       <div class="flex flex-col items-center text-center mb-8">
         <div
-          class="flex items-center justify-center mb-4"
-          style="
-            width:54px; height:54px;
-            border: 2px solid #0891B2;
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(8,145,178,0.15);
-          "
+          class="flex items-center justify-center mb-4 w-[54px] h-[54px] border-2 border-primary rounded-lg bg-card shadow-1"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
             viewBox="0 0 24 24" fill="none"
-            stroke="#0891B2" stroke-width="2.5"
+            stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round"
+            class="text-primary"
             aria-hidden="true">
             <path d="M12 5v14M5 12h14"/>
           </svg>
         </div>
 
-        <p style="font-family:var(--font-heading); font-size:22px; font-weight:700; color:#0891B2; letter-spacing:-0.02em; line-height:1.2;">
+        <p class="font-heading text-[22px] font-bold text-primary tracking-tight leading-tight">
           Klinik Sehat
         </p>
-        <p style="font-family:var(--font-body); font-size:13px; font-weight:500; color:#64748B; margin-top:3px;">
+        <p class="font-sans text-xs font-medium text-muted-foreground mt-1">
           RME &amp; Antrian
         </p>
       </div>
 
       <!-- ── Card ── -->
       <div
-        class="w-full"
-        style="
-          max-width:388px;
-          background:#FFFFFF;
-          border:1px solid #CCFBF1;
-          border-radius:12px;
-          box-shadow:0 4px 6px rgba(0,0,0,0.07);
-          padding:32px 28px 28px;
-        "
+        class="w-full max-w-[388px] bg-card border border-border rounded-lg shadow-2 p-7 sm:p-8"
       >
         @if (!isSubmitted()) {
           <!-- Form Header -->
-          <h1 style="font-family:var(--font-heading); font-size:20px; font-weight:700; color:#0F172A; margin-bottom:4px;">
+          <h1 class="font-heading text-xl font-bold text-foreground mb-1">
             Lupa Password
           </h1>
-          <p style="font-family:var(--font-body); font-size:13px; color:#64748B; line-height:1.5; margin-bottom:24px;">
+          <p class="font-sans text-xs text-muted-foreground leading-relaxed mb-6">
             Masukkan email terdaftar Anda. Kami akan mengirimkan instruksi untuk mengatur ulang password.
           </p>
 
           <!-- Form Email -->
-          <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()" novalidate style="display:flex;flex-direction:column;gap:16px;">
-            <div style="display:flex;flex-direction:column;gap:5px;">
-              <label for="forgot-email" style="font-family:var(--font-body);font-size:12.5px;font-weight:600;color:#334155;">
+          <form [formGroup]="forgotForm" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-4">
+            <div class="flex flex-col gap-1.5">
+              <label for="forgot-email" class="font-sans text-xs font-semibold text-foreground">
                 Email Terdaftar
               </label>
               <input
@@ -102,18 +84,17 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
                 [attr.aria-invalid]="emailControl.touched && emailControl.invalid ? 'true' : null"
               />
               @if (emailControl.touched && emailControl.errors?.['required']) {
-                <span style="font-size:11.5px;color:#DC2626;" role="alert">Email wajib diisi</span>
+                <span class="text-[11.5px] text-destructive" role="alert">Email wajib diisi</span>
               }
               @if (emailControl.touched && emailControl.errors?.['email']) {
-                <span style="font-size:11.5px;color:#DC2626;" role="alert">Format email tidak valid</span>
+                <span class="text-[11.5px] text-destructive" role="alert">Format email tidak valid</span>
               }
             </div>
 
             <!-- Submit Button -->
             <button
               type="submit"
-              class="kl-btn-primary"
-              style="margin-top:4px;"
+              class="kl-btn-primary mt-1"
               [disabled]="isLoading()"
               [attr.aria-busy]="isLoading() ? 'true' : null"
             >
@@ -132,7 +113,7 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
           <!-- Success State Card (Respon Generik 200) -->
           <div class="flex flex-col items-center text-center space-y-4">
             <div
-              class="h-12 w-12 rounded-full bg-[#F0FDF4] border border-[#BBF7D0] flex items-center justify-center text-[var(--color-accent)]"
+              class="h-12 w-12 rounded-full bg-muted border border-border flex items-center justify-center text-accent"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="m5 12 5 5L20 7"/>
@@ -140,24 +121,23 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
             </div>
 
             <div>
-              <h2 style="font-family:var(--font-heading); font-size:18px; font-weight:700; color:#0F172A;">
+              <h2 class="font-heading text-lg font-bold text-foreground">
                 Instruksi Dikirim
               </h2>
-              <p style="font-family:var(--font-body); font-size:13px; color:#475569; line-height:1.6; margin-top:8px;">
-                Jika email <strong class="text-[var(--color-foreground)]">{{ submittedEmail() }}</strong> terdaftar di sistem kami, instruksi dan link reset password telah dikirimkan.
+              <p class="font-sans text-xs text-muted-foreground leading-relaxed mt-2">
+                Jika email <strong class="text-foreground">{{ submittedEmail() }}</strong> terdaftar di sistem kami, instruksi dan link reset password telah dikirimkan.
               </p>
             </div>
 
-            <div class="p-3 bg-[var(--color-muted)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-left w-full">
-              <p style="font-family:var(--font-body); font-size:12px; color:#64748B; line-height:1.5;">
+            <div class="p-3 bg-muted border border-border rounded-md text-left w-full">
+              <p class="font-sans text-xs text-muted-foreground leading-relaxed">
                  Link reset password berlaku selama <strong>1 jam</strong>. Silakan periksa folder Inbox atau Spam email Anda.
               </p>
             </div>
 
             <a
               routerLink="/login"
-              class="kl-btn-primary w-full inline-flex justify-center items-center gap-2"
-              style="text-decoration:none; margin-top:8px;"
+              class="kl-btn-primary w-full inline-flex justify-center items-center gap-2 no-underline mt-2"
             >
               Kembali ke Halaman Login
             </a>
@@ -166,12 +146,10 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
 
         <!-- Back to login link (on form state) -->
         @if (!isSubmitted()) {
-          <div style="text-align:center; margin-top:20px;">
+          <div class="text-center mt-5">
             <a
               routerLink="/login"
-              style="font-family:var(--font-body);font-size:13px;font-weight:600;color:#0891B2;text-decoration:none;transition:color 150ms;"
-              onmouseenter="this.style.textDecoration='underline'"
-              onmouseleave="this.style.textDecoration='none'"
+              class="font-sans text-xs font-semibold text-primary hover:underline transition-colors"
             >
               &larr; Kembali ke Login
             </a>

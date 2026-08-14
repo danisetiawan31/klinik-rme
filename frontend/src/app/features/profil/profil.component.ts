@@ -47,25 +47,25 @@ const passwordsMatchValidator: ValidatorFn = (
     <div class="max-w-3xl mx-auto space-y-6">
       <!-- ── Page Header ── -->
       <div>
-        <h1 class="text-2xl font-bold text-[var(--color-foreground)] font-heading">
+        <h1 class="text-2xl font-bold text-foreground font-heading">
           Profil &amp; Pengaturan Akun
         </h1>
-        <p class="text-sm text-[var(--color-muted-foreground)] mt-1">
+        <p class="text-sm text-muted-foreground mt-1">
           Informasi akun dan opsi pembaruan kata sandi pengguna.
         </p>
       </div>
 
       <!-- ── Section 1: Informasi Pengguna Read-Only ── -->
-      <div class="bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-2)] p-6 space-y-4">
-        <div class="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
-          <h2 class="text-base font-semibold text-[var(--color-foreground)] font-heading flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+      <div class="bg-card border border-border rounded-md shadow-2 p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-border pb-3">
+          <h2 class="text-base font-semibold text-foreground font-heading flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary">
               <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
             </svg>
             Informasi Akun
           </h2>
-          <span class="px-2.5 py-1 bg-[var(--color-muted)] text-[var(--color-muted-foreground)] text-xs font-medium rounded-full">
+          <span class="px-2.5 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-full">
             Read-only
           </span>
         </div>
@@ -73,22 +73,22 @@ const passwordsMatchValidator: ValidatorFn = (
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <!-- Nama -->
           <div class="space-y-1">
-            <p class="text-xs text-[var(--color-muted-foreground)] font-medium">Nama Lengkap</p>
-            <p class="font-semibold text-[var(--color-foreground)]">
+            <p class="text-xs text-muted-foreground font-medium">Nama Lengkap</p>
+            <p class="font-semibold text-foreground">
               {{ currentUser()?.nama || '—' }}
             </p>
           </div>
 
           <!-- Peranan -->
           <div class="space-y-1">
-            <p class="text-xs text-[var(--color-muted-foreground)] font-medium">Peranan Aktif (Roles)</p>
+            <p class="text-xs text-muted-foreground font-medium">Peranan Aktif (Roles)</p>
             <div class="flex flex-wrap gap-1.5 pt-0.5">
               @for (role of userRoles(); track role) {
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize bg-[var(--color-primary)] text-[var(--color-primary-foreground)]">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize bg-primary text-primary-foreground">
                   {{ role }}
                 </span>
               } @empty {
-                <span class="text-[var(--color-muted-foreground)]">—</span>
+                <span class="text-muted-foreground">—</span>
               }
             </div>
           </div>
@@ -96,16 +96,16 @@ const passwordsMatchValidator: ValidatorFn = (
       </div>
 
       <!-- ── Section 2: Form Ubah Password ── -->
-      <div class="bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-2)] p-6 space-y-6">
-        <div class="border-b border-[var(--color-border)] pb-3">
-          <h2 class="text-base font-semibold text-[var(--color-foreground)] font-heading flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+      <div class="bg-card border border-border rounded-md shadow-2 p-6 space-y-6">
+        <div class="border-b border-border pb-3">
+          <h2 class="text-base font-semibold text-foreground font-heading flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary">
               <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
             Ubah Kata Sandi
           </h2>
-          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">
+          <p class="text-xs text-muted-foreground mt-1">
             Masukkan kata sandi saat ini dan tentukan kata sandi baru minimal 8 karakter.
           </p>
         </div>
@@ -113,7 +113,7 @@ const passwordsMatchValidator: ValidatorFn = (
         <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()" novalidate class="space-y-4 max-w-md">
           <!-- Password Saat Ini -->
           <div class="flex flex-col gap-1.5">
-            <label for="sv-password-lama" class="text-xs font-semibold text-[var(--color-foreground)]">
+            <label for="sv-password-lama" class="text-xs font-semibold text-foreground">
               Kata Sandi Saat Ini
             </label>
             <app-sensitive-value
@@ -124,11 +124,11 @@ const passwordsMatchValidator: ValidatorFn = (
               (focusin)="onClearOldPasswordError()"
             />
             @if (oldPasswordError()) {
-              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+              <span class="text-xs text-destructive" role="alert">
                 {{ oldPasswordError() }}
               </span>
             } @else if (oldPasswordControl.touched && oldPasswordControl.errors?.['required']) {
-              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+              <span class="text-xs text-destructive" role="alert">
                 Kata sandi saat ini wajib diisi
               </span>
             }
@@ -136,7 +136,7 @@ const passwordsMatchValidator: ValidatorFn = (
 
           <!-- Password Baru -->
           <div class="flex flex-col gap-1.5">
-            <label for="sv-password-baru-profil" class="text-xs font-semibold text-[var(--color-foreground)]">
+            <label for="sv-password-baru-profil" class="text-xs font-semibold text-foreground">
               Kata Sandi Baru
             </label>
             <app-sensitive-value
@@ -146,12 +146,12 @@ const passwordsMatchValidator: ValidatorFn = (
               placeholder="Masukkan kata sandi baru (min. 8 karakter)"
             />
             @if (newPasswordControl.touched && newPasswordControl.errors?.['required']) {
-              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+              <span class="text-xs text-destructive" role="alert">
                 Kata sandi baru wajib diisi
               </span>
             }
             @if (newPasswordControl.touched && newPasswordControl.errors?.['minlength']) {
-              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+              <span class="text-xs text-destructive" role="alert">
                 Kata sandi baru minimal 8 karakter
               </span>
             }
@@ -159,7 +159,7 @@ const passwordsMatchValidator: ValidatorFn = (
 
           <!-- Konfirmasi Password Baru -->
           <div class="flex flex-col gap-1.5">
-            <label for="sv-konfirmasi-password-profil" class="text-xs font-semibold text-[var(--color-foreground)]">
+            <label for="sv-konfirmasi-password-profil" class="text-xs font-semibold text-foreground">
               Konfirmasi Kata Sandi Baru
             </label>
             <app-sensitive-value
@@ -169,12 +169,12 @@ const passwordsMatchValidator: ValidatorFn = (
               placeholder="Ulangi kata sandi baru"
             />
             @if (konfirmasiControl.touched && konfirmasiControl.errors?.['required']) {
-              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+              <span class="text-xs text-destructive" role="alert">
                 Konfirmasi kata sandi wajib diisi
               </span>
             }
             @if ((changePasswordForm.touched || konfirmasiControl.touched) && changePasswordForm.errors?.['passwordsMismatch'] && !konfirmasiControl.errors?.['required']) {
-              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+              <span class="text-xs text-destructive" role="alert">
                 Konfirmasi kata sandi tidak cocok
               </span>
             }

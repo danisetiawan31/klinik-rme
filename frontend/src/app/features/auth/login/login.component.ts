@@ -28,69 +28,51 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
 
     <!-- ── Page background ── -->
     <div
-      class="min-h-[100dvh] w-full flex flex-col items-center justify-center px-4 py-10"
-      style="
-        background-color: #F0FDFA;
-        background-image: radial-gradient(ellipse 90% 55% at 50% 0%, rgba(8,145,178,0.10) 0%, transparent 65%);
-      "
+      class="min-h-[100dvh] w-full flex flex-col items-center justify-center px-4 py-10 kl-auth-bg"
     >
       <!-- ── Brand ── -->
       <div class="flex flex-col items-center text-center mb-8">
         <!-- Icon badge -->
         <div
-          class="flex items-center justify-center mb-4"
-          style="
-            width:54px; height:54px;
-            border: 2px solid #0891B2;
-            border-radius: 12px;
-            background: #fff;
-            box-shadow: 0 1px 4px rgba(8,145,178,0.15);
-          "
+          class="flex items-center justify-center mb-4 w-[54px] h-[54px] border-2 border-primary rounded-lg bg-card shadow-1"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
             viewBox="0 0 24 24" fill="none"
-            stroke="#0891B2" stroke-width="2.5"
+            stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" stroke-linejoin="round"
+            class="text-primary"
             aria-hidden="true">
             <path d="M12 5v14M5 12h14"/>
           </svg>
         </div>
 
         <!-- Brand name -->
-        <p style="font-family:var(--font-heading); font-size:22px; font-weight:700; color:#0891B2; letter-spacing:-0.02em; line-height:1.2;">
+        <p class="font-heading text-[22px] font-bold text-primary tracking-tight leading-tight">
           Klinik Sehat
         </p>
-        <p style="font-family:var(--font-body); font-size:13px; font-weight:500; color:#64748B; margin-top:3px;">
+        <p class="font-sans text-xs font-medium text-muted-foreground mt-1">
           RME &amp; Antrian
         </p>
       </div>
 
       <!-- ── Card ── -->
       <div
-        class="w-full"
-        style="
-          max-width:388px;
-          background:#FFFFFF;
-          border:1px solid #CCFBF1;
-          border-radius:12px;
-          box-shadow:0 4px 6px rgba(0,0,0,0.07);
-          padding:32px 28px 28px;
-        "
+        class="w-full max-w-[388px] bg-card border border-border rounded-lg shadow-2 p-7 sm:p-8"
       >
         <!-- Card header -->
-        <h1 style="font-family:var(--font-heading); font-size:20px; font-weight:700; color:#0F172A; margin-bottom:4px;">
+        <h1 class="font-heading text-xl font-bold text-foreground mb-1">
           Masuk
         </h1>
-        <p style="font-family:var(--font-body); font-size:13px; color:#64748B; line-height:1.5; margin-bottom:24px;">
+        <p class="font-sans text-xs text-muted-foreground leading-relaxed mb-6">
           Silakan masuk untuk mengakses sistem internal klinik.
         </p>
 
         <!-- Form -->
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate style="display:flex;flex-direction:column;gap:16px;">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="flex flex-col gap-4">
 
           <!-- Email -->
-          <div style="display:flex;flex-direction:column;gap:5px;">
-            <label for="login-email" style="font-family:var(--font-body);font-size:12.5px;font-weight:600;color:#334155;">
+          <div class="flex flex-col gap-1.5">
+            <label for="login-email" class="font-sans text-xs font-semibold text-foreground">
               Email
             </label>
             <input
@@ -103,16 +85,16 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
               [attr.aria-invalid]="loginForm.controls.email.touched && loginForm.controls.email.invalid ? 'true' : null"
             />
             @if (loginForm.controls.email.touched && loginForm.controls.email.errors?.['required']) {
-              <span style="font-size:11.5px;color:#DC2626;" role="alert">Email wajib diisi</span>
+              <span class="text-[11.5px] text-destructive" role="alert">Email wajib diisi</span>
             }
             @if (loginForm.controls.email.touched && loginForm.controls.email.errors?.['email']) {
-              <span style="font-size:11.5px;color:#DC2626;" role="alert">Format email tidak valid</span>
+              <span class="text-[11.5px] text-destructive" role="alert">Format email tidak valid</span>
             }
           </div>
 
           <!-- Password -->
-          <div style="display:flex;flex-direction:column;gap:5px;">
-            <label for="sv-password" style="font-family:var(--font-body);font-size:12.5px;font-weight:600;color:#334155;">
+          <div class="flex flex-col gap-1.5">
+            <label for="sv-password" class="font-sans text-xs font-semibold text-foreground">
               Password
             </label>
             <app-sensitive-value
@@ -122,15 +104,14 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
               placeholder="Masukkan password"
             />
             @if (loginForm.controls.password.touched && loginForm.controls.password.errors?.['required']) {
-              <span style="font-size:11.5px;color:#DC2626;" role="alert">Password wajib diisi</span>
+              <span class="text-[11.5px] text-destructive" role="alert">Password wajib diisi</span>
             }
           </div>
 
           <!-- Submit -->
           <button
             type="submit"
-            class="kl-btn-primary"
-            style="margin-top:4px;"
+            class="kl-btn-primary mt-1"
             [disabled]="isLoading()"
             [attr.aria-busy]="isLoading() ? 'true' : null"
           >
@@ -147,12 +128,10 @@ import { ToastComponent } from '../../../shared/components/toast/toast.component
         </form>
 
         <!-- Forgot -->
-        <div style="text-align:center; margin-top:20px;">
+        <div class="text-center mt-5">
           <a
             routerLink="/forgot-password"
-            style="font-family:var(--font-body);font-size:13px;font-weight:600;color:#0891B2;cursor:pointer;text-decoration:none;transition:color 150ms;"
-            onmouseenter="this.style.textDecoration='underline'"
-            onmouseleave="this.style.textDecoration='none'"
+            class="font-sans text-xs font-semibold text-primary hover:underline transition-colors"
           >
             Lupa password?
           </a>

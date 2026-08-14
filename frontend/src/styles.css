@@ -219,6 +219,17 @@ h6 {
   animation: kl-spin 0.75s linear infinite;
 }
 
+/* ─── Auth Page Background ─────────────────────────────────────────── */
+.kl-auth-bg {
+  background-color: var(--background);
+  background-image: radial-gradient(
+    ellipse 90% 55% at 50% 0%,
+    color-mix(in srgb, var(--primary) 10%, transparent) 0%,
+    transparent 65%
+  );
+}
+
+
 /* ─── Accessibility ──────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,
