@@ -135,6 +135,7 @@ Informasi yang dicatat meliputi: apa yang dikerjakan, file yang berubah, cara ve
 - Standalone components, bukan `NgModule`.
 - Signals + service layer tipis per domain — bukan NgRx.
 - `@if`/`@for`/`@switch` (native control flow) & `ChangeDetectionStrategy.OnPush` default di semua komponen.
+- **Pemisahan template HTML**: Gunakan file `.component.html` terpisah (`templateUrl: './<komponen>.component.html'`) — bukan inline string `template:` — demi pemisahan logic vs UI, keterbacaan, dan syntax highlighting IDE.
 - **Reactive Forms wajib** (bukan template-driven) untuk form dengan array dinamis — `diagnosis[]`/`tindakan[]` di rekam medis butuh `FormArray`.
 
 **Styling & UI Primitives**
@@ -199,7 +200,7 @@ src/app/
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **klinik-rme** (1668 symbols, 4863 relationships, 86 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **klinik-rme** (1688 symbols, 4887 relationships, 86 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
