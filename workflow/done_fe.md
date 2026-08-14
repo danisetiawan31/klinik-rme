@@ -95,27 +95,13 @@
 
 ---
 
-## Migrasi Token CSS & Arsitektur Tailwind v4 `@theme` — Tahap A s.d. B4 (Selesai Penuh)
+## Migrasi Token CSS & Tailwind v4 `@theme` — Tahap A s.d. B4 (Selesai Penuh)
 
-- **Tahap A (Fondasi Token & Single Source of Truth)**:
-  - Mengonfigurasi `:root { --color-* }` di `src/styles.css` sebagai alias tipis (`--color-primary: var(--primary);`, dst.) ke token Spartan untuk mengeliminasi duplikasi dan inkonsistensi.
-  - Menyetel token input Spartan (`--input`) ke `oklch(0.951 0.050 180.0)` (`#CCFBF1` teal muda) sesuai spesifikasi resmi `docs/DESIGN.md`.
-  - Mendaftarkan token baru `--warning` (`#D97706`) dan `--warning-foreground` (`#431407`) ke `:root` dan `@theme inline`.
-  - Mendaftarkan radius 4-tingkat presisi (`rounded-sm: 4px`, `rounded-md: 8px`, `rounded-lg: 12px`, `rounded-full: 9999px`), kustom shadow (`shadow-1` s.d. `shadow-4`), serta `font-heading` ke blok `@theme inline` di `src/styles.css`.
-  - Memperbarui tabel token semantik di `docs/DESIGN.md` Section 2.
-- **Tahap B1 (Shared Components & App Shell)**:
-  - Migrasi seluruh arbitrary bracket classes (`[var(--...)]`) dan inline style manual ke utility class Tailwind standar pada `ShellComponent`, `LandingComponent`, `ForbiddenComponent`, `ClinicStatusIndicatorComponent` (& spec assertion), `PaginationComponent`, `ToastComponent`, dan `SensitiveValueComponent`.
-- **Tahap B2 (Modul Auth & Profil)**:
-  - Menambahkan kelas utility `.kl-auth-bg` di `styles.css` menggunakan `color-mix(in srgb, var(--primary) 10%, transparent)` untuk latar hero halaman autentikasi.
-  - Migrasi seluruh arbitrary classes & inline hex/styles pada `LoginComponent`, `ForgotPasswordComponent`, `SetPasswordComponent`, dan `ProfilComponent` ke utility class Tailwind standar.
-- **Tahap B3 (Modul Pasien & Antrian Dashboard)**:
-  - Migrasi seluruh inline styles dan bracket classes pada `PasienFormComponent`, `PasienListComponent`, `PasienDetailComponent` (termasuk helper `getStatusBadgeClass`), `PasienEditComponent`, dan `AntrianDashboardComponent` ke utility class Tailwind standar.
-- **Verifikasi**:
-  - Sweeping grep regex `#[0-9a-fA-F]{3,6}|rgb\(|rgba\(` dan `\[var\(--` pada seluruh komponen UI `src/app/` menghasilkan **0 matches (NIHIL)**.
-  - Test suite penuh Vitest (24 test files, 111 unit tests) PASS 100%.
-  - Production build Angular (`npx ng build`) PASS 100% tanpa error styling.
+- **Fondasi Token (Tahap A)**: Konsolidasi `:root` di `styles.css` sebagai alias tipis ke token Spartan (single source of truth). Daftarkan token `--input` (`#CCFBF1`), `--warning` & `--warning-foreground`, radius 4-tingkat (`rounded-sm/md/lg/full`), `shadow-1` s.d. `shadow-4`, dan `font-heading` ke blok `@theme inline`. Sinkronisasi `docs/DESIGN.md` Section 2.
+- **Migrasi Komponen (Tahap B1-B3)**: Migrasi seluruh arbitrary bracket class (`[var(--...)]`) dan inline styling di seluruh modul (Shell, Shared, Auth, Profil, Pasien, Antrian, dan Admin) ke utility class standar Tailwind.
+- **Verifikasi (Tahap B4)**: Sweeping regex `#[0-9a-fA-F]{3,6}|rgb\(|rgba\(` dan `\[var\(--` di seluruh `src/app/` menghasilkan 0 matches (NIHIL). Vitest (24 files, 111 unit tests) dan build production (`npx ng build`) PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
-- **Backward-Compatible CSS Alias**: Blok `:root { --color-* }` dipertahankan murni sebagai alias (`var(--primary)`, `var(--background)`) untuk menjamin kompabilitas elemen SVG attribute dan dynamic inline CSS tanpa memecah single source of truth.
-- **Utility `.kl-auth-bg`**: Gradient radial latar belakang halaman Auth di-encapsulate dalam class `.kl-auth-bg` di `styles.css` agar tidak ada interpolasi bracket `rgba(...)` ad-hoc di template komponen.
+- **Backward-Compatible CSS Alias**: Blok `:root { --color-* }` dipertahankan murni sebagai alias (`var(--primary)`) untuk SVG attribute dan dynamic inline CSS tanpa menduplikasi nilai.
+- **Utility `.kl-auth-bg`**: Radial gradient latar Auth di-encapsulate dalam class `.kl-auth-bg` di `styles.css` menggunakan `color-mix(in srgb, var(--primary) 10%, transparent)`.
 
