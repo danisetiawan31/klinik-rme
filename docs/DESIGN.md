@@ -29,31 +29,37 @@ Dark mode: **di luar scope.** Semua token di bawah untuk light mode saja.
 
 ---
 
-## 2. Warna
+## 2. Warna & Sistem Token (Single Source of Truth)
 
 Palet dasar "Medical Clinic" — teal sebagai primary, hijau kesehatan sebagai accent.
 
-| Token                            | Hex       | Pemakaian                                       |
-| -------------------------------- | --------- | ----------------------------------------------- |
-| `--color-primary`                | `#0891B2` | Aksi utama, link, brand                         |
-| `--color-primary-foreground`     | `#FFFFFF` | Teks di atas primary                            |
-| `--color-secondary`              | `#22D3EE` | Aksen sekunder, badge prioritas                 |
-| `--color-secondary-foreground`   | `#0F172A` | Teks di atas secondary                          |
-| `--color-accent`                 | `#16A34A` | Sukses, status positif, CTA sekunder            |
-| `--color-accent-foreground`      | `#FFFFFF` | Teks di atas accent                             |
-| `--color-background`             | `#F0FDFA` | Latar halaman                                   |
-| `--color-foreground`             | `#134E4A` | Teks utama                                      |
-| `--color-card`                   | `#FFFFFF` | Latar card/panel                                |
-| `--color-card-foreground`        | `#134E4A` | Teks di dalam card                              |
-| `--color-muted`                  | `#E8F1F6` | Latar elemen non-aktif/disabled                 |
-| `--color-muted-foreground`       | `#64748B` | Teks sekunder, meta, state netral               |
-| `--color-border`                 | `#CCFBF1` | Border, divider                                 |
-| `--color-input`                  | `#CCFBF1` | Border input                                    |
-| `--color-ring`                   | `#0891B2` | Focus ring (3–4px)                              |
-| `--color-destructive`            | `#DC2626` | Error sungguhan, aksi destruktif                |
-| `--color-destructive-foreground` | `#FFFFFF` | Teks di atas destructive                        |
-| `--color-warning`                | `#D97706` | Menunggu/pending, perlu perhatian (bukan error) |
-| `--color-warning-foreground`     | `#431407` | Teks di atas warning                            |
+> [!IMPORTANT]
+> **Konvensi Nama Token & Utility Tailwind:**
+>
+> - **Token Spartan / `@theme` (Nama Pendek, Authoritative)**: Langsung menjadi utility class Tailwind standar (mis. `bg-primary`, `text-foreground`, `bg-background`, `bg-card`, `border-border`, `bg-muted`, `text-muted-foreground`, `bg-warning`, `text-warning-foreground`, `bg-destructive`). Ini adalah standar penulisan utama di template HTML/komponen.
+> - **Variabel Alias `:root { --color-* }`**: Disediakan di `styles.css` sebagai alias (`--color-primary: var(--primary)`) khusus untuk konsumen non-Tailwind (SVG attribute, inline style dinamis, atau custom CSS).
+
+| Token Authoritative (`@theme`) | Alias `:root`                    | Hex       | Utility Tailwind Utama                         | Pemakaian                                       |
+| ------------------------------ | -------------------------------- | --------- | ---------------------------------------------- | ----------------------------------------------- |
+| `primary`                      | `--color-primary`                | `#0891B2` | `bg-primary`, `text-primary`, `border-primary` | Aksi utama, link, brand                         |
+| `primary-foreground`           | `--color-primary-foreground`     | `#FFFFFF` | `text-primary-foreground`                      | Teks di atas primary                            |
+| `secondary`                    | `--color-secondary`              | `#22D3EE` | `bg-secondary`, `text-secondary`               | Aksen sekunder, badge prioritas                 |
+| `secondary-foreground`         | `--color-secondary-foreground`   | `#0F172A` | `text-secondary-foreground`                    | Teks di atas secondary                          |
+| `accent`                       | `--color-accent`                 | `#16A34A` | `bg-accent`, `text-accent`, `border-accent`    | Sukses, status positif, CTA sekunder            |
+| `accent-foreground`            | `--color-accent-foreground`      | `#FFFFFF` | `text-accent-foreground`                       | Teks di atas accent                             |
+| `background`                   | `--color-background`             | `#F0FDFA` | `bg-background`                                | Latar halaman                                   |
+| `foreground`                   | `--color-foreground`             | `#134E4A` | `text-foreground`                              | Teks utama                                      |
+| `card`                         | `--color-card`                   | `#FFFFFF` | `bg-card`                                      | Latar card/panel                                |
+| `card-foreground`              | `--color-card-foreground`        | `#134E4A` | `text-card-foreground`                         | Teks di dalam card                              |
+| `muted`                        | `--color-muted`                  | `#E8F1F6` | `bg-muted`                                     | Latar elemen non-aktif/disabled                 |
+| `muted-foreground`             | `--color-muted-foreground`       | `#64748B` | `text-muted-foreground`                        | Teks sekunder, meta, state netral               |
+| `border`                       | `--color-border`                 | `#CCFBF1` | `border-border`                                | Border, divider                                 |
+| `input`                        | `--color-input`                  | `#CCFBF1` | `border-input`                                 | Border input (teal muda)                        |
+| `ring`                         | `--color-ring`                   | `#0891B2` | `ring-ring`, `outline-ring`                    | Focus ring (3–4px)                              |
+| `destructive`                  | `--color-destructive`            | `#DC2626` | `bg-destructive`, `text-destructive`           | Error sungguhan, aksi destruktif                |
+| `destructive-foreground`       | `--color-destructive-foreground` | `#FFFFFF` | `text-destructive-foreground`                  | Teks di atas destructive                        |
+| `warning`                      | `--color-warning`                | `#D97706` | `bg-warning`, `text-warning`, `border-warning` | Menunggu/pending, perlu perhatian (bukan error) |
+| `warning-foreground`           | `--color-warning-foreground`     | `#431407` | `text-warning-foreground`                      | Teks di atas warning                            |
 
 ### Warna semantik status antrian
 
@@ -281,25 +287,25 @@ Token tambahan, aktif hanya di scope `.papan-antrian`:
 
 > **Wajib dicek** sebelum membuat komponen baru atau fetch primitive Spartan baru (lihat `AGENTS.md` §8 dan §10 di atas). Kolom **Status** diupdate Antigravity seiring implementasi — `Direncanakan` → `Selesai`. Registry ini basi kalau tidak dijaga; itu justru bagian dari poin kenapa dia wajib dicek, bukan sekadar didokumentasikan.
 
-| Komponen                                        | Tipe      | Fungsi                                                 | Membungkus                                  | Dipakai di                          | Status                                          |
-| ----------------------------------------------- | --------- | ------------------------------------------------------ | ------------------------------------------- | ----------------------------------- | ----------------------------------------------- |
-| `SensitiveValue`                                | Composed  | Mask/reveal NIK & password, toggle ikon mata (§9.1)    | Spartan Input, Button                       | Auth, Pasien                        | Selesai                                         |
-| `ToastNotification`                             | Composed  | Toast top-center, ARIA live region, dismissible (§9.5) | — (custom)                                  | Auth, Lintas Fitur                  | Selesai                                         |
-| `PasienForm`                                    | Composed  | Form registrasi pasien, consent, validasi NIK format, warning duplikasi NIK pre-submission (non-blocking) | ToastNotification, native select/textarea/checkbox | Pasien (route /pasien/baru) | Selesai (Tahap 1) |
-| `PaginationComponent`                           | Composed  | Pagination generic, label "Halaman X dari Y", state prev/next button, signal input/output (§9.3) | Button                                      | Pasien, Lintas Fitur                | Selesai (Tahap 2)                               |
-| `PasienList`                                    | Composed  | Live search nama (debounce 300ms), auto-trigger NIK 16 digit, sensitive NIK display masking, pagination | PaginationComponent, SensitiveValue, ToastNotification | Pasien (route /pasien)     | Selesai (Tahap 2)                               |
-| `PasienDetail`                                  | Composed  | Halaman detail pasien (biodata lengkap + riwayatKunjunganRingkas list) | SensitiveValue, ToastNotification           | Pasien (route /pasien/:id)          | Selesai (Tahap 2)                               |
-| `PasienEdit`                                    | Composed  | Form edit biodata pasien (pre-filled, NIK format validator, 409 Optimistic Lock hybrid UX) | ToastNotification, native select/textarea | Pasien (route /pasien/:id/edit) | Selesai (Tahap 3)                               |
-| `RevealOnceSecret`                              | Composed  | Tampilkan token/link sekali + copy (§9.2)              | Spartan Input (readonly), Button            | Admin (invite, display-token)       | Direncanakan                                    |
-| `DataTable`                                     | Composed  | Tabel + pagination bernomor + collapse ke card (§9.3)  | Spartan Table                               | Pasien, Antrian, Admin              | Direncanakan                                    |
-| `StatusBadge`                                   | Composed  | Badge status antrian (§9.4)                            | Spartan Badge                               | Antrian                             | Direncanakan                                    |
-| `PriorityBadge`                                 | Composed  | Badge prioritas, ikon+label (§9.4)                     | Spartan Badge                               | Antrian, Pasien                     | Direncanakan                                    |
-| `ClinicStatusIndicator`                         | Composed  | Badge buka/tutup klinik (§9.4)                         | Spartan Badge                               | App shell/header staff              | Selesai                                         |
-| `ConfirmDialog`                                 | Composed  | Dialog konfirmasi aksi berdampak (§9.7)                | Spartan Dialog                              | Admin, Rekam Medis                  | Direncanakan                                    |
-| `DiagnosisTindakanFormArray`                    | Composed  | Repeatable row group add/remove (§9.6)                 | Spartan Input, Select, Button + `FormArray` | Rekam Medis                         | Direncanakan                                    |
-| `AuditDiffViewer`                               | Composed  | Diff view before/after JSON (§9.9)                     | — (custom)                                  | Admin > Audit Log                   | Direncanakan                                    |
-| `ConnectionStatusIndicator`                     | Composed  | Indikator status WS (§9.10)                            | — (custom)                                  | Papan Antrian, widget antrian staff | Direncanakan                                    |
-| Button / Badge / Avatar / Dropdown-Menu / Sheet | Primitive | Primitive dasar Spartan (diverifikasi §10)             | —                                           | Lintas fitur                        | Selesai                                         |
+| Komponen                                        | Tipe      | Fungsi                                                                                                    | Membungkus                                             | Dipakai di                          | Status            |
+| ----------------------------------------------- | --------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ----------------------------------- | ----------------- |
+| `SensitiveValue`                                | Composed  | Mask/reveal NIK & password, toggle ikon mata (§9.1)                                                       | Spartan Input, Button                                  | Auth, Pasien                        | Selesai           |
+| `ToastNotification`                             | Composed  | Toast top-center, ARIA live region, dismissible (§9.5)                                                    | — (custom)                                             | Auth, Lintas Fitur                  | Selesai           |
+| `PasienForm`                                    | Composed  | Form registrasi pasien, consent, validasi NIK format, warning duplikasi NIK pre-submission (non-blocking) | ToastNotification, native select/textarea/checkbox     | Pasien (route /pasien/baru)         | Selesai (Tahap 1) |
+| `PaginationComponent`                           | Composed  | Pagination generic, label "Halaman X dari Y", state prev/next button, signal input/output (§9.3)          | Button                                                 | Pasien, Lintas Fitur                | Selesai (Tahap 2) |
+| `PasienList`                                    | Composed  | Live search nama (debounce 300ms), auto-trigger NIK 16 digit, sensitive NIK display masking, pagination   | PaginationComponent, SensitiveValue, ToastNotification | Pasien (route /pasien)              | Selesai (Tahap 2) |
+| `PasienDetail`                                  | Composed  | Halaman detail pasien (biodata lengkap + riwayatKunjunganRingkas list)                                    | SensitiveValue, ToastNotification                      | Pasien (route /pasien/:id)          | Selesai (Tahap 2) |
+| `PasienEdit`                                    | Composed  | Form edit biodata pasien (pre-filled, NIK format validator, 409 Optimistic Lock hybrid UX)                | ToastNotification, native select/textarea              | Pasien (route /pasien/:id/edit)     | Selesai (Tahap 3) |
+| `RevealOnceSecret`                              | Composed  | Tampilkan token/link sekali + copy (§9.2)                                                                 | Spartan Input (readonly), Button                       | Admin (invite, display-token)       | Direncanakan      |
+| `DataTable`                                     | Composed  | Tabel + pagination bernomor + collapse ke card (§9.3)                                                     | Spartan Table                                          | Pasien, Antrian, Admin              | Direncanakan      |
+| `StatusBadge`                                   | Composed  | Badge status antrian (§9.4)                                                                               | Spartan Badge                                          | Antrian                             | Direncanakan      |
+| `PriorityBadge`                                 | Composed  | Badge prioritas, ikon+label (§9.4)                                                                        | Spartan Badge                                          | Antrian, Pasien                     | Direncanakan      |
+| `ClinicStatusIndicator`                         | Composed  | Badge buka/tutup klinik (§9.4)                                                                            | Spartan Badge                                          | App shell/header staff              | Selesai           |
+| `ConfirmDialog`                                 | Composed  | Dialog konfirmasi aksi berdampak (§9.7)                                                                   | Spartan Dialog                                         | Admin, Rekam Medis                  | Direncanakan      |
+| `DiagnosisTindakanFormArray`                    | Composed  | Repeatable row group add/remove (§9.6)                                                                    | Spartan Input, Select, Button + `FormArray`            | Rekam Medis                         | Direncanakan      |
+| `AuditDiffViewer`                               | Composed  | Diff view before/after JSON (§9.9)                                                                        | — (custom)                                             | Admin > Audit Log                   | Direncanakan      |
+| `ConnectionStatusIndicator`                     | Composed  | Indikator status WS (§9.10)                                                                               | — (custom)                                             | Papan Antrian, widget antrian staff | Direncanakan      |
+| Button / Badge / Avatar / Dropdown-Menu / Sheet | Primitive | Primitive dasar Spartan (diverifikasi §10)                                                                | —                                                      | Lintas fitur                        | Selesai           |
 
 ---
 
