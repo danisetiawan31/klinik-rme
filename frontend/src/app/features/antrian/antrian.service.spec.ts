@@ -3,7 +3,12 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { environment } from '../../../environments/environment';
 import { AntrianService } from './antrian.service';
-import { KunjunganListItem, PanggilBerikutnyaResponse } from './antrian.types';
+import {
+  CreateKunjunganRequest,
+  CreateKunjunganResponse,
+  KunjunganListItem,
+  PanggilBerikutnyaResponse,
+} from './antrian.types';
 
 describe('AntrianService', () => {
   let service: AntrianService;
@@ -23,6 +28,29 @@ describe('AntrianService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should create kunjungan queue entry via POST /kunjungan', () => {
+    const payload: CreateKunjunganRequest = {
+      pasienId: 10,
+      isPriority: true,
+      priorityReason: 'Lansia',
+    };
+    const mockResponse: CreateKunjunganResponse = {
+      id: 101,
+      nomorAntrian: 7,
+      status: 'menunggu',
+      tanggalKunjungan: '2026-08-14',
+    };
+
+    service.create(payload).subscribe((res) => {
+      expect(res).toEqual(mockResponse);
+    });
+
+    const req = httpTesting.expectOne(`${environment.apiUrl}/kunjungan`);
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(payload);
+    req.flush(mockResponse, { status: 201, statusText: 'Created' });
   });
 
   it('should fetch antrian list for given klinikId', () => {

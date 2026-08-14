@@ -114,4 +114,20 @@
 - **Shell & Shared Components (Tahap 3)**: Pemisahan template HTML untuk `ShellComponent`, `LandingComponent`, `AntrianDashboardComponent`, `AdminDashboardComponent`, `ForbiddenComponent`, `ClinicStatusIndicatorComponent`, `PaginationComponent`, `ToastComponent`, dan `SensitiveValueComponent` ke file `.component.html` terpisah.
 - **Verifikasi**: Vitest (24 files, 111 unit tests) dan build production (`npx ng build`) lolos 100%. File controller `.ts` seluruh frontend kini ramping (~12–130 baris) dan template `.html` mendapatkan full IDE syntax highlighting, Emmet, dan formatting.
 
+---
+
+## Antrian (Staff-Facing) — Tahap 1 s.d. 3 (Backlog Item 15 - Selesai Penuh)
+
+- **Tahap 1 (List & Realtime Dashboard)**: Addendum BE (`GET /klinik/:id/antrian` bawa `skipCount` & `priorityReason`), `StatusBadgeComponent` (4 status) & `PriorityBadgeComponent` (WCAG AA `text-foreground`, `DESIGN.md` §12), `AntrianDashboardComponent` (sort `isPriority DESC, skipCount ASC, nomorAntrian ASC`, dual-trigger WS `lastUpdateAt`/`connected`, `DestroyRef` teardown, summary cards).
+- **Tahap 2 (Aksi Dokter & Petugas/Admin)**: `AntrianService` (`panggilBerikutnya`, `lewati`, `tidakHadir`), RBAC per-tombol (Dokter: Panggil & Lewati `dipanggil`; Dokter/Admin: Tidak Hadir `menunggu` + modal konfirmasi; Petugas: view-only), response 204 info toast, 409 conflict auto-refetch, proteksi double-submit `isSubmittingAction`.
+- **Tahap 3 (Pendaftaran via PasienDetail)**: `AntrianService.create()` (`POST /kunjungan`), tombol "Daftarkan ke Antrian" di `PasienDetailComponent` (RBAC `isStaff()`, proaktif disabled saat `!isKlinikBuka()`), modal registrasi (validasi wajib `priorityReason` saat `isPriority` aktif), sukses toast dengan `nomorAntrian` tanpa navigasi (auto-refresh riwayat), modal error recovery (tetap terbuka jika submit gagal).
+- **Verifikasi**: Vitest (28 files, 144 unit tests) dan build production (`npx ng build`) PASS 100%. Self-check styling 0 hex literal & 0 bracket CSS variables.
+
+**Catatan Deviasi & Keputusan Teknis**:
+- `StatusBadge` dan `PriorityBadge` ditempatkan di `shared/components/` untuk reuse lintas modul (Antrian, Pasien Detail, Rekam Medis).
+- Validasi `priorityReason` di client dibuat lebih ketat dari backend (wajib isi jika prioritas aktif) demi integritas audit operasional.
+- Helper `isStaff` di `PasienDetailComponent` memisahkan hak akses pendaftaran/edit data (petugas/admin) dari role dokter.
+
+
+
 

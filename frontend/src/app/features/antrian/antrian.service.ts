@@ -2,11 +2,26 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { KunjunganListItem, PanggilBerikutnyaResponse } from './antrian.types';
+import {
+  CreateKunjunganRequest,
+  CreateKunjunganResponse,
+  KunjunganListItem,
+  PanggilBerikutnyaResponse,
+} from './antrian.types';
 
 @Injectable({ providedIn: 'root' })
 export class AntrianService {
   private http = inject(HttpClient);
+
+  /**
+   * Daftarkan pasien ke antrian klinik hari ini (POST /api/v1/kunjungan)
+   */
+  create(payload: CreateKunjunganRequest): Observable<CreateKunjunganResponse> {
+    return this.http.post<CreateKunjunganResponse>(
+      `${environment.apiUrl}/kunjungan`,
+      payload
+    );
+  }
 
   /**
    * Fetch daftar antrian aktif klinik hari ini (GET /api/v1/klinik/:id/antrian)

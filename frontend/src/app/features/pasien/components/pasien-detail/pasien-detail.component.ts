@@ -8,8 +8,10 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { KlinikService } from '../../../../core/klinik/klinik.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
+import { AntrianService } from '../../../antrian/antrian.service';
 import { PasienService } from '../../pasien.service';
 import { Pasien } from '../../pasien.types';
 
@@ -23,6 +25,8 @@ import { Pasien } from '../../pasien.types';
 export class PasienDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private pasienService = inject(PasienService);
+  private antrianService = inject(AntrianService);
+  private klinikService = inject(KlinikService);
   private authService = inject(AuthService);
 
   readonly pasien = signal<Pasien | null>(null);
@@ -30,15 +34,32 @@ export class PasienDetailComponent implements OnInit {
   readonly errorMessage = signal<string | null>(null);
   readonly successMessage = signal<string | null>(null);
 
-  readonly canEdit = computed(() => {
+  // RBAC permissions: Petugas and Admin can manage patient & register to queue
+  readonly isStaff = computed(() => {
     const roles = this.authService.currentUser()?.roles || [];
     return roles.includes('petugas') || roles.includes('admin');
   });
+  readonly canEdit = this.isStaff;
+
+  // Clinic operating hours state
+  readonly klinikInfo = this.klinikService.klinikInfo;
+  readonly isKlinikBuka = computed(() => this.klinikService.isKlinikBuka(this.klinikInfo()));
+
+  // Queue registration dialog state (Tahap 3)
+  readonly showDaftarModal = signal<boolean>(false);
+  readonly isPriority = signal<boolean>(false);
+  readonly priorityReason = signal<string>('');
+  readonly formError = signal<string | null>(null);
+  readonly isSubmitting = signal<boolean>(false);
 
   ngOnInit(): void {
     const state = history.state as { successMessage?: string };
     if (state?.successMessage) {
       this.successMessage.set(state.successMessage);
+    }
+
+    if (!this.klinikInfo()) {
+      this.klinikService.fetchKlinikInfo().subscribe();
     }
 
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -65,10 +86,77 @@ export class PasienDetailComponent implements OnInit {
         this.isLoading.set(false);
         const msg =
           err?.error?.error?.message ??
+          err?.error?.message ??
           'Gagal mengambil detail pasien. Silakan coba lagi.';
         this.errorMessage.set(msg);
       },
     });
+  }
+
+  /**
+   * Buka modal pendaftaran antrian & reset state form
+   */
+  openDaftarModal(): void {
+    this.isPriority.set(false);
+    this.priorityReason.set('');
+    this.formError.set(null);
+    this.showDaftarModal.set(true);
+  }
+
+  /**
+   * Tutup modal pendaftaran antrian
+   */
+  closeDaftarModal(): void {
+    this.showDaftarModal.set(false);
+    this.formError.set(null);
+  }
+
+  /**
+   * Submit pendaftaran pasien ke antrian hari ini (POST /api/v1/kunjungan)
+   */
+  submitDaftarAntrian(): void {
+    const p = this.pasien();
+    if (!p || this.isSubmitting()) return;
+
+    // Client-side strict validation: priorityReason is required if isPriority is true
+    if (this.isPriority() && !this.priorityReason().trim()) {
+      this.formError.set('Alasan prioritas wajib diisi jika status prioritas diaktifkan.');
+      return;
+    }
+
+    this.formError.set(null);
+    this.isSubmitting.set(true);
+
+    this.antrianService
+      .create({
+        pasienId: p.id,
+        isPriority: this.isPriority(),
+        priorityReason: this.isPriority() ? this.priorityReason().trim() : undefined,
+      })
+      .subscribe({
+        next: (res) => {
+          this.isSubmitting.set(false);
+          this.showDaftarModal.set(false);
+          this.successMessage.set(
+            `Pasien berhasil didaftarkan ke antrian hari ini dengan Nomor Antrian #${res.nomorAntrian}.`
+          );
+          // Refetch patient detail to update riwayatKunjunganRingkas without page redirect
+          this.fetchDetail(p.id);
+        },
+        error: (err: any) => {
+          this.isSubmitting.set(false);
+          // Modal remains OPEN on failure so staff sees the error and can retry or cancel
+          let msg = 'Gagal mendaftarkan pasien ke antrian.';
+          if (err?.error?.code === 'KLINIK_TUTUP') {
+            msg = 'Pendaftaran antrian sudah ditutup untuk hari ini.';
+          } else if (err?.error?.message) {
+            msg = err.error.message;
+          } else if (err?.error?.error?.message) {
+            msg = err.error.error.message;
+          }
+          this.errorMessage.set(msg);
+        },
+      });
   }
 
   formatDate(isoDateStr: string): string {

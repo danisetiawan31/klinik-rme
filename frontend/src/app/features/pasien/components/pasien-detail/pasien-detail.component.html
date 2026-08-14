@@ -55,22 +55,47 @@
         </p>
       </div>
 
-      @if (canEdit()) {
-        <a
-          [routerLink]="['/pasien', pasien()!.id, 'edit']"
-          class="kl-btn-secondary no-underline inline-flex items-center gap-2"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="15" height="15" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"
-            aria-hidden="true"
+      <!-- Action buttons for staff (Petugas & Admin) -->
+      @if (isStaff()) {
+        <div class="flex items-center gap-3">
+          <!-- Button 1: Daftarkan ke Antrian -->
+          <button
+            type="button"
+            (click)="openDaftarModal()"
+            [disabled]="!isKlinikBuka() || isSubmitting()"
+            class="kl-btn-primary inline-flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            [title]="!isKlinikBuka() ? 'Pendaftaran ditutup karena klinik sudah tutup' : 'Daftarkan pasien ke antrian hari ini'"
           >
-            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-          </svg>
-          Edit Biodata
-        </a>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15" height="15" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Daftarkan ke Antrian
+          </button>
+
+          <!-- Button 2: Edit Biodata -->
+          <a
+            [routerLink]="['/pasien', pasien()!.id, 'edit']"
+            class="kl-btn-secondary no-underline inline-flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="15" height="15" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+            Edit Biodata
+          </a>
+        </div>
       }
     </div>
 
@@ -166,6 +191,90 @@
             Belum ada riwayat kunjungan recorded.
           </div>
         }
+      </div>
+    </div>
+  }
+
+  <!-- ── Modal Dialog: Pendaftaran Pasien ke Antrian ── -->
+  @if (showDaftarModal() && pasien()) {
+    <div
+      class="fixed inset-0 z-50 bg-background/80 backdrop-blur-xs flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="daftar-antrian-modal-title"
+    >
+      <div class="bg-card border border-border rounded-xl shadow-lg max-w-md w-full p-6 space-y-4">
+        <div>
+          <h3 id="daftar-antrian-modal-title" class="text-base font-semibold text-foreground">
+            Daftarkan ke Antrian Hari Ini
+          </h3>
+          <p class="text-xs text-muted-foreground mt-0.5">
+            Pasien: <strong class="text-foreground font-medium">{{ pasien()!.nama }}</strong> (ID #{{ pasien()!.id }})
+          </p>
+        </div>
+
+        <div class="space-y-3 pt-1">
+          <!-- Toggle Prioritas -->
+          <label class="flex items-start gap-3 cursor-pointer select-none p-3 rounded-lg border border-border bg-muted/40 hover:bg-muted/60 transition-colors">
+            <input
+              type="checkbox"
+              [checked]="isPriority()"
+              (change)="isPriority.set($any($event.target).checked)"
+              class="mt-0.5 rounded border-border"
+            />
+            <div>
+              <span class="text-sm font-medium text-foreground block">
+                Pasien Prioritas
+              </span>
+              <span class="text-xs text-muted-foreground block mt-0.5">
+                Aktifkan untuk lansia, disabilitas, ibu hamil, atau kondisi darurat.
+              </span>
+            </div>
+          </label>
+
+          <!-- Input Alasan Prioritas (Kondisional) -->
+          @if (isPriority()) {
+            <div class="space-y-1.5">
+              <label for="priority-reason-input" class="text-xs font-semibold text-foreground">
+                Alasan Prioritas <span class="text-destructive">*</span>
+              </label>
+              <textarea
+                id="priority-reason-input"
+                [value]="priorityReason()"
+                (input)="priorityReason.set($any($event.target).value)"
+                placeholder="Contoh: Lansia 78 tahun dengan kursi roda"
+                class="kl-input h-20 resize-none text-sm"
+              ></textarea>
+            </div>
+          }
+
+          <!-- Form Error Alert -->
+          @if (formError()) {
+            <p class="text-xs text-destructive font-medium bg-destructive/10 p-2 rounded border border-destructive/20">
+              {{ formError() }}
+            </p>
+          }
+        </div>
+
+        <!-- Dialog Footer Actions -->
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button
+            type="button"
+            (click)="closeDaftarModal()"
+            [disabled]="isSubmitting()"
+            class="px-4 py-2 text-sm font-medium rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            (click)="submitDaftarAntrian()"
+            [disabled]="isSubmitting()"
+            class="kl-btn-primary px-4 py-2 text-sm font-semibold rounded-lg disabled:opacity-50 cursor-pointer shadow-sm"
+          >
+            {{ isSubmitting() ? 'Mendaftarkan...' : 'Konfirmasi Pendaftaran' }}
+          </button>
+        </div>
       </div>
     </div>
   }

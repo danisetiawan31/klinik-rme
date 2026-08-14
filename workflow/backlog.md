@@ -39,7 +39,7 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 ### Fase 2 — Domain inti _(urutan ngikutin backend, boleh diprioritaskan ulang sesuai kebutuhan demo)_
 
 - [x] **14. Pasien** (Selesai Penuh) — form registrasi (+consent), pencarian (nik/nama), halaman detail+riwayat ringkas, edit biodata.
-- [ ] **15. Antrian (staff-facing)** — tampilan antrian klinik, tombol panggil berikutnya, tandai tidak hadir, indikator prioritas.
+- [x] **15. Antrian (staff-facing)** (Selesai Penuh) — tampilan antrian klinik (real-time + dual-trigger), tombol aksi dokter (panggil berikutnya, lewati) & petugas/admin (tandai tidak hadir dengan modal konfirmasi), indikator prioritas + status badge Spartan, form modal registrasi antrian via PasienDetail (validasi wajib alasan prioritas + proaktif disabled saat klinik tutup).
 - [ ] **16. Papan Antrian (publik)** — route terpisah tanpa guard staff, subscribe `RealtimeService`, refetch on notify.
 - [ ] **17. Rekam Medis** — form isi rekam medis (Reactive Forms + `FormArray` untuk `diagnosis[]`/`tindakan[]`), tampilan versi terkini, form addendum, riwayat pasien.
 - [ ] **18. Admin dashboard** — manajemen user (invite, **resend invite**, **edit email/nama**, roles), filter+detail audit log, regenerate display token.
