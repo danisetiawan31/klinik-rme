@@ -105,3 +105,13 @@
 - **Backward-Compatible CSS Alias**: Blok `:root { --color-* }` dipertahankan murni sebagai alias (`var(--primary)`) untuk SVG attribute dan dynamic inline CSS tanpa menduplikasi nilai.
 - **Utility `.kl-auth-bg`**: Radial gradient latar Auth di-encapsulate dalam class `.kl-auth-bg` di `styles.css` menggunakan `color-mix(in srgb, var(--primary) 10%, transparent)`.
 
+---
+
+## Pemisahan File Template HTML (`templateUrl`) — Tahap 1 s.d. 3 (Selesai Penuh)
+
+- **Modul Pasien (Tahap 1)**: Pemisahan template HTML untuk `PasienFormComponent`, `PasienListComponent`, `PasienDetailComponent`, dan `PasienEditComponent` ke file `.component.html` terpisah menggunakan `templateUrl`.
+- **Modul Auth & Profil (Tahap 2)**: Pemisahan template HTML untuk `LoginComponent`, `ForgotPasswordComponent`, `SetPasswordComponent`, dan `ProfilComponent` ke file `.component.html` terpisah menggunakan `templateUrl`.
+- **Shell & Shared Components (Tahap 3)**: Pemisahan template HTML untuk `ShellComponent`, `LandingComponent`, `AntrianDashboardComponent`, `AdminDashboardComponent`, `ForbiddenComponent`, `ClinicStatusIndicatorComponent`, `PaginationComponent`, `ToastComponent`, dan `SensitiveValueComponent` ke file `.component.html` terpisah.
+- **Verifikasi**: Vitest (24 files, 111 unit tests) dan build production (`npx ng build`) lolos 100%. File controller `.ts` seluruh frontend kini ramping (~12–130 baris) dan template `.html` mendapatkan full IDE syntax highlighting, Emmet, dan formatting.
+
+
