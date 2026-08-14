@@ -64,6 +64,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/profil/profil.component').then((m) => m.ProfilComponent),
       },
+      {
+        path: 'pasien',
+        canActivate: [roleGuard('petugas', 'dokter', 'admin')],
+        loadChildren: () =>
+          import('./features/pasien/pasien.routes').then((m) => m.pasienRoutes),
+      },
     ],
   },
   {
