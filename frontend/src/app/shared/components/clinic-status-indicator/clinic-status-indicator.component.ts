@@ -7,29 +7,7 @@ import { KlinikService } from '../../../core/klinik/klinik.service';
   standalone: true,
   imports: [HlmBadge],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (isBuka()) {
-      <span
-        hlmBadge
-        variant="outline"
-        class="bg-muted border-border text-accent font-medium px-2.5 py-1 flex items-center gap-1.5"
-        aria-label="Status Klinik: Buka"
-      >
-        <span class="h-2 w-2 rounded-full bg-accent"></span>
-        Klinik Buka
-      </span>
-    } @else {
-      <span
-        hlmBadge
-        variant="outline"
-        class="bg-muted border-border text-muted-foreground font-medium px-2.5 py-1 flex items-center gap-1.5"
-        aria-label="Status Klinik: Tutup"
-      >
-        <span class="h-2 w-2 rounded-full bg-muted-foreground"></span>
-        Klinik Tutup
-      </span>
-    }
-  `,
+  templateUrl: './clinic-status-indicator.component.html',
 })
 export class ClinicStatusIndicatorComponent implements OnInit {
   private klinikService = inject(KlinikService);

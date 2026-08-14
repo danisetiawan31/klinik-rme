@@ -8,65 +8,7 @@ import { AuthService } from '../../../core/auth/auth.service';
   standalone: true,
   imports: [RouterLink, HlmButton],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <main
-      class="min-h-screen w-full flex items-center justify-center p-4 bg-background font-sans"
-    >
-      <div
-        class="w-full max-w-md bg-card border border-border rounded-lg p-6 sm:p-8 shadow-2 text-center transition-all"
-      >
-        <!-- Icon Header -->
-        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-warning">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-            <path d="m14.5 9.5-5 5"/>
-            <path d="m9.5 9.5 5 5"/>
-          </svg>
-        </div>
-
-        <!-- Heading & Microcopy -->
-        <h1
-          class="font-heading text-2xl font-bold text-foreground tracking-tight mb-2"
-        >
-          Akses Ditolak
-        </h1>
-        <p class="text-sm sm:text-base text-muted-foreground leading-relaxed mb-6">
-          Anda tidak memiliki hak akses yang sesuai untuk membuka halaman ini. Apabila Anda memerlukan akses fitur ini, silakan hubungi Administrator Klinik.
-        </p>
-
-        <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <button
-            hlmBtn
-            type="button"
-            (click)="goBack()"
-            class="w-full sm:w-auto px-5 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-sm transition-colors cursor-pointer"
-          >
-            Kembali ke Beranda
-          </button>
-          <a
-            hlmBtn
-            variant="outline"
-            routerLink="/login"
-            class="w-full sm:w-auto px-5 py-2.5 border border-border text-foreground hover:bg-muted font-medium rounded-sm transition-colors cursor-pointer"
-          >
-            Ganti Akun
-          </a>
-        </div>
-      </div>
-    </main>
-  `,
+  templateUrl: './forbidden.component.html',
 })
 export class ForbiddenComponent {
   private authService = inject(AuthService);

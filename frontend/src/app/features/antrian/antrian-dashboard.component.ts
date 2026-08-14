@@ -5,30 +5,7 @@ import { AuthService } from '../../core/auth/auth.service';
   selector: 'app-antrian-dashboard',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div class="min-h-screen bg-background p-8">
-      <div class="max-w-4xl mx-auto bg-card rounded-md shadow-2 border border-border p-6 flex items-center justify-between">
-        <div>
-          <h1 class="text-xl font-bold text-foreground mb-1">
-            Selamat datang, {{ authService.currentUser()?.nama || 'Pengguna' }}!
-          </h1>
-          <p class="text-sm text-muted-foreground">
-            Peranan aktif: <span class="font-semibold text-primary">{{ authService.currentUser()?.roles?.join(', ') }}</span>
-          </p>
-          <span class="inline-block mt-3 px-3 py-1 bg-muted text-muted-foreground text-xs rounded-full font-medium">
-            Placeholder Dashboard Antrian (Backlog Item 15)
-          </span>
-        </div>
-        <button
-          type="button"
-          (click)="authService.logout().subscribe()"
-          class="px-4 py-2 bg-muted text-foreground hover:bg-border font-medium text-sm rounded-sm transition-all cursor-pointer"
-        >
-          Keluar
-        </button>
-      </div>
-    </div>
-  `,
+  templateUrl: './antrian-dashboard.component.html',
 })
 export class AntrianDashboardComponent {
   readonly authService = inject(AuthService);
