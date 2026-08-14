@@ -1,0 +1,23 @@
+<span
+  hlmBadge
+  variant="outline"
+  class="rounded-full border border-secondary bg-transparent px-2 py-0.5 text-xs font-semibold text-foreground inline-flex items-center gap-1 shrink-0"
+  [title]="reason() ? 'Pasien Prioritas: ' + reason() : 'Pasien Prioritas'"
+  aria-label="Pasien Prioritas"
+>
+  <svg
+    class="h-3 w-3 text-secondary"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+    <line x1="4" x2="4" y1="22" y2="15" />
+  </svg>
+  <span>Prioritas</span>
+</span>

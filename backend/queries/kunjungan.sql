@@ -19,7 +19,7 @@ WHERE klinik_id = $1 AND tanggal_kunjungan = $2
 ORDER BY nomor_antrian ASC;
 
 -- name: ListKunjunganWithPasienNamaByKlinikAndTanggal :many
-SELECT k.id, k.nomor_antrian, k.status, k.is_priority, p.nama AS pasien_nama
+SELECT k.id, k.nomor_antrian, k.status, k.is_priority, k.priority_reason, k.skip_count, p.nama AS pasien_nama
 FROM kunjungan k
 JOIN pasien p ON k.pasien_id = p.id
 WHERE k.klinik_id = $1 AND k.tanggal_kunjungan = $2

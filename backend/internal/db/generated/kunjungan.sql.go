@@ -201,7 +201,7 @@ func (q *Queries) ListKunjunganByKlinikAndTanggal(ctx context.Context, arg ListK
 }
 
 const listKunjunganWithPasienNamaByKlinikAndTanggal = `-- name: ListKunjunganWithPasienNamaByKlinikAndTanggal :many
-SELECT k.id, k.nomor_antrian, k.status, k.is_priority, p.nama AS pasien_nama
+SELECT k.id, k.nomor_antrian, k.status, k.is_priority, k.priority_reason, k.skip_count, p.nama AS pasien_nama
 FROM kunjungan k
 JOIN pasien p ON k.pasien_id = p.id
 WHERE k.klinik_id = $1 AND k.tanggal_kunjungan = $2
@@ -214,11 +214,13 @@ type ListKunjunganWithPasienNamaByKlinikAndTanggalParams struct {
 }
 
 type ListKunjunganWithPasienNamaByKlinikAndTanggalRow struct {
-	ID           int32
-	NomorAntrian int32
-	Status       string
-	IsPriority   bool
-	PasienNama   string
+	ID             int32
+	NomorAntrian   int32
+	Status         string
+	IsPriority     bool
+	PriorityReason pgtype.Text
+	SkipCount      int32
+	PasienNama     string
 }
 
 func (q *Queries) ListKunjunganWithPasienNamaByKlinikAndTanggal(ctx context.Context, arg ListKunjunganWithPasienNamaByKlinikAndTanggalParams) ([]ListKunjunganWithPasienNamaByKlinikAndTanggalRow, error) {
@@ -235,6 +237,8 @@ func (q *Queries) ListKunjunganWithPasienNamaByKlinikAndTanggal(ctx context.Cont
 			&i.NomorAntrian,
 			&i.Status,
 			&i.IsPriority,
+			&i.PriorityReason,
+			&i.SkipCount,
 			&i.PasienNama,
 		); err != nil {
 			return nil, err

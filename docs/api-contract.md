@@ -83,7 +83,7 @@ GET  /kunjungan/:id                                [petugas, dokter, admin]
 GET  /klinik/:id/antrian                           [petugas, dokter, admin via cookie | display-token]
   Response beda tergantung channel auth — disengaja, bukan lupa:
   ← via X-Display-Token: 200 [{ nomorAntrian, status, isPriority }]                    (tanpa identitas pasien — publik, ruang tunggu)
-  ← via cookie staff:    200 [{ id, nomorAntrian, status, isPriority, pasienNama }]     (staff butuh nama untuk memanggil)
+  ← via cookie staff:    200 [{ id, nomorAntrian, status, isPriority, priorityReason?, skipCount, pasienNama }] (staff butuh nama & alasan prioritas untuk memanggil/menata antrian)
 
 POST /klinik/:id/panggil-berikutnya                [dokter]
   ← 200 { id, nomorAntrian, pasienNama, dokterId, dipanggilAt } | 204 kalau antrian kosong

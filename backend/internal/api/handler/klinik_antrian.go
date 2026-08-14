@@ -67,11 +67,13 @@ type GetKunjunganResponse struct {
 }
 
 type AntrianItemResponse struct {
-	ID           int32  `json:"id"`
-	NomorAntrian int32  `json:"nomorAntrian"`
-	Status       string `json:"status"`
-	IsPriority   bool   `json:"isPriority"`
-	PasienNama   string `json:"pasienNama"`
+	ID             int32   `json:"id"`
+	NomorAntrian   int32   `json:"nomorAntrian"`
+	Status         string  `json:"status"`
+	IsPriority     bool    `json:"isPriority"`
+	PriorityReason *string `json:"priorityReason,omitempty"`
+	SkipCount      int32   `json:"skipCount"`
+	PasienNama     string  `json:"pasienNama"`
 }
 
 type AntrianItemPublicResponse struct {
@@ -296,12 +298,18 @@ func (h *KlinikAntrianHandler) GetAntrianKlinik(c *gin.Context) {
 
 	response := make([]AntrianItemResponse, 0, len(rows))
 	for _, r := range rows {
+		var priorityReason *string
+		if r.PriorityReason.Valid {
+			priorityReason = &r.PriorityReason.String
+		}
 		response = append(response, AntrianItemResponse{
-			ID:           r.ID,
-			NomorAntrian: r.NomorAntrian,
-			Status:       r.Status,
-			IsPriority:   r.IsPriority,
-			PasienNama:   r.PasienNama,
+			ID:             r.ID,
+			NomorAntrian:   r.NomorAntrian,
+			Status:         r.Status,
+			IsPriority:     r.IsPriority,
+			PriorityReason: priorityReason,
+			SkipCount:      r.SkipCount,
+			PasienNama:     r.PasienNama,
 		})
 	}
 

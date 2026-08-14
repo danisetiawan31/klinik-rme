@@ -1,0 +1,9 @@
+<span
+  hlmBadge
+  variant="outline"
+  [class]="'rounded-full px-2.5 py-0.5 text-xs font-semibold inline-flex items-center gap-1.5 ' + badgeConfig().class"
+  [attr.aria-label]="'Status: ' + badgeConfig().label"
+>
+  <span [class]="'h-1.5 w-1.5 rounded-full ' + badgeConfig().dotClass"></span>
+  {{ badgeConfig().label }}
+</span>
