@@ -84,7 +84,8 @@ func (q *Queries) GetUserByID(ctx context.Context, id int32) (User, error) {
 
 const listUsersWithRoles = `-- name: ListUsersWithRoles :many
 SELECT u.id, u.nama, u.email,
-       COALESCE(array_agg(ur.role ORDER BY ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}')::text[] AS roles
+       COALESCE(array_agg(ur.role ORDER BY ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}')::text[] AS roles,
+       COUNT(*) OVER() AS total_count
 FROM users u
 LEFT JOIN user_roles ur ON u.id = ur.user_id
 GROUP BY u.id, u.nama, u.email
@@ -98,10 +99,11 @@ type ListUsersWithRolesParams struct {
 }
 
 type ListUsersWithRolesRow struct {
-	ID    int32
-	Nama  string
-	Email string
-	Roles []string
+	ID         int32
+	Nama       string
+	Email      string
+	Roles      []string
+	TotalCount int64
 }
 
 func (q *Queries) ListUsersWithRoles(ctx context.Context, arg ListUsersWithRolesParams) ([]ListUsersWithRolesRow, error) {
@@ -118,6 +120,7 @@ func (q *Queries) ListUsersWithRoles(ctx context.Context, arg ListUsersWithRoles
 			&i.Nama,
 			&i.Email,
 			&i.Roles,
+			&i.TotalCount,
 		); err != nil {
 			return nil, err
 		}

@@ -261,6 +261,7 @@ func TestPasienEndpoints_Integration(t *testing.T) {
 
 		router.ServeHTTP(rec, req)
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "1", rec.Header().Get("X-Total-Count"))
 
 		var searchRes []map[string]interface{}
 		_ = json.Unmarshal(rec.Body.Bytes(), &searchRes)
@@ -274,6 +275,7 @@ func TestPasienEndpoints_Integration(t *testing.T) {
 
 		router.ServeHTTP(rec, req)
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "2", rec.Header().Get("X-Total-Count"))
 
 		_ = json.Unmarshal(rec.Body.Bytes(), &searchRes)
 		assert.Len(t, searchRes, 2)
@@ -285,18 +287,20 @@ func TestPasienEndpoints_Integration(t *testing.T) {
 
 		router.ServeHTTP(rec, req)
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "1", rec.Header().Get("X-Total-Count"))
 
 		_ = json.Unmarshal(rec.Body.Bytes(), &searchRes)
 		require.Len(t, searchRes, 1)
 		assert.Equal(t, float64(p1.ID), searchRes[0]["id"])
 
-		// d. Pagination
+		// d. Pagination (total count must reflect total matched rows before limit/offset)
 		req = httptest.NewRequest("GET", "/api/v1/pasien/search?page=1&limit=1", nil)
 		req.AddCookie(petugasCookie)
 		rec = httptest.NewRecorder()
 
 		router.ServeHTTP(rec, req)
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "2", rec.Header().Get("X-Total-Count"), "total count must be 2 even when limit=1")
 
 		_ = json.Unmarshal(rec.Body.Bytes(), &searchRes)
 		assert.Len(t, searchRes, 1)
@@ -308,6 +312,7 @@ func TestPasienEndpoints_Integration(t *testing.T) {
 
 		router.ServeHTTP(rec, req)
 		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Equal(t, "0", rec.Header().Get("X-Total-Count"), "total count must be 0 for empty search result")
 
 		_ = json.Unmarshal(rec.Body.Bytes(), &searchRes)
 		assert.Len(t, searchRes, 0, "soft-deleted patient must not appear in search")

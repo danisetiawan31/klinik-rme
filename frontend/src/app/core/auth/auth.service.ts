@@ -100,6 +100,16 @@ export class AuthService {
   }
 
   /**
+   * Change own password via PATCH /api/v1/auth/me/password [authenticated]
+   */
+  changePassword(passwordLama: string, passwordBaru: string): Observable<void> {
+    return this.http.patch<void>(`${environment.apiUrl}/auth/me/password`, {
+      passwordLama,
+      passwordBaru,
+    });
+  }
+
+  /**
    * Determine priority landing route based on roles: admin > dokter > petugas
    */
   getLandingRoute(user: UserResponse | null = this.currentUser()): string {

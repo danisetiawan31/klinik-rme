@@ -23,7 +23,8 @@ FROM pasien
 WHERE id = $1;
 
 -- name: SearchPasien :many
-SELECT id, nik, nama, tanggal_lahir, jenis_kelamin, alamat, no_telp, consent_at, version, deleted_at
+SELECT id, nik, nama, tanggal_lahir, jenis_kelamin, alamat, no_telp, consent_at, version, deleted_at,
+       COUNT(*) OVER() AS total_count
 FROM pasien
 WHERE deleted_at IS NULL
   AND (sqlc.narg('nik')::text IS NULL OR nik = sqlc.narg('nik'))

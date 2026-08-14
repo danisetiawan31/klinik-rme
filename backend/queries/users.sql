@@ -20,7 +20,8 @@ RETURNING id, nama, email;
 
 -- name: ListUsersWithRoles :many
 SELECT u.id, u.nama, u.email,
-       COALESCE(array_agg(ur.role ORDER BY ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}')::text[] AS roles
+       COALESCE(array_agg(ur.role ORDER BY ur.role) FILTER (WHERE ur.role IS NOT NULL), '{}')::text[] AS roles,
+       COUNT(*) OVER() AS total_count
 FROM users u
 LEFT JOIN user_roles ur ON u.id = ur.user_id
 GROUP BY u.id, u.nama, u.email

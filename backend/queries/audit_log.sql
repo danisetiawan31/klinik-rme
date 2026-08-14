@@ -25,7 +25,8 @@ SET last_hash = $1
 WHERE id = 1;
 
 -- name: ListAuditLogs :many
-SELECT id, tabel_target, record_id, actor_user_id, aksi, created_at
+SELECT id, tabel_target, record_id, actor_user_id, aksi, created_at,
+       COUNT(*) OVER() AS total_count
 FROM audit_log
 WHERE (sqlc.narg('tabel_target')::text IS NULL OR tabel_target = sqlc.narg('tabel_target'))
   AND (sqlc.narg('record_id')::int IS NULL OR record_id = sqlc.narg('record_id'))

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 	"time"
 
@@ -241,6 +242,7 @@ func TestAdminCreateUser_Integration(t *testing.T) {
 		err := json.Unmarshal(w.Body.Bytes(), &users)
 		require.NoError(t, err)
 		assert.GreaterOrEqual(t, len(users), 2)
+		assert.Equal(t, strconv.Itoa(len(users)), w.Header().Get("X-Total-Count"))
 
 		// Verify admin user is in the list
 		foundAdmin := false
@@ -251,6 +253,14 @@ func TestAdminCreateUser_Integration(t *testing.T) {
 			}
 		}
 		assert.True(t, foundAdmin, "admin user should be listed")
+
+		// Verify X-Total-Count reflects total users before pagination limit=1
+		wLimit := httptest.NewRecorder()
+		reqLimit, _ := http.NewRequest(http.MethodGet, "/api/v1/admin/users?page=1&limit=1", nil)
+		reqLimit.AddCookie(adminCookie)
+		router.ServeHTTP(wLimit, reqLimit)
+		assert.Equal(t, http.StatusOK, wLimit.Code)
+		assert.Equal(t, w.Header().Get("X-Total-Count"), wLimit.Header().Get("X-Total-Count"), "total count must match even with limit=1")
 	})
 
 	t.Run("GET /admin/users - Non-Admin 403 Forbidden", func(t *testing.T) {

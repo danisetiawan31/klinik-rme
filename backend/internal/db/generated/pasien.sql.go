@@ -111,7 +111,8 @@ func (q *Queries) InsertPasien(ctx context.Context, arg InsertPasienParams) (Pas
 }
 
 const searchPasien = `-- name: SearchPasien :many
-SELECT id, nik, nama, tanggal_lahir, jenis_kelamin, alamat, no_telp, consent_at, version, deleted_at
+SELECT id, nik, nama, tanggal_lahir, jenis_kelamin, alamat, no_telp, consent_at, version, deleted_at,
+       COUNT(*) OVER() AS total_count
 FROM pasien
 WHERE deleted_at IS NULL
   AND ($3::text IS NULL OR nik = $3)
@@ -127,7 +128,21 @@ type SearchPasienParams struct {
 	Nama   pgtype.Text
 }
 
-func (q *Queries) SearchPasien(ctx context.Context, arg SearchPasienParams) ([]Pasien, error) {
+type SearchPasienRow struct {
+	ID           int32
+	Nik          pgtype.Text
+	Nama         string
+	TanggalLahir pgtype.Date
+	JenisKelamin string
+	Alamat       string
+	NoTelp       string
+	ConsentAt    pgtype.Timestamptz
+	Version      int32
+	DeletedAt    pgtype.Timestamptz
+	TotalCount   int64
+}
+
+func (q *Queries) SearchPasien(ctx context.Context, arg SearchPasienParams) ([]SearchPasienRow, error) {
 	rows, err := q.db.Query(ctx, searchPasien,
 		arg.Limit,
 		arg.Offset,
@@ -138,9 +153,9 @@ func (q *Queries) SearchPasien(ctx context.Context, arg SearchPasienParams) ([]P
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Pasien
+	var items []SearchPasienRow
 	for rows.Next() {
-		var i Pasien
+		var i SearchPasienRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Nik,
@@ -152,6 +167,7 @@ func (q *Queries) SearchPasien(ctx context.Context, arg SearchPasienParams) ([]P
 			&i.ConsentAt,
 			&i.Version,
 			&i.DeletedAt,
+			&i.TotalCount,
 		); err != nil {
 			return nil, err
 		}

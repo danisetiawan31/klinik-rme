@@ -9,6 +9,7 @@
   - WebSocket, staff: cookie (otomatis, sama seperti REST)
   - WebSocket, papan antrian: query param `displayToken` — browser WebSocket API tidak bisa set custom header, jadi transportnya beda dari REST secara sengaja, bukan kelalaian
 - Sukses: return resource langsung, tanpa envelope
+- List endpoint dengan `page`/`limit` (GET /pasien/search, GET /admin/audit-log, GET /admin/users) menyertakan header response `X-Total-Count` (total record cocok filter, sebelum pagination diterapkan) — body tetap array polos tanpa envelope.
 - Error: `{ "error": { "code", "message", "requestId" } }` — `message` dikurasi per `code` (aman ditampilkan ke user, mis. "NIK sudah terdaftar"), **bukan** raw error dari DB/Go (mencegah kebocoran data seperti NIK ikut ke-embed di pesan error). `requestId` (UUID per request) dicatat di server log bareng detail lengkap (stack trace, raw error, query params) untuk debugging — `grep requestId` di log, tanpa expose apa pun ke client.
 - Status: 200/201/204 sukses, 400 validasi, 401 unauth, 403 role tidak sesuai, 404 not found, 409 conflict (unique/optimistic-lock violation)
 

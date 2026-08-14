@@ -248,6 +248,12 @@ func SearchPasien(q *dbgen.Queries) gin.HandlerFunc {
 			return
 		}
 
+		var totalCount int64 = 0
+		if len(results) > 0 {
+			totalCount = results[0].TotalCount
+		}
+		c.Header("X-Total-Count", strconv.FormatInt(totalCount, 10))
+
 		items := make([]PasienSearchItem, 0, len(results))
 		for _, p := range results {
 			items = append(items, PasienSearchItem{

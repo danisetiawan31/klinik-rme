@@ -90,7 +90,8 @@ func (q *Queries) InsertAuditLog(ctx context.Context, arg InsertAuditLogParams) 
 }
 
 const listAuditLogs = `-- name: ListAuditLogs :many
-SELECT id, tabel_target, record_id, actor_user_id, aksi, created_at
+SELECT id, tabel_target, record_id, actor_user_id, aksi, created_at,
+       COUNT(*) OVER() AS total_count
 FROM audit_log
 WHERE ($3::text IS NULL OR tabel_target = $3)
   AND ($4::int IS NULL OR record_id = $4)
@@ -114,6 +115,7 @@ type ListAuditLogsRow struct {
 	ActorUserID int32
 	Aksi        string
 	CreatedAt   pgtype.Timestamptz
+	TotalCount  int64
 }
 
 func (q *Queries) ListAuditLogs(ctx context.Context, arg ListAuditLogsParams) ([]ListAuditLogsRow, error) {
@@ -138,6 +140,7 @@ func (q *Queries) ListAuditLogs(ctx context.Context, arg ListAuditLogsParams) ([
 			&i.ActorUserID,
 			&i.Aksi,
 			&i.CreatedAt,
+			&i.TotalCount,
 		); err != nil {
 			return nil, err
 		}

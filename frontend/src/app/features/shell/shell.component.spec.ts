@@ -112,4 +112,19 @@ describe('ShellComponent', () => {
 
     expect(authServiceSpy.logout).toHaveBeenCalled();
   });
+
+  it('should render user menu link to /profil for Pengaturan Akun when user menu is opened', () => {
+    userSignal.set({ id: 1, nama: 'Staff', roles: ['petugas'] });
+    fixture.detectChanges();
+
+    const menuTrigger = fixture.nativeElement.querySelector('button[aria-label="Menu Pengguna"]');
+    expect(menuTrigger).toBeTruthy();
+
+    menuTrigger.click();
+    fixture.detectChanges();
+
+    const profilLink = document.querySelector('a[routerLink="/profil"]');
+    expect(profilLink).toBeTruthy();
+    expect(profilLink?.textContent).toContain('Pengaturan Akun');
+  });
 });

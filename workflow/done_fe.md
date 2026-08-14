@@ -60,3 +60,21 @@
 - `RealtimeService` tidak melakukan REST fetch secara langsung; peran service ini sesuai `TDD.md` murni sebagai pemberi sinyal invalidation timestamp (`lastUpdateAt`), sehingga komponen consumer bertanggung jawab melakukan refetch data antrian sendiri via REST endpoint.
 - Jitter ±20% dipasang secara eksplisit pada perhitungan delay reconnect untuk memastikan skenario server restart/single-instance drop tidak menyebabkan semua client melakukan thundering herd reconnect pada detik yang persis sama.
 
+---
+
+## Profil / Account Settings — Backlog Item 12 (ProfilComponent - Selesai Penuh)
+
+- **AuthService Integration**: Menambahkan method `changePassword(passwordLama: string, passwordBaru: string): Observable<void>` (`PATCH /api/v1/auth/me/password`) dan tipe `ChangePasswordRequest` di `auth.types.ts`.
+- **`ProfilComponent` (`/profil`)**: Komponen standalone halaman profil & pengaturan kata sandi (`src/app/features/profil/profil.component.ts`) mengikuti **Zona Content** (`docs/DESIGN.md` §1.1). 
+  - Bagian 1: Ringkasan info akun read-only (nama, email, roles) bersumber langsung dari `AuthService.currentUser()`.
+  - Bagian 2: Form Ubah Password (Reactive Forms + `SensitiveValueComponent` mode input), validasi `passwordBaru` (min 8 karakter) & `konfirmasiPassword` (`passwordsMismatch`).
+- **Error Handling Inline & Toast**:
+  - Error HTTP 400 `INVALID_PASSWORD` di-render sebagai **inline error** spesifik di bawah field `passwordLama` ("Password lama tidak sesuai").
+  - Error teknis murni (500/network) di-render via `ToastComponent` (`type="error"`).
+  - Submit sukses (HTTP 204) me-render `ToastComponent` (`type="success"`, "Password berhasil diubah"), me-reset 3 field password ke kosong, dan tetap berada di halaman `/profil`.
+- **Shell & Routing Integration**: Menambahkan tautan "Pengaturan Akun" (`routerLink="/profil"`) pada dropdown `#userMenu` di `ShellComponent` di atas tombol Logout. Mendaftarkan child route `path: 'profil'` di bawah rute root shell di `app.routes.ts`.
+- **Verifikasi**: Spec unit test `profil.component.spec.ts` (5 unit tests) + update `shell.component.spec.ts` (1 unit test link /profil) + seluruh test suite frontend (18 test files, 70 unit tests) PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+- **Zona Content Strict Styling**: Halaman `/profil` secara ketat mengikuti panduan Zona Content (`docs/DESIGN.md` §1.1) dengan latar belakang solid (`var(--color-background)`) dan shadow (`var(--shadow-2)`), tanpa radial background gradient aksen teal di belakang panel utama demi menjaga kontras & keterbacaan tinggi.
+- **Inline Error vs Toast**: Sesuai keputusan produk, `INVALID_PASSWORD` ditangani secara inline spesifik di bawah input `passwordLama` karena merupakan error validasi input milik field tertentu, sedangkan `ToastComponent` dikhususkan untuk notifikasi sukses (HTTP 204) & kegagalan teknis murni.

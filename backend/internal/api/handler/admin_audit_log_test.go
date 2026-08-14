@@ -126,17 +126,31 @@ func TestAdminAuditLog_Integration(t *testing.T) {
 	require.Len(t, rows, 3)
 	latestAuditID := rows[0].ID
 
-	t.Run("1. List tanpa filter (pagination benar)", func(t *testing.T) {
+	t.Run("1. List tanpa filter (pagination benar & X-Total-Count)", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodGet, "/api/v1/admin/audit-log?page=1&limit=2", nil)
 		req.AddCookie(adminCookie)
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "3", w.Header().Get("X-Total-Count"), "X-Total-Count must be 3 even when limit=2")
 		var list []map[string]interface{}
 		err := json.Unmarshal(w.Body.Bytes(), &list)
 		require.NoError(t, err)
-		assert.Len(t, list, 2, "page=1 & limit=2 should return exactly 2 items")
+		assert.Len(t, list, 2, "page=1 & limit=2 should return exactly 2 items in body")
+	})
+
+	t.Run("1b. List filter kosong (X-Total-Count=0)", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodGet, "/api/v1/admin/audit-log?tabelTarget=nonexistent", nil)
+		req.AddCookie(adminCookie)
+		router.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "0", w.Header().Get("X-Total-Count"))
+		var list []map[string]interface{}
+		_ = json.Unmarshal(w.Body.Bytes(), &list)
+		assert.Len(t, list, 0)
 	})
 
 	t.Run("2. List dengan kombinasi filter (tabelTarget + recordId + actorId sekaligus)", func(t *testing.T) {
@@ -147,6 +161,7 @@ func TestAdminAuditLog_Integration(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "1", w.Header().Get("X-Total-Count"))
 		var list []handler.AuditLogSummaryResponse
 		err := json.Unmarshal(w.Body.Bytes(), &list)
 		require.NoError(t, err)
@@ -165,6 +180,7 @@ func TestAdminAuditLog_Integration(t *testing.T) {
 		router.ServeHTTP(w, req)
 
 		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Equal(t, "2", w.Header().Get("X-Total-Count"))
 		var list []handler.AuditLogSummaryResponse
 		err := json.Unmarshal(w.Body.Bytes(), &list)
 		require.NoError(t, err)

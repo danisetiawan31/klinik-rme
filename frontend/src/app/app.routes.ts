@@ -59,6 +59,11 @@ export const routes: Routes = [
             (m) => m.AdminDashboardComponent
           ),
       },
+      {
+        path: 'profil',
+        loadComponent: () =>
+          import('./features/profil/profil.component').then((m) => m.ProfilComponent),
+      },
     ],
   },
   {

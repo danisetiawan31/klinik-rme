@@ -93,6 +93,15 @@
 - **Tahap 4 (GET /kunjungan/:id/rekam-medis & GET /pasien/:id/riwayat)**: Endpoint `GET /kunjungan/:id/rekam-medis` [dokter saja] (leaf query traversal `NOT EXISTS` + `deleted_at IS NULL`) & `GET /pasien/:id/riwayat` [dokter saja] (list kunjungan ber-rekam-medis).
 - **Tahap 5 (Integrasi E2E Lifecycle, Test Konkurensi & Regresi Menyeluruh)**: Test konkurensi `TestRekamMedisAddendum_Concurrency` (2 goroutines addendum bersamaan: 1 sukses 201, 1 gagal 409 via constraint `uq_addendum_of_active`), Test E2E `TestRekamMedisFullLifecycle_E2E` (skenario a-j berurutan: auth, pasien, kunjungan, panggil antrian, create RM awal, addendum 1 & 2, fetch leaf/riwayat, RBAC non-dokter 403, audit log linkage). Regresi penuh `go test -v -p 1 ./...` & `go vet ./...` PASS 100%.
 
+## Addendum — Header X-Total-Count pada List Endpoints
+
+- **Fitur**: Penambahan header response `X-Total-Count` pada 3 list endpoint (`GET /pasien/search`, `GET /admin/audit-log`, `GET /admin/users`) via `COUNT(*) OVER()` window function di query sqlc — total row terfilter dihitung sebelum LIMIT/OFFSET, satu round-trip DB. Body response tetap array polos (no envelope), sesuai `AGENTS.md` §7. Zero-row guard: total di-set 0 jika hasil array kosong.
+- **Verifikasi**: Assertion `X-Total-Count` ditambahkan ke test suite existing (`pasien_test.go`, `admin_audit_log_test.go`, `admin_user_test.go`) — kasus multi-page, filter kosong, kombinasi filter. Regresi penuh `go test -v -p 1 ./...` (tanpa `-short`) & `go vet ./...` PASS 100% seluruh package (termasuk concurrency test lawan Postgres asli — klaim antrian, audit hash chain, migration).
+
+**Catatan Deviasi & Keputusan Teknis**:
+
+- Perubahan kontrak ini didorong dari kebutuhan FE (`workflow/pasien.md` — PaginationComponent butuh total count untuk next/prev), bukan requirement awal di `docs/`. `docs/api-contract.md` §Konvensi diupdate manual oleh user untuk mendokumentasikan header ini secara resmi sebelum implementasi dimulai.
+
 **Catatan Deviasi & Keputusan Teknis**:
 
 - Extension constraint `audit_log.aksi` via migration `000014_extend_audit_log_aksi` (`CHECK (aksi IN ('create', 'update', 'addendum'))`).
@@ -127,6 +136,7 @@
 - **Verifikasi**: `TestLaporanHarian_Integration` (5 skenario: mixed status, tanggal tanpa data, default hari ini, format invalid, tanpa auth) PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
+
 - Sesuai spec 100%, tidak ada deviasi.
 
 ---
@@ -139,12 +149,8 @@
 - **Tahap 4 (Integrasi E2E Lifecycle & Regresi Penuh)**: Test suite E2E `TestAdminFullLifecycle_E2E` memverifikasi alur penuh langkah a-h (login admin, GET users, PATCH user, resend invite + invalidasi token lama, PATCH roles & pembuktian real-time RBAC tanpa re-login, LAST_ADMIN_GUARD, GET audit log list & detail). Regresi penuh `go test -v -p 1 ./...` dan `go vet ./...` PASS 100%.
 
 **Catatan Deviasi & Keputusan Teknis**:
+
 - **Input Role Deduplication**: Array role input di `PATCH /admin/users/:id/roles` dideduplikasi otomatis sebelum validasi & insert untuk mencegah pelanggaran constraint komposit PK `(user_id, role)` (`23505 unique_violation`).
 - **Resend Invite Transactionality**: Invalidasi token lama & insert token invite baru dieksekusi dalam 1 transaksi DB eksplisit. Dispatch email dilakukan best-effort setelah commit untuk mencegah kegagalan SMTP menggagalkan transaksi DB.
 - **Robust Pre-check Last-Admin Guard**: Penghitungan jumlah admin aktif dilakukan secara preemptive (`q.CountUsersWithRole(ctx, "admin")`) khusus di operasi PATCH roles karena operasi ini tergolong jarang dan tidak concurrency-sensitive.
 - **Safety Handling Query Parameters**: Parameter integer optional pada list audit log (`recordId`, `actorId`) mengabaikan string non-numerik (seperti `abc`) sehingga fallback menjadi un-filtered secara aman tanpa menyebabkan error DB/500.
-
-
-
-
-

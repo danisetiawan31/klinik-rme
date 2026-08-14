@@ -75,6 +75,12 @@ func ListUsers(q *dbgen.Queries) gin.HandlerFunc {
 			return
 		}
 
+		var totalCount int64 = 0
+		if len(rows) > 0 {
+			totalCount = rows[0].TotalCount
+		}
+		c.Header("X-Total-Count", strconv.FormatInt(totalCount, 10))
+
 		res := make([]UserItemResponse, 0, len(rows))
 		for _, row := range rows {
 			roles := row.Roles

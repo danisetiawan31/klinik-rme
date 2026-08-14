@@ -6,6 +6,12 @@
         "-y",
         "@spartan-ng/mcp"
       ]
+    },
+    "gitnexus": {
+      "command": "gitnexus",
+      "args": [
+        "mcp"
+      ]
     }
   }
 }

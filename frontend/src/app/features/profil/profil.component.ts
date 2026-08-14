@@ -1,0 +1,299 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
+import { AuthService } from '../../core/auth/auth.service';
+import { ErrorEnvelope } from '../../core/types/api-response.type';
+import { SensitiveValueComponent } from '../../shared/components/sensitive-value/sensitive-value.component';
+import { ToastComponent } from '../../shared/components/toast/toast.component';
+
+const passwordsMatchValidator: ValidatorFn = (
+  control: AbstractControl
+): ValidationErrors | null => {
+  const p1 = control.get('passwordBaru')?.value;
+  const p2 = control.get('konfirmasiPassword')?.value;
+  if (p1 && p2 && p1 !== p2) {
+    return { passwordsMismatch: true };
+  }
+  return null;
+};
+
+@Component({
+  selector: 'app-profil',
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [ReactiveFormsModule, SensitiveValueComponent, ToastComponent],
+  template: `
+    <!-- ── Toast notification top-center (Sukses / Error Teknis) ── -->
+    @if (toastMessage()) {
+      <app-toast
+        [message]="toastMessage() || ''"
+        [type]="toastType()"
+        (dismiss)="onDismissToast()"
+      />
+    }
+
+    <!-- ── Page Content Container (Zona Content - DESIGN.md §1.1) ── -->
+    <div class="max-w-3xl mx-auto space-y-6">
+      <!-- ── Page Header ── -->
+      <div>
+        <h1 class="text-2xl font-bold text-[var(--color-foreground)] font-heading">
+          Profil &amp; Pengaturan Akun
+        </h1>
+        <p class="text-sm text-[var(--color-muted-foreground)] mt-1">
+          Informasi akun dan opsi pembaruan kata sandi pengguna.
+        </p>
+      </div>
+
+      <!-- ── Section 1: Informasi Pengguna Read-Only ── -->
+      <div class="bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-2)] p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-[var(--color-border)] pb-3">
+          <h2 class="text-base font-semibold text-[var(--color-foreground)] font-heading flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            Informasi Akun
+          </h2>
+          <span class="px-2.5 py-1 bg-[var(--color-muted)] text-[var(--color-muted-foreground)] text-xs font-medium rounded-full">
+            Read-only
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+          <!-- Nama -->
+          <div class="space-y-1">
+            <p class="text-xs text-[var(--color-muted-foreground)] font-medium">Nama Lengkap</p>
+            <p class="font-semibold text-[var(--color-foreground)]">
+              {{ currentUser()?.nama || '—' }}
+            </p>
+          </div>
+
+          <!-- Peranan -->
+          <div class="space-y-1">
+            <p class="text-xs text-[var(--color-muted-foreground)] font-medium">Peranan Aktif (Roles)</p>
+            <div class="flex flex-wrap gap-1.5 pt-0.5">
+              @for (role of userRoles(); track role) {
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold capitalize bg-[var(--color-primary)] text-[var(--color-primary-foreground)]">
+                  {{ role }}
+                </span>
+              } @empty {
+                <span class="text-[var(--color-muted-foreground)]">—</span>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Section 2: Form Ubah Password ── -->
+      <div class="bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-2)] p-6 space-y-6">
+        <div class="border-b border-[var(--color-border)] pb-3">
+          <h2 class="text-base font-semibold text-[var(--color-foreground)] font-heading flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-primary)]">
+              <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Ubah Kata Sandi
+          </h2>
+          <p class="text-xs text-[var(--color-muted-foreground)] mt-1">
+            Masukkan kata sandi saat ini dan tentukan kata sandi baru minimal 8 karakter.
+          </p>
+        </div>
+
+        <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()" novalidate class="space-y-4 max-w-md">
+          <!-- Password Saat Ini -->
+          <div class="flex flex-col gap-1.5">
+            <label for="sv-password-lama" class="text-xs font-semibold text-[var(--color-foreground)]">
+              Kata Sandi Saat Ini
+            </label>
+            <app-sensitive-value
+              id="sv-password-lama"
+              mode="input"
+              formControlName="passwordLama"
+              placeholder="Masukkan kata sandi saat ini"
+              (focusin)="onClearOldPasswordError()"
+            />
+            @if (oldPasswordError()) {
+              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+                {{ oldPasswordError() }}
+              </span>
+            } @else if (oldPasswordControl.touched && oldPasswordControl.errors?.['required']) {
+              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+                Kata sandi saat ini wajib diisi
+              </span>
+            }
+          </div>
+
+          <!-- Password Baru -->
+          <div class="flex flex-col gap-1.5">
+            <label for="sv-password-baru-profil" class="text-xs font-semibold text-[var(--color-foreground)]">
+              Kata Sandi Baru
+            </label>
+            <app-sensitive-value
+              id="sv-password-baru-profil"
+              mode="input"
+              formControlName="passwordBaru"
+              placeholder="Masukkan kata sandi baru (min. 8 karakter)"
+            />
+            @if (newPasswordControl.touched && newPasswordControl.errors?.['required']) {
+              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+                Kata sandi baru wajib diisi
+              </span>
+            }
+            @if (newPasswordControl.touched && newPasswordControl.errors?.['minlength']) {
+              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+                Kata sandi baru minimal 8 karakter
+              </span>
+            }
+          </div>
+
+          <!-- Konfirmasi Password Baru -->
+          <div class="flex flex-col gap-1.5">
+            <label for="sv-konfirmasi-password-profil" class="text-xs font-semibold text-[var(--color-foreground)]">
+              Konfirmasi Kata Sandi Baru
+            </label>
+            <app-sensitive-value
+              id="sv-konfirmasi-password-profil"
+              mode="input"
+              formControlName="konfirmasiPassword"
+              placeholder="Ulangi kata sandi baru"
+            />
+            @if (konfirmasiControl.touched && konfirmasiControl.errors?.['required']) {
+              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+                Konfirmasi kata sandi wajib diisi
+              </span>
+            }
+            @if ((changePasswordForm.touched || konfirmasiControl.touched) && changePasswordForm.errors?.['passwordsMismatch'] && !konfirmasiControl.errors?.['required']) {
+              <span class="text-xs text-[var(--color-destructive)]" role="alert">
+                Konfirmasi kata sandi tidak cocok
+              </span>
+            }
+          </div>
+
+          <!-- Submit Button -->
+          <div class="pt-2">
+            <button
+              type="submit"
+              class="kl-btn-primary sm:w-auto px-6"
+              [disabled]="isLoading()"
+              [attr.aria-busy]="isLoading() ? 'true' : null"
+            >
+              @if (isLoading()) {
+                <svg class="kl-spinner" xmlns="http://www.w3.org/2000/svg"
+                  width="16" height="16" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2.5"
+                  stroke-linecap="round" aria-hidden="true">
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+              }
+              Simpan Kata Sandi Baru
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  `,
+})
+export class ProfilComponent {
+  readonly authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+
+  readonly currentUser = this.authService.currentUser;
+  readonly userRoles = () => this.currentUser()?.roles || [];
+
+  readonly isLoading = signal<boolean>(false);
+  readonly oldPasswordError = signal<string | null>(null);
+
+  readonly toastMessage = signal<string | null>(null);
+  readonly toastType = signal<'success' | 'error'>('success');
+
+  readonly changePasswordForm = this.fb.group(
+    {
+      passwordLama: ['', [Validators.required]],
+      passwordBaru: ['', [Validators.required, Validators.minLength(8)]],
+      konfirmasiPassword: ['', [Validators.required]],
+    },
+    { validators: passwordsMatchValidator }
+  );
+
+  get oldPasswordControl() {
+    return this.changePasswordForm.controls.passwordLama;
+  }
+
+  get newPasswordControl() {
+    return this.changePasswordForm.controls.passwordBaru;
+  }
+
+  get konfirmasiControl() {
+    return this.changePasswordForm.controls.konfirmasiPassword;
+  }
+
+  onClearOldPasswordError(): void {
+    if (this.oldPasswordError()) {
+      this.oldPasswordError.set(null);
+    }
+  }
+
+  onSubmit(): void {
+    if (this.changePasswordForm.invalid) {
+      this.changePasswordForm.markAllAsTouched();
+      return;
+    }
+
+    const { passwordLama, passwordBaru } = this.changePasswordForm.value;
+    if (!passwordLama || !passwordBaru) return;
+
+    this.isLoading.set(true);
+    this.oldPasswordError.set(null);
+    this.toastMessage.set(null);
+    this.changePasswordForm.disable();
+
+    this.authService.changePassword(passwordLama, passwordBaru).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.changePasswordForm.enable();
+        this.changePasswordForm.reset();
+
+        this.toastType.set('success');
+        this.toastMessage.set('Password berhasil diubah');
+      },
+      error: (err: any) => {
+        this.isLoading.set(false);
+        this.changePasswordForm.enable();
+
+        const parsedEnvelope: ErrorEnvelope | null = err?.error?.error ? err.error : (err as ErrorEnvelope);
+        const code = parsedEnvelope?.error?.code || err?.code;
+
+        if (code === 'INVALID_PASSWORD' || (err?.status === 400 && err?.error?.error?.code === 'INVALID_PASSWORD')) {
+          // Render inline error specifically under passwordLama field
+          const msg = parsedEnvelope?.error?.message || 'Password lama tidak sesuai';
+          this.oldPasswordError.set(msg);
+        } else {
+          // Render Toast for technical HTTP error (500/Network/Timeout)
+          let message = 'Gagal memperbarui password. Silakan periksa koneksi dan coba lagi.';
+          if (parsedEnvelope?.error?.message) {
+            message = parsedEnvelope.error.message;
+          } else if (err?.message) {
+            message = err.message;
+          }
+          this.toastType.set('error');
+          this.toastMessage.set(message);
+        }
+      },
+    });
+  }
+
+  onDismissToast(): void {
+    this.toastMessage.set(null);
+  }
+}

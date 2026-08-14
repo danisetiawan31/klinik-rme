@@ -25,3 +25,8 @@ export interface ResetPasswordRequest {
   token: string;
   passwordBaru: string;
 }
+
+export interface ChangePasswordRequest {
+  passwordLama: string;
+  passwordBaru: string;
+}
