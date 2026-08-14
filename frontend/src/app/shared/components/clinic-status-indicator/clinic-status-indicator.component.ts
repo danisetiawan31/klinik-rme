@@ -12,20 +12,20 @@ import { KlinikService } from '../../../core/klinik/klinik.service';
       <span
         hlmBadge
         variant="outline"
-        class="bg-[var(--color-muted)] border-[var(--color-border)] text-[var(--color-accent)] font-medium px-2.5 py-1 flex items-center gap-1.5"
+        class="bg-muted border-border text-accent font-medium px-2.5 py-1 flex items-center gap-1.5"
         aria-label="Status Klinik: Buka"
       >
-        <span class="h-2 w-2 rounded-full bg-[var(--color-accent)]"></span>
+        <span class="h-2 w-2 rounded-full bg-accent"></span>
         Klinik Buka
       </span>
     } @else {
       <span
         hlmBadge
         variant="outline"
-        class="bg-[var(--color-muted)] border-[var(--color-border)] text-[var(--color-muted-foreground)] font-medium px-2.5 py-1 flex items-center gap-1.5"
+        class="bg-muted border-border text-muted-foreground font-medium px-2.5 py-1 flex items-center gap-1.5"
         aria-label="Status Klinik: Tutup"
       >
-        <span class="h-2 w-2 rounded-full bg-[var(--color-muted-foreground)]"></span>
+        <span class="h-2 w-2 rounded-full bg-muted-foreground"></span>
         Klinik Tutup
       </span>
     }

@@ -34,10 +34,10 @@ export interface NavItem {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-[var(--color-background)] font-sans flex flex-col">
+    <div class="min-h-screen bg-background font-sans flex flex-col">
       <!-- Top Navigation Header -->
       <header
-        class="h-16 bg-[var(--color-card)] border-b border-[var(--color-border)] px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-[var(--shadow-1)]"
+        class="h-16 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-1"
       >
         <div class="flex items-center gap-3">
           <!-- Mobile Drawer Trigger (< lg) -->
@@ -47,7 +47,7 @@ export interface NavItem {
               variant="ghost"
               size="icon"
               hlmSheetTrigger
-              class="lg:hidden text-[var(--color-foreground)] cursor-pointer"
+              class="lg:hidden text-foreground cursor-pointer"
               aria-label="Buka Menu Sidebar"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -56,25 +56,25 @@ export interface NavItem {
                 <line x1="4" x2="20" y1="18" y2="18"/>
               </svg>
             </button>
-            <hlm-sheet-content class="w-72 p-0 bg-[var(--color-card)] border-r border-[var(--color-border)]">
-              <div class="p-6 border-b border-[var(--color-border)] flex items-center gap-3">
-                <div class="h-9 w-9 rounded-lg bg-[var(--color-primary)] text-[var(--color-primary-foreground)] flex items-center justify-center font-bold text-lg">
+            <hlm-sheet-content class="w-72 p-0 bg-card border-r border-border">
+              <div class="p-6 border-b border-border flex items-center gap-3">
+                <div class="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
                   K
                 </div>
                 <div>
-                  <h2 class="font-heading font-bold text-base text-[var(--color-foreground)]">
+                  <h2 class="font-heading font-bold text-base text-foreground">
                     Klinik RME
                   </h2>
-                  <p class="text-xs text-[var(--color-muted-foreground)]">Sistem Staff Klinik</p>
+                  <p class="text-xs text-muted-foreground">Sistem Staff Klinik</p>
                 </div>
               </div>
               <nav class="p-4 space-y-1">
                 @for (item of navItems(); track item.route) {
                   <a
                     [routerLink]="item.route"
-                    routerLinkActive="bg-[var(--color-primary)] text-[var(--color-primary-foreground)]"
+                    routerLinkActive="bg-primary text-primary-foreground"
                     [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-muted)] transition-colors"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
                   >
                     <span [innerHTML]="item.iconSvg" class="flex items-center"></span>
                     <span>{{ item.label }}</span>
@@ -90,7 +90,7 @@ export interface NavItem {
             variant="ghost"
             size="icon"
             (click)="toggleDesktopSidebar()"
-            class="hidden lg:flex text-[var(--color-foreground)] cursor-pointer"
+            class="hidden lg:flex text-foreground cursor-pointer"
             aria-label="Toggle Sidebar Desktop"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -101,10 +101,10 @@ export interface NavItem {
 
           <!-- Brand Logo -->
           <a routerLink="/" class="flex items-center gap-2.5">
-            <div class="h-8 w-8 rounded-md bg-[var(--color-primary)] text-[var(--color-primary-foreground)] flex items-center justify-center font-bold text-base shadow-sm">
+            <div class="h-8 w-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold text-base shadow-sm">
               K
             </div>
-            <span class="font-heading text-lg font-bold text-[var(--color-foreground)] hidden sm:inline-block tracking-tight">
+            <span class="font-heading text-lg font-bold text-foreground hidden sm:inline-block tracking-tight">
               Klinik RME
             </span>
           </a>
@@ -121,29 +121,29 @@ export interface NavItem {
               hlmBtn
               variant="ghost"
               [hlmDropdownMenuTrigger]="userMenu"
-              class="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-[var(--color-muted)] transition-colors cursor-pointer"
+              class="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-muted transition-colors cursor-pointer"
               aria-label="Menu Pengguna"
             >
-              <hlm-avatar size="sm" class="bg-[var(--color-primary)] text-[var(--color-primary-foreground)] font-semibold text-xs">
+              <hlm-avatar size="sm" class="bg-primary text-primary-foreground font-semibold text-xs">
                 <span hlmAvatarFallback>{{ userInitial() }}</span>
               </hlm-avatar>
-              <span class="text-sm font-medium text-[var(--color-foreground)] hidden md:inline-block max-w-[120px] truncate">
+              <span class="text-sm font-medium text-foreground hidden md:inline-block max-w-[120px] truncate">
                 {{ userName() }}
               </span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[var(--color-muted-foreground)]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
                 <path d="m6 9 6 6 6-6"/>
               </svg>
             </button>
 
             <!-- Dropdown Menu Content -->
             <ng-template #userMenu>
-              <div hlmDropdownMenu class="w-56 p-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-[var(--shadow-3)]">
-                <div class="px-3 py-2.5 border-b border-[var(--color-border)]">
-                  <p class="text-xs text-[var(--color-muted-foreground)]">Masuk sebagai</p>
-                  <p class="text-sm font-semibold text-[var(--color-foreground)] truncate mt-0.5">
+              <div hlmDropdownMenu class="w-56 p-1 bg-card border border-border rounded-md shadow-3">
+                <div class="px-3 py-2.5 border-b border-border">
+                  <p class="text-xs text-muted-foreground">Masuk sebagai</p>
+                  <p class="text-sm font-semibold text-foreground truncate mt-0.5">
                     {{ userName() }}
                   </p>
-                  <p class="text-xs text-[var(--color-primary)] font-medium mt-0.5 capitalize">
+                  <p class="text-xs text-primary font-medium mt-0.5 capitalize">
                     {{ primaryRole() }}
                   </p>
                 </div>
@@ -151,7 +151,7 @@ export interface NavItem {
                   <a
                     routerLink="/profil"
                     hlmDropdownMenuItem
-                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-foreground)] hover:bg-[var(--color-muted)] rounded-sm cursor-pointer transition-colors"
+                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-sm cursor-pointer transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
@@ -162,7 +162,7 @@ export interface NavItem {
                   <button
                     hlmDropdownMenuItem
                     (click)="logout()"
-                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-destructive)] hover:bg-red-50 rounded-sm cursor-pointer transition-colors"
+                    class="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-red-50 rounded-sm cursor-pointer transition-colors"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -182,7 +182,7 @@ export interface NavItem {
       <div class="flex-1 flex overflow-hidden">
         <!-- Desktop Sidebar (lg+) -->
         <aside
-          class="hidden lg:flex flex-col border-r border-[var(--color-border)] bg-[var(--color-card)] transition-all duration-300 z-20 shrink-0"
+          class="hidden lg:flex flex-col border-r border-border bg-card transition-all duration-300 z-20 shrink-0"
           [class.w-64]="!isSidebarCollapsed()"
           [class.w-20]="isSidebarCollapsed()"
         >
@@ -190,9 +190,9 @@ export interface NavItem {
             @for (item of navItems(); track item.route) {
               <a
                 [routerLink]="item.route"
-                routerLinkActive="bg-[var(--color-primary)] text-[var(--color-primary-foreground)]"
+                routerLinkActive="bg-primary text-primary-foreground"
                 [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-                class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-muted)] transition-all group"
+                class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-all group"
                 [title]="isSidebarCollapsed() ? item.label : ''"
               >
                 <span [innerHTML]="item.iconSvg" class="flex items-center shrink-0"></span>

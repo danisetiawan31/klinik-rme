@@ -64,7 +64,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       </div>
     } @else {
       <!-- Display mode: NIK masking -->
-      <span style="font-family:var(--font-mono);font-size:13px;display:inline-flex;align-items:center;gap:6px;">
+      <span class="font-mono text-sm inline-flex items-center gap-1.5">
         {{ formattedDisplayValue() }}
         <button
           type="button"

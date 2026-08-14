@@ -12,34 +12,23 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      style="
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: var(--space-3) var(--space-4);
-        background: var(--color-card);
-        border-top: 1px solid var(--color-border);
-        font-family: var(--font-body);
-        font-size: var(--text-sm);
-        color: var(--color-muted-foreground);
-      "
+      class="flex items-center justify-between px-4 py-3 bg-card border-t border-border font-sans text-sm text-muted-foreground"
     >
       <!-- Page counter info -->
       <div>
-        <span>Halaman <strong>{{ page() }}</strong> dari <strong>{{ totalPages() }}</strong></span>
+        <span>Halaman <strong class="text-foreground">{{ page() }}</strong> dari <strong class="text-foreground">{{ totalPages() }}</strong></span>
         @if (totalCount() > 0) {
-          <span style="margin-left: var(--space-2); color: var(--color-muted-foreground);">
+          <span class="ml-2 text-muted-foreground">
             ({{ totalCount() }} total record)
           </span>
         }
       </div>
 
       <!-- Navigation buttons -->
-      <div style="display: flex; gap: var(--space-2);">
+      <div class="flex gap-2">
         <button
           type="button"
-          class="kl-btn-secondary"
-          style="padding: 4px 12px; font-size: var(--text-xs);"
+          class="px-3 py-1 text-xs border border-border text-foreground hover:bg-muted font-medium rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           [disabled]="isPrevDisabled()"
           (click)="onPrev()"
           aria-label="Halaman sebelumnya"
@@ -48,8 +37,7 @@ import {
         </button>
         <button
           type="button"
-          class="kl-btn-secondary"
-          style="padding: 4px 12px; font-size: var(--text-xs);"
+          class="px-3 py-1 text-xs border border-border text-foreground hover:bg-muted font-medium rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           [disabled]="isNextDisabled()"
           (click)="onNext()"
           aria-label="Halaman selanjutnya"

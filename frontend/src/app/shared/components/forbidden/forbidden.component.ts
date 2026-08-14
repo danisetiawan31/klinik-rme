@@ -10,13 +10,13 @@ import { AuthService } from '../../../core/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <main
-      class="min-h-screen w-full flex items-center justify-center p-4 bg-[var(--color-background)] font-sans"
+      class="min-h-screen w-full flex items-center justify-center p-4 bg-background font-sans"
     >
       <div
-        class="w-full max-w-md bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 sm:p-8 shadow-[var(--shadow-2)] text-center transition-all"
+        class="w-full max-w-md bg-card border border-border rounded-lg p-6 sm:p-8 shadow-2 text-center transition-all"
       >
         <!-- Icon Header -->
-        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-amber-50 text-[var(--color-warning)]">
+        <div class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-warning">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="32"
@@ -37,11 +37,11 @@ import { AuthService } from '../../../core/auth/auth.service';
 
         <!-- Heading & Microcopy -->
         <h1
-          class="font-heading text-2xl font-bold text-[var(--color-foreground)] tracking-tight mb-2"
+          class="font-heading text-2xl font-bold text-foreground tracking-tight mb-2"
         >
           Akses Ditolak
         </h1>
-        <p class="text-sm sm:text-base text-[var(--color-muted-foreground)] leading-relaxed mb-6">
+        <p class="text-sm sm:text-base text-muted-foreground leading-relaxed mb-6">
           Anda tidak memiliki hak akses yang sesuai untuk membuka halaman ini. Apabila Anda memerlukan akses fitur ini, silakan hubungi Administrator Klinik.
         </p>
 
@@ -51,7 +51,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             hlmBtn
             type="button"
             (click)="goBack()"
-            class="w-full sm:w-auto px-5 py-2.5 bg-[var(--color-primary)] text-[var(--color-primary-foreground)] hover:opacity-90 font-medium rounded-[var(--radius-sm)] transition-colors cursor-pointer"
+            class="w-full sm:w-auto px-5 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-sm transition-colors cursor-pointer"
           >
             Kembali ke Beranda
           </button>
@@ -59,7 +59,7 @@ import { AuthService } from '../../../core/auth/auth.service';
             hlmBtn
             variant="outline"
             routerLink="/login"
-            class="w-full sm:w-auto px-5 py-2.5 border border-[var(--color-border)] text-[var(--color-foreground)] hover:bg-[var(--color-muted)] font-medium rounded-[var(--radius-sm)] transition-colors cursor-pointer"
+            class="w-full sm:w-auto px-5 py-2.5 border border-border text-foreground hover:bg-muted font-medium rounded-sm transition-colors cursor-pointer"
           >
             Ganti Akun
           </a>

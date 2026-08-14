@@ -18,21 +18,21 @@ export interface NavShortcut {
     <div class="space-y-6 max-w-5xl mx-auto">
       <!-- Greeting Banner -->
       <div
-        class="bg-[var(--color-card)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-6 sm:p-8 shadow-[var(--shadow-2)]"
+        class="bg-card border border-border rounded-lg p-6 sm:p-8 shadow-2"
       >
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 class="font-heading text-2xl sm:text-3xl font-bold text-[var(--color-foreground)] tracking-tight">
+            <h1 class="font-heading text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
               Selamat datang, {{ userName() }}!
             </h1>
-            <p class="text-sm sm:text-base text-[var(--color-muted-foreground)] mt-1">
+            <p class="text-sm sm:text-base text-muted-foreground mt-1">
               Sistem Informasi Rekam Medis Elektronik & Antrian Klinik
             </p>
           </div>
           <div class="flex items-center gap-2">
             @for (role of userRoles(); track role) {
               <span
-                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-[var(--color-primary)] text-[var(--color-primary-foreground)]"
+                class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-primary text-primary-foreground"
               >
                 {{ role }}
               </span>
@@ -43,30 +43,30 @@ export interface NavShortcut {
 
       <!-- Quick Shortcuts Grid -->
       <div>
-        <h2 class="font-heading text-lg font-semibold text-[var(--color-foreground)] mb-4">
+        <h2 class="font-heading text-lg font-semibold text-foreground mb-4">
           Akses Cepat Modul
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           @for (shortcut of shortcuts(); track shortcut.route) {
             <a
               [routerLink]="shortcut.route"
-              class="group bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-primary)] rounded-[var(--radius-md)] p-5 shadow-[var(--shadow-1)] hover:shadow-[var(--shadow-2)] transition-all flex flex-col justify-between cursor-pointer"
+              class="group bg-card border border-border hover:border-primary rounded-md p-5 shadow-1 hover:shadow-2 transition-all flex flex-col justify-between cursor-pointer"
             >
               <div class="space-y-3">
                 <div
-                  class="h-10 w-10 rounded-lg bg-[var(--color-background)] text-[var(--color-primary)] flex items-center justify-center group-hover:bg-[var(--color-primary)] group-hover:text-[var(--color-primary-foreground)] transition-colors"
+                  class="h-10 w-10 rounded-lg bg-background text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
                   [innerHTML]="shortcut.iconSvg"
                 ></div>
                 <div>
-                  <h3 class="font-heading font-semibold text-[var(--color-foreground)] group-hover:text-[var(--color-primary)] transition-colors">
+                  <h3 class="font-heading font-semibold text-foreground group-hover:text-primary transition-colors">
                     {{ shortcut.label }}
                   </h3>
-                  <p class="text-xs text-[var(--color-muted-foreground)] mt-1 leading-relaxed">
+                  <p class="text-xs text-muted-foreground mt-1 leading-relaxed">
                     {{ shortcut.description }}
                   </p>
                 </div>
               </div>
-              <div class="mt-4 flex items-center text-xs font-medium text-[var(--color-primary)] group-hover:translate-x-1 transition-transform">
+              <div class="mt-4 flex items-center text-xs font-medium text-primary group-hover:translate-x-1 transition-transform">
                 Buka Modul &rarr;
               </div>
             </a>

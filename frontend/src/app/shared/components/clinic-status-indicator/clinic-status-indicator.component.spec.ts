@@ -32,7 +32,7 @@ describe('ClinicStatusIndicatorComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should render Klinik Buka badge with semantic token --color-accent and NO pulse or emerald hardcode when open', () => {
+  it('should render Klinik Buka badge with semantic token accent and NO pulse or emerald hardcode when open', () => {
     klinikInfoSignal.set({ id: 1, nama: 'Klinik', isBuka: true });
     klinikServiceSpy.isKlinikBuka.mockReturnValue(true);
 
@@ -44,17 +44,17 @@ describe('ClinicStatusIndicatorComponent', () => {
 
     const badgeEl = compiled.querySelector('span[hlmBadge]') as HTMLElement;
     expect(badgeEl).toBeTruthy();
-    expect(badgeEl.className).toContain('text-[var(--color-accent)]');
+    expect(badgeEl.className).toContain('text-accent');
     expect(badgeEl.className).not.toContain('bg-emerald-500');
     expect(badgeEl.className).not.toContain('border-emerald-200');
 
     const dotEl = compiled.querySelector('span.rounded-full') as HTMLElement;
     expect(dotEl).toBeTruthy();
-    expect(dotEl.className).toContain('bg-[var(--color-accent)]');
+    expect(dotEl.className).toContain('bg-accent');
     expect(dotEl.className).not.toContain('animate-pulse');
   });
 
-  it('should render Klinik Tutup badge with --color-muted-foreground and NO red/destructive when closed', () => {
+  it('should render Klinik Tutup badge with muted-foreground and NO red/destructive when closed', () => {
     klinikInfoSignal.set({ id: 1, nama: 'Klinik', isBuka: false });
     klinikServiceSpy.isKlinikBuka.mockReturnValue(false);
 
@@ -66,14 +66,14 @@ describe('ClinicStatusIndicatorComponent', () => {
 
     const badgeEl = compiled.querySelector('span[hlmBadge]') as HTMLElement;
     expect(badgeEl).toBeTruthy();
-    expect(badgeEl.className).toContain('text-[var(--color-muted-foreground)]');
-    expect(badgeEl.className).toContain('bg-[var(--color-muted)]');
+    expect(badgeEl.className).toContain('text-muted-foreground');
+    expect(badgeEl.className).toContain('bg-muted');
     expect(badgeEl.className).not.toContain('bg-red-');
     expect(badgeEl.className).not.toContain('text-destructive');
     expect(badgeEl.className).not.toContain('bg-destructive');
 
     const dotEl = compiled.querySelector('span.rounded-full') as HTMLElement;
     expect(dotEl).toBeTruthy();
-    expect(dotEl.className).toContain('bg-[var(--color-muted-foreground)]');
+    expect(dotEl.className).toContain('bg-muted-foreground');
   });
 });
