@@ -35,48 +35,25 @@ import { Pasien } from '../../pasien.types';
     }
 
     <!-- ── Page Wrapper (Zona Content — DESIGN.md §1.1) ── -->
-    <div
-      style="
-        min-height: 100%;
-        padding: var(--space-6);
-        background-color: var(--color-background);
-      "
-    >
+    <div class="min-h-full p-6 bg-background">
       <!-- Top nav back link -->
-      <div style="margin-bottom: var(--space-4);">
+      <div class="mb-4">
         <a
           routerLink="/pasien"
-          style="
-            font-family: var(--font-body);
-            font-size: var(--text-sm);
-            font-weight: 600;
-            color: var(--color-primary);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-1);
-          "
+          class="font-sans text-sm font-semibold text-primary no-underline inline-flex items-center gap-1"
         >
           &larr; Kembali ke Daftar Pasien
         </a>
       </div>
 
       @if (isLoading()) {
-        <div
-          style="
-            padding: var(--space-12);
-            text-align: center;
-            color: var(--color-muted-foreground);
-            font-family: var(--font-body);
-          "
-        >
+        <div class="p-12 text-center text-muted-foreground font-sans">
           <svg
-            class="kl-spinner"
+            class="kl-spinner text-primary mx-auto mb-3 block"
             xmlns="http://www.w3.org/2000/svg"
             width="24" height="24" viewBox="0 0 24 24"
-            fill="none" stroke="var(--color-primary)" stroke-width="2.5"
+            fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round" aria-hidden="true"
-            style="margin: 0 auto 12px; display:block;"
           >
             <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
           </svg>
@@ -84,56 +61,17 @@ import { Pasien } from '../../pasien.types';
         </div>
       } @else if (pasien()) {
         <!-- Header banner -->
-        <div
-          style="
-            background: var(--color-card);
-            border: 1px solid var(--color-border);
-            border-radius: var(--radius-md);
-            box-shadow: var(--shadow-2);
-            padding: var(--space-6);
-            margin-bottom: var(--space-6);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: var(--space-4);
-          "
-        >
+        <div class="bg-card border border-border rounded-md shadow-2 p-6 mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: 4px;">
-              <h1
-                style="
-                  font-family: var(--font-heading);
-                  font-size: var(--text-2xl);
-                  font-weight: 700;
-                  color: var(--color-foreground);
-                  margin: 0;
-                "
-              >
+            <div class="flex items-center gap-3 mb-1">
+              <h1 class="font-heading text-2xl font-bold text-foreground m-0">
                 {{ pasien()!.nama }}
               </h1>
-              <span
-                style="
-                  font-family: var(--font-body);
-                  font-size: var(--text-xs);
-                  padding: 2px 8px;
-                  border-radius: var(--radius-full);
-                  background: var(--color-muted);
-                  color: var(--color-muted-foreground);
-                  font-weight: 600;
-                "
-              >
+              <span class="font-sans text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-semibold">
                 ID Pasien #{{ pasien()!.id }}
               </span>
             </div>
-            <p
-              style="
-                font-family: var(--font-body);
-                font-size: var(--text-sm);
-                color: var(--color-muted-foreground);
-                margin: 0;
-              "
-            >
+            <p class="font-sans text-sm text-muted-foreground m-0">
               Versi Data: v{{ pasien()!.version }}
             </p>
           </div>
@@ -141,13 +79,7 @@ import { Pasien } from '../../pasien.types';
           @if (canEdit()) {
             <a
               [routerLink]="['/pasien', pasien()!.id, 'edit']"
-              class="kl-btn-secondary"
-              style="
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: var(--space-2);
-              "
+              class="kl-btn-secondary no-underline inline-flex items-center gap-2"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -164,100 +96,59 @@ import { Pasien } from '../../pasien.types';
         </div>
 
         <!-- Grid layout: Biodata + Riwayat Ringkas -->
-        <div
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: var(--space-6);
-          "
-        >
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- ── Card 1: Biodata Lengkap ── -->
-          <div
-            style="
-              background: var(--color-card);
-              border: 1px solid var(--color-border);
-              border-radius: var(--radius-md);
-              box-shadow: var(--shadow-2);
-              padding: var(--space-6);
-            "
-          >
-            <h2
-              style="
-                font-family: var(--font-heading);
-                font-size: var(--text-lg);
-                font-weight: 700;
-                color: var(--color-foreground);
-                margin-bottom: var(--space-4);
-                padding-bottom: var(--space-2);
-                border-bottom: 1px solid var(--color-border);
-              "
-            >
+          <div class="bg-card border border-border rounded-md shadow-2 p-6">
+            <h2 class="font-heading text-lg font-bold text-foreground mb-4 pb-2 border-b border-border">
               Biodata Lengkap
             </h2>
 
-            <dl
-              style="
-                display: grid;
-                grid-template-columns: 140px 1fr;
-                gap: 12px 16px;
-                font-family: var(--font-body);
-                font-size: var(--text-sm);
-                margin: 0;
-              "
-            >
-              <dt style="color: var(--color-muted-foreground); font-weight: 500;">NIK</dt>
-              <dd style="margin: 0; font-weight: 600;">
+            <dl class="grid grid-cols-[140px_1fr] gap-x-4 gap-y-3 font-sans text-sm m-0">
+              <dt class="text-muted-foreground font-medium">NIK</dt>
+              <dd class="m-0 font-semibold">
                 @if (pasien()!.nik) {
                   <app-sensitive-value
                     mode="display"
                     [displayValue]="pasien()!.nik!"
                   />
                 } @else {
-                  <span style="color: var(--color-muted-foreground); font-style: italic;">
+                  <span class="text-muted-foreground italic">
                     (Tidak ada NIK)
                   </span>
                 }
               </dd>
 
-              <dt style="color: var(--color-muted-foreground); font-weight: 500;">Jenis Kelamin</dt>
-              <dd style="margin: 0;">
+              <dt class="text-muted-foreground font-medium">Jenis Kelamin</dt>
+              <dd class="m-0">
                 {{ pasien()!.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
               </dd>
 
-              <dt style="color: var(--color-muted-foreground); font-weight: 500;">Tanggal Lahir</dt>
-              <dd style="margin: 0;">
+              <dt class="text-muted-foreground font-medium">Tanggal Lahir</dt>
+              <dd class="m-0">
                 {{ formatDate(pasien()!.tanggalLahir) }}
               </dd>
 
-              <dt style="color: var(--color-muted-foreground); font-weight: 500;">No. Telepon</dt>
-              <dd style="margin: 0;">
+              <dt class="text-muted-foreground font-medium">No. Telepon</dt>
+              <dd class="m-0">
                 {{ pasien()!.noTelp }}
               </dd>
 
-              <dt style="color: var(--color-muted-foreground); font-weight: 500;">Alamat</dt>
-              <dd style="margin: 0; white-space: pre-wrap;">
+              <dt class="text-muted-foreground font-medium">Alamat</dt>
+              <dd class="m-0 whitespace-pre-wrap">
                 {{ pasien()!.alamat }}
               </dd>
 
-              <dt style="color: var(--color-muted-foreground); font-weight: 500;">Status Consent</dt>
-              <dd style="margin: 0;">
+              <dt class="text-muted-foreground font-medium">Status Consent</dt>
+              <dd class="m-0">
                 @if (pasien()!.consent) {
-                  <span
-                    style="
-                      color: var(--color-accent);
-                      font-weight: 600;
-                      display: inline-flex;
-                      align-items: center;
-                      gap: 4px;
-                    "
-                  >
+                  <span class="text-accent font-semibold inline-flex items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                     Disetujui
                   </span>
                 } @else {
-                  <span style="color: var(--color-destructive); font-weight: 600;">
+                  <span class="text-destructive font-semibold">
                     Belum disetujui
                   </span>
                 }
@@ -266,72 +157,33 @@ import { Pasien } from '../../pasien.types';
           </div>
 
           <!-- ── Card 2: Riwayat Kunjungan Ringkas ── -->
-          <div
-            style="
-              background: var(--color-card);
-              border: 1px solid var(--color-border);
-              border-radius: var(--radius-md);
-              box-shadow: var(--shadow-2);
-              padding: var(--space-6);
-            "
-          >
-            <h2
-              style="
-                font-family: var(--font-heading);
-                font-size: var(--text-lg);
-                font-weight: 700;
-                color: var(--color-foreground);
-                margin-bottom: var(--space-4);
-                padding-bottom: var(--space-2);
-                border-bottom: 1px solid var(--color-border);
-              "
-            >
+          <div class="bg-card border border-border rounded-md shadow-2 p-6">
+            <h2 class="font-heading text-lg font-bold text-foreground mb-4 pb-2 border-b border-border">
               Riwayat Kunjungan Ringkas
             </h2>
 
             @if (pasien()!.riwayatKunjunganRingkas && pasien()!.riwayatKunjunganRingkas.length > 0) {
-              <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+              <ul class="list-none p-0 m-0 flex flex-col gap-2">
                 @for (kunjungan of pasien()!.riwayatKunjunganRingkas; track kunjungan.kunjunganId) {
-                  <li
-                    style="
-                      display: flex;
-                      align-items: center;
-                      justify-content: space-between;
-                      padding: 10px 12px;
-                      background: var(--color-muted);
-                      border-radius: var(--radius-sm);
-                      font-family: var(--font-body);
-                      font-size: var(--text-sm);
-                    "
-                  >
+                  <li class="flex items-center justify-between p-2.5 sm:px-3 bg-muted rounded-sm font-sans text-sm">
                     <div>
-                      <span style="font-weight: 600; color: var(--color-foreground);">
+                      <span class="font-semibold text-foreground">
                         Kunjungan #{{ kunjungan.kunjunganId }}
                       </span>
-                      <span style="display: block; font-size: var(--text-xs); color: var(--color-muted-foreground);">
+                      <span class="block text-xs text-muted-foreground">
                         {{ formatDate(kunjungan.tanggal) }}
                       </span>
                     </div>
 
                     <!-- Status badge (DESIGN.md §2 status colors) -->
-                    <span
-                      [style]="getStatusBadgeStyle(kunjungan.status)"
-                    >
+                    <span [class]="getStatusBadgeClass(kunjungan.status)">
                       {{ getStatusLabel(kunjungan.status) }}
                     </span>
                   </li>
                 }
               </ul>
             } @else {
-              <div
-                style="
-                  padding: var(--space-8);
-                  text-align: center;
-                  color: var(--color-muted-foreground);
-                  font-family: var(--font-body);
-                  font-size: var(--text-sm);
-                "
-              >
+              <div class="p-8 text-center text-muted-foreground font-sans text-sm">
                 Belum ada riwayat kunjungan recorded.
               </div>
             }
@@ -416,19 +268,19 @@ export class PasienDetailComponent implements OnInit {
     }
   }
 
-  getStatusBadgeStyle(status: string): string {
-    const base = 'font-size:12px; font-weight:600; padding:2px 8px; border-radius:var(--radius-full);';
+  getStatusBadgeClass(status: string): string {
+    const base = 'text-xs font-semibold px-2 py-0.5 rounded-full';
     switch (status) {
       case 'menunggu':
-        return `${base} background:var(--color-muted); color:var(--color-warning-foreground); border:1px solid var(--color-warning);`;
+        return `${base} bg-muted text-warning-foreground border border-warning`;
       case 'dipanggil':
-        return `${base} background:var(--color-primary); color:var(--color-primary-foreground);`;
+        return `${base} bg-primary text-primary-foreground`;
       case 'selesai':
-        return `${base} background:var(--color-accent); color:var(--color-accent-foreground);`;
+        return `${base} bg-accent text-accent-foreground`;
       case 'tidak_hadir':
-        return `${base} background:var(--color-muted); color:var(--color-muted-foreground); border:1px solid var(--color-border);`;
+        return `${base} bg-muted text-muted-foreground border border-border`;
       default:
-        return `${base} background:var(--color-muted); color:var(--color-muted-foreground);`;
+        return `${base} bg-muted text-muted-foreground`;
     }
   }
 }

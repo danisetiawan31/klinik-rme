@@ -37,54 +37,21 @@ import { PasienSearchItem } from '../../pasien.types';
     }
 
     <!-- ── Page Wrapper (Zona Content — DESIGN.md §1.1) ── -->
-    <div
-      style="
-        min-height: 100%;
-        padding: var(--space-6);
-        background-color: var(--color-background);
-      "
-    >
+    <div class="min-h-full p-6 bg-background">
       <!-- Header section -->
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: var(--space-6);
-        "
-      >
+      <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
         <div>
-          <h1
-            style="
-              font-family: var(--font-heading);
-              font-size: var(--text-2xl);
-              font-weight: 700;
-              color: var(--color-foreground);
-              margin-bottom: var(--space-1);
-            "
-          >
+          <h1 class="font-heading text-2xl font-bold text-foreground mb-1">
             Pencarian &amp; Data Pasien
           </h1>
-          <p
-            style="
-              font-family: var(--font-body);
-              font-size: var(--text-sm);
-              color: var(--color-muted-foreground);
-            "
-          >
+          <p class="font-sans text-sm text-muted-foreground">
             Cari data pasien berdasarkan Nama atau NIK.
           </p>
         </div>
 
         <a
           routerLink="/pasien/baru"
-          class="kl-btn-primary"
-          style="
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: var(--space-2);
-          "
+          class="kl-btn-primary no-underline inline-flex items-center gap-2"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -101,34 +68,16 @@ import { PasienSearchItem } from '../../pasien.types';
       </div>
 
       <!-- Search form card -->
-      <div
-        style="
-          background: var(--color-card);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-2);
-          padding: var(--space-6);
-          margin-bottom: var(--space-6);
-        "
-      >
+      <div class="bg-card border border-border rounded-md shadow-2 p-6 mb-6">
         <form
           [formGroup]="searchForm"
-          style="
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: var(--space-4);
-          "
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4"
         >
           <!-- Nama field (Debounced live-search) -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="search-nama"
-              style="
-                font-family: var(--font-body);
-                font-size: var(--text-sm);
-                font-weight: 600;
-                color: var(--color-foreground);
-              "
+              class="font-sans text-sm font-semibold text-foreground"
             >
               Nama Pasien
             </label>
@@ -142,15 +91,10 @@ import { PasienSearchItem } from '../../pasien.types';
           </div>
 
           <!-- NIK field (Auto-trigger exactly at 16 digits) -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="search-nik"
-              style="
-                font-family: var(--font-body);
-                font-size: var(--text-sm);
-                font-weight: 600;
-                color: var(--color-foreground);
-              "
+              class="font-sans text-sm font-semibold text-foreground"
             >
               NIK
             </label>
@@ -168,31 +112,15 @@ import { PasienSearchItem } from '../../pasien.types';
       </div>
 
       <!-- Results section -->
-      <div
-        style="
-          background: var(--color-card);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-2);
-          overflow: hidden;
-        "
-      >
+      <div class="bg-card border border-border rounded-md shadow-2 overflow-hidden">
         @if (isLoading()) {
-          <div
-            style="
-              padding: var(--space-12);
-              text-align: center;
-              color: var(--color-muted-foreground);
-              font-family: var(--font-body);
-            "
-          >
+          <div class="p-12 text-center text-muted-foreground font-sans">
             <svg
-              class="kl-spinner"
+              class="kl-spinner text-primary mx-auto mb-3 block"
               xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="var(--color-primary)" stroke-width="2.5"
+              fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round" aria-hidden="true"
-              style="margin: 0 auto 12px; display:block;"
             >
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
@@ -200,93 +128,65 @@ import { PasienSearchItem } from '../../pasien.types';
           </div>
         } @else if (items().length === 0) {
           <!-- Empty State -->
-          <div
-            style="
-              padding: var(--space-12);
-              text-align: center;
-              color: var(--color-muted-foreground);
-              font-family: var(--font-body);
-            "
-          >
+          <div class="p-12 text-center text-muted-foreground font-sans">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="40" height="40" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="1.5"
               stroke-linecap="round" stroke-linejoin="round"
-              style="margin: 0 auto 12px; display:block; opacity: 0.6;"
+              class="mx-auto mb-3 block opacity-60"
               aria-hidden="true"
             >
               <circle cx="11" cy="11" r="8"/>
               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <p style="font-size: var(--text-base); font-weight: 600; color: var(--color-foreground); margin-bottom: 4px;">
+            <p class="text-base font-semibold text-foreground mb-1">
               Tidak ada data pasien ditemukan
             </p>
-            <p style="font-size: var(--text-sm); max-width: 360px; margin: 0 auto;">
+            <p class="text-sm max-w-sm mx-auto">
               Coba ubah kata kunci pencarian NIK atau nama pasien di atas, atau daftarkan pasien baru.
             </p>
           </div>
         } @else {
           <!-- Table list -->
-          <div style="overflow-x: auto;">
-            <table
-              style="
-                width: 100%;
-                border-collapse: collapse;
-                text-align: left;
-                font-family: var(--font-body);
-                font-size: var(--text-sm);
-              "
-            >
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse text-left font-sans text-sm">
               <thead>
-                <tr
-                  style="
-                    background: var(--color-muted);
-                    color: var(--color-foreground);
-                    border-bottom: 1px solid var(--color-border);
-                  "
-                >
-                  <th style="padding: 12px 16px; font-weight: 600;">NIK</th>
-                  <th style="padding: 12px 16px; font-weight: 600;">Nama Lengkap</th>
-                  <th style="padding: 12px 16px; font-weight: 600;">Tanggal Lahir</th>
-                  <th style="padding: 12px 16px; font-weight: 600; text-align: right;">Aksi</th>
+                <tr class="bg-muted text-foreground border-b border-border">
+                  <th class="px-4 py-3 font-semibold">NIK</th>
+                  <th class="px-4 py-3 font-semibold">Nama Lengkap</th>
+                  <th class="px-4 py-3 font-semibold">Tanggal Lahir</th>
+                  <th class="px-4 py-3 font-semibold text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 @for (pasien of items(); track pasien.id) {
                   <tr
-                    style="
-                      border-bottom: 1px solid var(--color-border);
-                      transition: background 150ms;
-                      cursor: pointer;
-                    "
-                    onmouseenter="this.style.background='var(--color-background)'"
-                    onmouseleave="this.style.background='transparent'"
+                    class="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
                     (click)="onSelectPasien(pasien.id)"
                   >
-                    <td style="padding: 12px 16px;">
+                    <td class="px-4 py-3">
                       @if (pasien.nik) {
                         <app-sensitive-value
                           mode="display"
                           [displayValue]="pasien.nik"
                         />
                       } @else {
-                        <span style="color: var(--color-muted-foreground); font-style: italic;">
+                        <span class="text-muted-foreground italic">
                           (Tidak ada NIK)
                         </span>
                       }
                     </td>
-                    <td style="padding: 12px 16px; font-weight: 600; color: var(--color-foreground);">
+                    <td class="px-4 py-3 font-semibold text-foreground">
                       {{ pasien.nama }}
                     </td>
-                    <td style="padding: 12px 16px; color: var(--color-muted-foreground);">
+                    <td class="px-4 py-3 text-muted-foreground">
                       {{ formatDate(pasien.tanggalLahir) }}
                     </td>
-                    <td style="padding: 12px 16px; text-align: right;">
+                    <td class="px-4 py-3 text-right">
                       <a
                         [routerLink]="['/pasien', pasien.id]"
-                        class="kl-btn-secondary"
-                        style="padding: 4px 10px; font-size: var(--text-xs); text-decoration: none;"
+                        class="kl-btn-secondary px-2.5 py-1 text-xs no-underline"
                         (click)="$event.stopPropagation()"
                       >
                         Detail &rarr;

@@ -40,85 +40,40 @@ import { nikFormatValidator } from '../../pasien.validators';
     }
 
     <!-- ── Page wrapper (Zona Content — DESIGN.md §1.1) ── -->
-    <div
-      style="
-        min-height:100%;
-        padding: var(--space-6);
-        background-color: var(--color-background);
-      "
-    >
+    <div class="min-h-full p-6 bg-background">
       <!-- Page heading -->
-      <div style="margin-bottom: var(--space-6);">
-        <h1
-          style="
-            font-family: var(--font-heading);
-            font-size: var(--text-2xl);
-            font-weight: 700;
-            color: var(--color-foreground);
-            margin-bottom: var(--space-1);
-          "
-        >
+      <div class="mb-6">
+        <h1 class="font-heading text-2xl font-bold text-foreground mb-1">
           Registrasi Pasien Baru
         </h1>
-        <p
-          style="
-            font-family: var(--font-body);
-            font-size: var(--text-sm);
-            color: var(--color-muted-foreground);
-          "
-        >
-          Lengkapi biodata pasien. Kolom bertanda <span style="color:var(--color-destructive)">*</span> wajib diisi.
+        <p class="font-sans text-sm text-muted-foreground">
+          Lengkapi biodata pasien. Kolom bertanda <span class="text-destructive">*</span> wajib diisi.
         </p>
       </div>
 
       <!-- ── Card form ── -->
-      <div
-        style="
-          background: var(--color-card);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-2);
-          padding: var(--space-8);
-          max-width: 640px;
-        "
-      >
+      <div class="bg-card border border-border rounded-md shadow-2 p-6 sm:p-8 max-w-[640px]">
         <!-- NIK duplicate warning banner (non-blocking) -->
         @if (nikDuplicateWarning()) {
           <div
             role="alert"
             aria-live="polite"
-            style="
-              display: flex;
-              align-items: flex-start;
-              gap: var(--space-2);
-              padding: var(--space-3) var(--space-4);
-              margin-bottom: var(--space-6);
-              background-color: var(--color-muted);
-              border: 1.5px solid var(--color-warning);
-              border-radius: var(--radius-sm);
-            "
+            class="flex items-start gap-2 p-3 sm:px-4 mb-6 bg-muted border border-warning rounded-sm"
           >
             <!-- Warning icon -->
             <svg
               xmlns="http://www.w3.org/2000/svg" width="18" height="18"
               viewBox="0 0 24 24" fill="none"
-              stroke="var(--color-warning)" stroke-width="2"
+              stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round"
-              style="flex-shrink:0; margin-top:1px;"
+              class="text-warning shrink-0 mt-0.5"
               aria-hidden="true"
             >
               <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
               <line x1="12" y1="9" x2="12" y2="13"/>
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            <p
-              style="
-                font-family: var(--font-body);
-                font-size: var(--text-sm);
-                color: var(--color-warning-foreground);
-                margin: 0;
-              "
-            >
+            <p class="font-sans text-sm text-warning-foreground m-0">
               NIK sudah terdaftar atas nama:
               <strong>{{ nikDuplicateWarning()!.nama }}</strong>.
               Anda tetap bisa melanjutkan pendaftaran.
@@ -130,13 +85,13 @@ import { nikFormatValidator } from '../../pasien.validators';
           [formGroup]="form"
           (ngSubmit)="onSubmit()"
           novalidate
-          style="display:flex; flex-direction:column; gap: var(--space-4);"
+          class="flex flex-col gap-4"
         >
           <!-- ── NIK (nullable) ── -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="reg-nik"
-              style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+              class="font-sans text-sm font-semibold text-foreground"
             >
               NIK
             </label>
@@ -152,15 +107,13 @@ import { nikFormatValidator } from '../../pasien.validators';
               (input)="onNikInput()"
             />
             @if (isCheckingNik()) {
-              <span
-                style="font-size:var(--text-xs);color:var(--color-muted-foreground);"
-              >
+              <span class="text-xs text-muted-foreground">
                 Memeriksa NIK…
               </span>
             }
             @if (nikCtrl.touched && nikCtrl.errors?.['nikFormat']) {
               <span
-                style="font-size:var(--text-xs);color:var(--color-destructive);"
+                class="text-xs text-destructive"
                 role="alert"
               >
                 NIK harus berupa 16 digit angka
@@ -169,12 +122,12 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── Nama ── -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="reg-nama"
-              style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+              class="font-sans text-sm font-semibold text-foreground"
             >
-              Nama Lengkap <span style="color:var(--color-destructive)">*</span>
+              Nama Lengkap <span class="text-destructive">*</span>
             </label>
             <input
               id="reg-nama"
@@ -186,7 +139,7 @@ import { nikFormatValidator } from '../../pasien.validators';
             />
             @if (namaCtrl.touched && namaCtrl.errors?.['required']) {
               <span
-                style="font-size:var(--text-xs);color:var(--color-destructive);"
+                class="text-xs text-destructive"
                 role="alert"
               >
                 Nama wajib diisi
@@ -195,12 +148,12 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── Tanggal Lahir ── -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="reg-tgl-lahir"
-              style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+              class="font-sans text-sm font-semibold text-foreground"
             >
-              Tanggal Lahir <span style="color:var(--color-destructive)">*</span>
+              Tanggal Lahir <span class="text-destructive">*</span>
             </label>
             <input
               id="reg-tgl-lahir"
@@ -211,7 +164,7 @@ import { nikFormatValidator } from '../../pasien.validators';
             />
             @if (tanggalLahirCtrl.touched && tanggalLahirCtrl.errors?.['required']) {
               <span
-                style="font-size:var(--text-xs);color:var(--color-destructive);"
+                class="text-xs text-destructive"
                 role="alert"
               >
                 Tanggal lahir wajib diisi
@@ -220,18 +173,17 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── Jenis Kelamin ── -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="reg-jenis-kelamin"
-              style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+              class="font-sans text-sm font-semibold text-foreground"
             >
-              Jenis Kelamin <span style="color:var(--color-destructive)">*</span>
+              Jenis Kelamin <span class="text-destructive">*</span>
             </label>
             <select
               id="reg-jenis-kelamin"
               formControlName="jenisKelamin"
-              class="kl-input"
-              style="cursor:pointer;"
+              class="kl-input cursor-pointer"
               [attr.aria-invalid]="jenisKelaminCtrl.touched && jenisKelaminCtrl.invalid ? 'true' : null"
             >
               <option value="" disabled>-- Pilih jenis kelamin --</option>
@@ -240,7 +192,7 @@ import { nikFormatValidator } from '../../pasien.validators';
             </select>
             @if (jenisKelaminCtrl.touched && jenisKelaminCtrl.errors?.['required']) {
               <span
-                style="font-size:var(--text-xs);color:var(--color-destructive);"
+                class="text-xs text-destructive"
                 role="alert"
               >
                 Jenis kelamin wajib dipilih
@@ -249,25 +201,24 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── Alamat ── -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="reg-alamat"
-              style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+              class="font-sans text-sm font-semibold text-foreground"
             >
-              Alamat <span style="color:var(--color-destructive)">*</span>
+              Alamat <span class="text-destructive">*</span>
             </label>
             <textarea
               id="reg-alamat"
               formControlName="alamat"
               rows="3"
               placeholder="Alamat lengkap pasien"
-              class="kl-input"
-              style="resize:vertical; min-height:72px;"
+              class="kl-input resize-y min-h-[72px]"
               [attr.aria-invalid]="alamatCtrl.touched && alamatCtrl.invalid ? 'true' : null"
             ></textarea>
             @if (alamatCtrl.touched && alamatCtrl.errors?.['required']) {
               <span
-                style="font-size:var(--text-xs);color:var(--color-destructive);"
+                class="text-xs text-destructive"
                 role="alert"
               >
                 Alamat wajib diisi
@@ -276,12 +227,12 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── No. Telepon ── -->
-          <div style="display:flex; flex-direction:column; gap:5px;">
+          <div class="flex flex-col gap-1.5">
             <label
               for="reg-notelp"
-              style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+              class="font-sans text-sm font-semibold text-foreground"
             >
-              Nomor Telepon <span style="color:var(--color-destructive)">*</span>
+              Nomor Telepon <span class="text-destructive">*</span>
             </label>
             <input
               id="reg-notelp"
@@ -294,7 +245,7 @@ import { nikFormatValidator } from '../../pasien.validators';
             />
             @if (noTelpCtrl.touched && noTelpCtrl.errors?.['required']) {
               <span
-                style="font-size:var(--text-xs);color:var(--color-destructive);"
+                class="text-xs text-destructive"
                 role="alert"
               >
                 Nomor telepon wajib diisi
@@ -303,57 +254,26 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── Consent ── -->
-          <div
-            style="
-              padding: var(--space-4);
-              background: var(--color-muted);
-              border: 1px solid var(--color-border);
-              border-radius: var(--radius-sm);
-            "
-          >
-            <label
-              style="
-                display: flex;
-                align-items: flex-start;
-                gap: var(--space-3);
-                cursor: pointer;
-              "
-            >
+          <div class="p-4 bg-muted border border-border rounded-sm">
+            <label class="flex items-start gap-3 cursor-pointer">
               <input
                 id="reg-consent"
                 type="checkbox"
                 formControlName="consent"
-                style="
-                  width: 18px; height: 18px;
-                  flex-shrink: 0;
-                  margin-top: 2px;
-                  accent-color: var(--color-primary);
-                  cursor: pointer;
-                "
+                class="w-4 h-4 shrink-0 mt-0.5 accent-primary cursor-pointer"
                 [attr.aria-invalid]="consentCtrl.touched && consentCtrl.invalid ? 'true' : null"
               />
-              <span
-                style="
-                  font-family: var(--font-body);
-                  font-size: var(--text-sm);
-                  color: var(--color-foreground);
-                  line-height: 1.6;
-                "
-              >
+              <span class="font-sans text-sm text-foreground leading-relaxed">
                 <strong>Persetujuan pengumpulan data pribadi</strong> — Pasien
                 menyetujui data identitas dan riwayat kesehatannya dikumpulkan
                 serta disimpan oleh klinik untuk keperluan pelayanan medis,
                 sesuai ketentuan yang berlaku.
-                <span style="color:var(--color-destructive)">*</span>
+                <span class="text-destructive">*</span>
               </span>
             </label>
             @if (consentCtrl.touched && consentCtrl.errors?.['required']) {
               <p
-                style="
-                  font-size:var(--text-xs);
-                  color:var(--color-destructive);
-                  margin: var(--space-2) 0 0 calc(18px + var(--space-3));
-                "
+                class="text-xs text-destructive mt-2 ml-7"
                 role="alert"
               >
                 Persetujuan wajib diberikan sebelum pendaftaran dapat dilanjutkan
@@ -362,14 +282,7 @@ import { nikFormatValidator } from '../../pasien.validators';
           </div>
 
           <!-- ── Actions ── -->
-          <div
-            style="
-              display: flex;
-              gap: var(--space-3);
-              justify-content: flex-end;
-              padding-top: var(--space-2);
-            "
-          >
+          <div class="flex gap-3 justify-end pt-2">
             <button
               type="button"
               class="kl-btn-secondary"

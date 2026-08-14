@@ -30,94 +30,47 @@ import { nikFormatValidator } from '../../pasien.validators';
     }
 
     <!-- ── Page wrapper (Zona Content — DESIGN.md §1.1) ── -->
-    <div
-      style="
-        min-height: 100%;
-        padding: var(--space-6);
-        background-color: var(--color-background);
-      "
-    >
+    <div class="min-h-full p-6 bg-background">
       <!-- Page heading -->
-      <div style="margin-bottom: var(--space-6);">
-        <h1
-          style="
-            font-family: var(--font-heading);
-            font-size: var(--text-2xl);
-            font-weight: 700;
-            color: var(--color-foreground);
-            margin-bottom: var(--space-1);
-          "
-        >
+      <div class="mb-6">
+        <h1 class="font-heading text-2xl font-bold text-foreground mb-1">
           Edit Biodata Pasien
         </h1>
-        <p
-          style="
-            font-family: var(--font-body);
-            font-size: var(--text-sm);
-            color: var(--color-muted-foreground);
-          "
-        >
+        <p class="font-sans text-sm text-muted-foreground">
           Perbarui data identitas pasien. Versi Data Saat Ini: <strong>v{{ version() }}</strong>
         </p>
       </div>
 
       <!-- ── Card Form ── -->
-      <div
-        style="
-          background: var(--color-card);
-          border: 1px solid var(--color-border);
-          border-radius: var(--radius-md);
-          box-shadow: var(--shadow-2);
-          padding: var(--space-8);
-          max-width: 640px;
-        "
-      >
+      <div class="bg-card border border-border rounded-md shadow-2 p-6 sm:p-8 max-w-[640px]">
         <!-- 409 Optimistic Lock Hybrid UX Banner -->
         @if (isConflict()) {
           <div
             role="alert"
             aria-live="assertive"
-            style="
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              gap: var(--space-3);
-              padding: var(--space-4);
-              margin-bottom: var(--space-6);
-              background-color: var(--color-muted);
-              border: 1.5px solid var(--color-warning);
-              border-radius: var(--radius-sm);
-              flex-wrap: wrap;
-            "
+            class="flex items-center justify-between gap-3 p-4 mb-6 bg-muted border border-warning rounded-sm flex-wrap"
           >
-            <div style="display: flex; align-items: center; gap: var(--space-3);">
+            <div class="flex items-center gap-3">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="20" height="20" viewBox="0 0 24 24"
-                fill="none" stroke="var(--color-warning)" stroke-width="2"
+                fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round"
+                class="text-warning shrink-0"
                 aria-hidden="true"
               >
                 <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                 <line x1="12" y1="9" x2="12" y2="13"/>
                 <line x1="12" y1="17" x2="12.01" y2="17"/>
               </svg>
-              <span
-                style="
-                  font-family: var(--font-body);
-                  font-size: var(--text-sm);
-                  font-weight: 600;
-                  color: var(--color-warning-foreground);
-                "
-              >
+              <span class="font-sans text-sm font-semibold text-warning-foreground">
                 Data sudah diubah oleh staff lain.
               </span>
             </div>
 
             <button
               type="button"
-              class="kl-btn-secondary"
-              style="font-size: var(--text-xs); padding: 4px 12px;"
+              class="kl-btn-secondary text-xs px-3 py-1"
               [disabled]="isRefetching()"
               (click)="onReloadLatest()"
             >
@@ -131,21 +84,13 @@ import { nikFormatValidator } from '../../pasien.validators';
         }
 
         @if (isLoadingInitial()) {
-          <div
-            style="
-              padding: var(--space-8);
-              text-align: center;
-              color: var(--color-muted-foreground);
-              font-family: var(--font-body);
-            "
-          >
+          <div class="p-8 text-center text-muted-foreground font-sans">
             <svg
-              class="kl-spinner"
+              class="kl-spinner text-primary mx-auto mb-3 block"
               xmlns="http://www.w3.org/2000/svg"
               width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="var(--color-primary)" stroke-width="2.5"
+              fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round" aria-hidden="true"
-              style="margin: 0 auto 12px; display:block;"
             >
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
@@ -156,13 +101,13 @@ import { nikFormatValidator } from '../../pasien.validators';
             [formGroup]="form"
             (ngSubmit)="onSubmit()"
             novalidate
-            style="display:flex; flex-direction:column; gap: var(--space-4);"
+            class="flex flex-col gap-4"
           >
             <!-- ── NIK (nullable) ── -->
-            <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="flex flex-col gap-1.5">
               <label
                 for="edit-nik"
-                style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+                class="font-sans text-sm font-semibold text-foreground"
               >
                 NIK
               </label>
@@ -178,7 +123,7 @@ import { nikFormatValidator } from '../../pasien.validators';
               />
               @if (nikCtrl.touched && nikCtrl.errors?.['nikFormat']) {
                 <span
-                  style="font-size:var(--text-xs);color:var(--color-destructive);"
+                  class="text-xs text-destructive"
                   role="alert"
                 >
                   NIK harus berupa 16 digit angka
@@ -187,12 +132,12 @@ import { nikFormatValidator } from '../../pasien.validators';
             </div>
 
             <!-- ── Nama ── -->
-            <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="flex flex-col gap-1.5">
               <label
                 for="edit-nama"
-                style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+                class="font-sans text-sm font-semibold text-foreground"
               >
-                Nama Lengkap <span style="color:var(--color-destructive)">*</span>
+                Nama Lengkap <span class="text-destructive">*</span>
               </label>
               <input
                 id="edit-nama"
@@ -204,7 +149,7 @@ import { nikFormatValidator } from '../../pasien.validators';
               />
               @if (namaCtrl.touched && namaCtrl.errors?.['required']) {
                 <span
-                  style="font-size:var(--text-xs);color:var(--color-destructive);"
+                  class="text-xs text-destructive"
                   role="alert"
                 >
                   Nama wajib diisi
@@ -213,12 +158,12 @@ import { nikFormatValidator } from '../../pasien.validators';
             </div>
 
             <!-- ── Tanggal Lahir ── -->
-            <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="flex flex-col gap-1.5">
               <label
                 for="edit-tgl-lahir"
-                style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+                class="font-sans text-sm font-semibold text-foreground"
               >
-                Tanggal Lahir <span style="color:var(--color-destructive)">*</span>
+                Tanggal Lahir <span class="text-destructive">*</span>
               </label>
               <input
                 id="edit-tgl-lahir"
@@ -229,7 +174,7 @@ import { nikFormatValidator } from '../../pasien.validators';
               />
               @if (tanggalLahirCtrl.touched && tanggalLahirCtrl.errors?.['required']) {
                 <span
-                  style="font-size:var(--text-xs);color:var(--color-destructive);"
+                  class="text-xs text-destructive"
                   role="alert"
                 >
                   Tanggal lahir wajib diisi
@@ -238,18 +183,17 @@ import { nikFormatValidator } from '../../pasien.validators';
             </div>
 
             <!-- ── Jenis Kelamin ── -->
-            <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="flex flex-col gap-1.5">
               <label
                 for="edit-jenis-kelamin"
-                style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+                class="font-sans text-sm font-semibold text-foreground"
               >
-                Jenis Kelamin <span style="color:var(--color-destructive)">*</span>
+                Jenis Kelamin <span class="text-destructive">*</span>
               </label>
               <select
                 id="edit-jenis-kelamin"
                 formControlName="jenisKelamin"
-                class="kl-input"
-                style="cursor:pointer;"
+                class="kl-input cursor-pointer"
                 [attr.aria-invalid]="jenisKelaminCtrl.touched && jenisKelaminCtrl.invalid ? 'true' : null"
               >
                 <option value="" disabled>-- Pilih jenis kelamin --</option>
@@ -258,7 +202,7 @@ import { nikFormatValidator } from '../../pasien.validators';
               </select>
               @if (jenisKelaminCtrl.touched && jenisKelaminCtrl.errors?.['required']) {
                 <span
-                  style="font-size:var(--text-xs);color:var(--color-destructive);"
+                  class="text-xs text-destructive"
                   role="alert"
                 >
                   Jenis kelamin wajib dipilih
@@ -267,25 +211,24 @@ import { nikFormatValidator } from '../../pasien.validators';
             </div>
 
             <!-- ── Alamat ── -->
-            <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="flex flex-col gap-1.5">
               <label
                 for="edit-alamat"
-                style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+                class="font-sans text-sm font-semibold text-foreground"
               >
-                Alamat <span style="color:var(--color-destructive)">*</span>
+                Alamat <span class="text-destructive">*</span>
               </label>
               <textarea
                 id="edit-alamat"
                 formControlName="alamat"
                 rows="3"
                 placeholder="Alamat lengkap pasien"
-                class="kl-input"
-                style="resize:vertical; min-height:72px;"
+                class="kl-input resize-y min-h-[72px]"
                 [attr.aria-invalid]="alamatCtrl.touched && alamatCtrl.invalid ? 'true' : null"
               ></textarea>
               @if (alamatCtrl.touched && alamatCtrl.errors?.['required']) {
                 <span
-                  style="font-size:var(--text-xs);color:var(--color-destructive);"
+                  class="text-xs text-destructive"
                   role="alert"
                 >
                   Alamat wajib diisi
@@ -294,12 +237,12 @@ import { nikFormatValidator } from '../../pasien.validators';
             </div>
 
             <!-- ── No. Telepon ── -->
-            <div style="display:flex; flex-direction:column; gap:5px;">
+            <div class="flex flex-col gap-1.5">
               <label
                 for="edit-notelp"
-                style="font-family:var(--font-body);font-size:var(--text-sm);font-weight:600;color:var(--color-foreground);"
+                class="font-sans text-sm font-semibold text-foreground"
               >
-                Nomor Telepon <span style="color:var(--color-destructive)">*</span>
+                Nomor Telepon <span class="text-destructive">*</span>
               </label>
               <input
                 id="edit-notelp"
@@ -312,7 +255,7 @@ import { nikFormatValidator } from '../../pasien.validators';
               />
               @if (noTelpCtrl.touched && noTelpCtrl.errors?.['required']) {
                 <span
-                  style="font-size:var(--text-xs);color:var(--color-destructive);"
+                  class="text-xs text-destructive"
                   role="alert"
                 >
                   Nomor telepon wajib diisi
@@ -321,14 +264,7 @@ import { nikFormatValidator } from '../../pasien.validators';
             </div>
 
             <!-- ── Actions ── -->
-            <div
-              style="
-                display: flex;
-                gap: var(--space-3);
-                justify-content: flex-end;
-                padding-top: var(--space-4);
-              "
-            >
+            <div class="flex gap-3 justify-end pt-4">
               <button
                 type="button"
                 class="kl-btn-secondary"
