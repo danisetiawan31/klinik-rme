@@ -8,7 +8,7 @@ const mockAuthService = {
   currentUser: signal({ id: 1, nama: 'Petugas', roles: ['petugas'] }),
 };
 
-describe('pasienRoutes (Routing Collision Test)', () => {
+describe('pasienRoutes (Routing Collision & Guard Test)', () => {
   let router: Router;
 
   beforeEach(async () => {
@@ -22,27 +22,31 @@ describe('pasienRoutes (Routing Collision Test)', () => {
     router = TestBed.inject(Router);
   });
 
-  it('resolves /baru to PasienFormComponent, not PasienDetailComponent', async () => {
+  it('resolves /baru before :id and :id/edit before :id', () => {
     const config = router.config;
 
-    // Find route 'baru' and route ':id'
     const baruRouteIndex = config.findIndex((r) => r.path === 'baru');
+    const editRouteIndex = config.findIndex((r) => r.path === ':id/edit');
     const idRouteIndex = config.findIndex((r) => r.path === ':id');
 
     expect(baruRouteIndex).toBeGreaterThan(-1);
+    expect(editRouteIndex).toBeGreaterThan(-1);
     expect(idRouteIndex).toBeGreaterThan(-1);
 
-    // Static route 'baru' MUST appear before parameterized route ':id'
+    // Static subpaths MUST appear before parameterized route ':id'
     expect(baruRouteIndex).toBeLessThan(idRouteIndex);
+    expect(editRouteIndex).toBeLessThan(idRouteIndex);
   });
 
   it('enforces RBAC guards on all pasien routes', () => {
     const searchRoute = router.config.find((r) => r.path === '');
     const baruRoute = router.config.find((r) => r.path === 'baru');
+    const editRoute = router.config.find((r) => r.path === ':id/edit');
     const detailRoute = router.config.find((r) => r.path === ':id');
 
     expect(searchRoute?.canActivate).toBeTruthy();
     expect(baruRoute?.canActivate).toBeTruthy();
+    expect(editRoute?.canActivate).toBeTruthy();
     expect(detailRoute?.canActivate).toBeTruthy();
   });
 });

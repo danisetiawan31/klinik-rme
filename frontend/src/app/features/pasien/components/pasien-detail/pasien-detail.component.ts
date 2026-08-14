@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { PasienService } from '../../pasien.service';
@@ -22,6 +24,13 @@ import { Pasien } from '../../pasien.types';
         [message]="errorMessage() || ''"
         type="error"
         (dismiss)="errorMessage.set(null)"
+      />
+    }
+    @if (successMessage()) {
+      <app-toast
+        [message]="successMessage() || ''"
+        type="success"
+        (dismiss)="successMessage.set(null)"
       />
     }
 
@@ -129,27 +138,29 @@ import { Pasien } from '../../pasien.types';
             </p>
           </div>
 
-          <a
-            [routerLink]="['/pasien', pasien()!.id, 'edit']"
-            class="kl-btn-secondary"
-            style="
-              text-decoration: none;
-              display: inline-flex;
-              align-items: center;
-              gap: var(--space-2);
-            "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="15" height="15" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"
-              aria-hidden="true"
+          @if (canEdit()) {
+            <a
+              [routerLink]="['/pasien', pasien()!.id, 'edit']"
+              class="kl-btn-secondary"
+              style="
+                text-decoration: none;
+                display: inline-flex;
+                align-items: center;
+                gap: var(--space-2);
+              "
             >
-              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-            </svg>
-            Edit Biodata
-          </a>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="15" height="15" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+              </svg>
+              Edit Biodata
+            </a>
+          }
         </div>
 
         <!-- Grid layout: Biodata + Riwayat Ringkas -->
@@ -333,12 +344,24 @@ import { Pasien } from '../../pasien.types';
 export class PasienDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private pasienService = inject(PasienService);
+  private authService = inject(AuthService);
 
   readonly pasien = signal<Pasien | null>(null);
   readonly isLoading = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly successMessage = signal<string | null>(null);
+
+  readonly canEdit = computed(() => {
+    const roles = this.authService.currentUser()?.roles || [];
+    return roles.includes('petugas') || roles.includes('admin');
+  });
 
   ngOnInit(): void {
+    const state = history.state as { successMessage?: string };
+    if (state?.successMessage) {
+      this.successMessage.set(state.successMessage);
+    }
+
     const idParam = this.route.snapshot.paramMap.get('id');
     const id = idParam ? parseInt(idParam, 10) : 0;
 

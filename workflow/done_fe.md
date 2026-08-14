@@ -78,3 +78,18 @@
 **Catatan Deviasi & Keputusan Teknis**:
 - **Zona Content Strict Styling**: Halaman `/profil` secara ketat mengikuti panduan Zona Content (`docs/DESIGN.md` §1.1) dengan latar belakang solid (`var(--color-background)`) dan shadow (`var(--shadow-2)`), tanpa radial background gradient aksen teal di belakang panel utama demi menjaga kontras & keterbacaan tinggi.
 - **Inline Error vs Toast**: Sesuai keputusan produk, `INVALID_PASSWORD` ditangani secara inline spesifik di bawah input `passwordLama` karena merupakan error validasi input milik field tertentu, sedangkan `ToastComponent` dikhususkan untuk notifikasi sukses (HTTP 204) & kegagalan teknis murni.
+
+---
+
+## Pasien — Tahap 1-3 (Backlog Item 14 - Selesai Penuh)
+
+- **Fitur**: Modul CRUD pasien untuk staff — registrasi (`/pasien/baru` + consent + NIK format validation + warning duplikasi NIK non-blocking), pencarian (`/pasien` nik/nama dengan debounce 300ms nama & 16-digit NIK auto-trigger, pagination via generic `PaginationComponent` membaca header `X-Total-Count`), halaman detail (`/pasien/:id` + `riwayatKunjunganRingkas`), dan edit biodata (`/pasien/:id/edit` dengan 409 Optimistic Lock hybrid UX).
+- **Verifikasi**: 41 unit test modul Pasien (16 form, 7 list, 6 detail, 5 edit, 2 routes, 5 pagination) mencakup validasi form, search trigger, kalkulasi pagination, 409 hybrid UX (field preservation & manual refetch), route collision (`/baru` & `/:id/edit` vs `/:id`), serta RBAC. Total regresi frontend 24 test files / 111 unit tests PASS 100%.
+
+**Catatan Deviasi & Keputusan Teknis**:
+- `nikFormatValidator()` di-extract ke `pasien.validators.ts` agar reusable di form registrasi & edit tanpa duplikasi logic.
+- Form edit sengaja mengecualikan field `consent` karena `PATCH /pasien/:id` backend silently ignore field tersebut (consent hanya diinput sekali saat registrasi).
+- `PaginationComponent` (`shared/components/pagination/`) dibangun generic dengan Angular 17+ Signal API (`input()`/`output()`), didesain untuk reuse pada modul Antrian (#15) & Admin (#18).
+- Feedback toast sukses (200) setelah edit dikirim via Angular Router `navigation.state` (`history.state.successMessage`) sehingga otomatis bersih saat di-refresh.
+- Self-check hardcode styling (§8) memverifikasi 0 hex literal pada seluruh komponen pasien (menggunakan CSS variables semantik `docs/DESIGN.md`).
+

@@ -20,6 +20,14 @@ export const pasienRoutes: Routes = [
       ),
   },
   {
+    path: ':id/edit',
+    canActivate: [roleGuard('petugas', 'admin')],
+    loadComponent: () =>
+      import('./components/pasien-edit/pasien-edit.component').then(
+        (m) => m.PasienEditComponent
+      ),
+  },
+  {
     path: ':id',
     canActivate: [roleGuard('petugas', 'dokter', 'admin')],
     loadComponent: () =>

@@ -16,15 +16,7 @@ import { Router } from '@angular/router';
 import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { PasienService } from '../../pasien.service';
 import { PasienSearchItem } from '../../pasien.types';
-
-/** Validator: NIK boleh kosong, tapi kalau diisi wajib persis 16 digit angka */
-function nikFormatValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const val: string = control.value ?? '';
-    if (!val) return null; // kosong = nullable, valid
-    return /^\d{16}$/.test(val) ? null : { nikFormat: true };
-  };
-}
+import { nikFormatValidator } from '../../pasien.validators';
 
 @Component({
   selector: 'app-pasien-form',

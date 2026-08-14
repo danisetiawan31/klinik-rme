@@ -6,6 +6,7 @@ import {
   CreatePasienRequest,
   Pasien,
   PasienSearchItem,
+  UpdatePasienRequest,
 } from './pasien.types';
 
 export interface PasienSearchParams {
@@ -77,6 +78,13 @@ export class PasienService {
    */
   getById(id: number): Observable<Pasien> {
     return this.http.get<Pasien>(`${this.base}/${id}`);
+  }
+
+  /**
+   * Update biodata pasien (PATCH /pasien/:id). Payload menyertakan version untuk optimistic locking.
+   */
+  update(id: number, payload: UpdatePasienRequest): Observable<Pasien> {
+    return this.http.patch<Pasien>(`${this.base}/${id}`, payload);
   }
 }
 
