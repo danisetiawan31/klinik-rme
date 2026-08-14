@@ -140,6 +140,14 @@
 - Kartu ringkasan statistik ditulis inline di template `LaporanHarianComponent` (mengikuti pola kartu ringkasan di `AntrianDashboardComponent`) untuk menjaga kesederhanaan scope fitur tanpa menambah overhead registry.
 - Helper `formatJakartaDate()` dieksploitasi ulang untuk format label tanggal bahasa Indonesia di banner informasi bawah.
 
+---
+
+## Addendum — Sentry Observability & Global Error Handling
+
+- **Fitur**: Integrasi `@sentry/angular` pada Frontend Angular. Konfigurasi `sentryDsn` di `environment.ts`, inisialisasi di `app.config.ts` dengan filter sanitasi `beforeSend` (menyensor PII & data rekam medis), dan registrasi provider global `ErrorHandler` (`Sentry.createErrorHandler()`). Penyesuaian `maximumWarning` initial bundle budget di `angular.json` ke 750kB. SDK otomatis berstatus *no-op* jika DSN tidak dikonfigurasi.
+- **Verifikasi**: Vitest (30 test files, 152 unit tests) dan build production (`npx ng build`) PASS 100%.
+
+
 
 
 

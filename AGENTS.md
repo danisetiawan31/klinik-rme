@@ -12,15 +12,17 @@ Dokumen acuan di atas diubah oleh user (bukan agent sepihak). Agent dilarang ber
 
 ## 2. Tech Stack
 
-| Layer      | Teknologi                                                                  |
-| ---------- | -------------------------------------------------------------------------- |
-| Backend    | Go + Gin                                                                   |
-| DB access  | sqlc (generate dari raw SQL) + pgx/v5 sebagai driver                       |
-| Database   | PostgreSQL, migration via golang-migrate (library, auto-run saat start)    |
-| Frontend   | Angular (standalone components, Vitest), Tailwind v4                       |
-| Realtime   | WebSocket, in-memory hub per proses (single-instance)                      |
-| Email      | Resend (invite user, forgot-password)                                      |
-| Deployment | Docker multi-stage, Nginx reverse proxy, docker-compose, GitHub Actions CI |
+| Layer             | Teknologi                                                                  |
+| ----------------- | -------------------------------------------------------------------------- |
+| Backend           | Go + Gin                                                                   |
+| DB access         | sqlc (generate dari raw SQL) + pgx/v5 sebagai driver                       |
+| Database          | PostgreSQL, migration via golang-migrate (library, auto-run saat start)    |
+| Frontend          | Angular (standalone components, Vitest), Tailwind v4                       |
+| Realtime          | WebSocket, in-memory hub per proses (single-instance)                      |
+| Email             | Resend (invite user, forgot-password)                                      |
+| Observability     | Sentry (Error tracking, panic recovery & telemetry BE + FE)                |
+| Code Intelligence | GitNexus (Symbol graph & impact analysis MCP)                              |
+| Deployment        | Docker multi-stage, Nginx reverse proxy, docker-compose, GitHub Actions CI |
 
 ## 3. Prinsip Kerja — ATURAN PALING PENTING DI FILE INI
 

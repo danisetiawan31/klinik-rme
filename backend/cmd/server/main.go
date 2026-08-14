@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/joho/godotenv"
 
 	"github.com/danisetiawan31/klinik-rme/internal/api"
@@ -42,6 +43,29 @@ func main() {
 
 	log.Printf("Configuration loaded successfully (TZ: %s, DB Host: %s:%d, HTTP Port: %s)",
 		cfg.TZ, cfg.DBHost, cfg.DBPort, cfg.HTTPPort)
+
+	// 1b. Initialize Sentry (if SENTRY_DSN configured)
+	if cfg.SentryDSN != "" {
+		if err := sentry.Init(sentry.ClientOptions{
+			Dsn:              cfg.SentryDSN,
+			Environment:      cfg.AppEnv,
+			TracesSampleRate: 1.0,
+			BeforeSend: func(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
+				// Sanitasi payload request untuk melindungi PII (NIK) & data rekam medis klinis
+				if event.Request != nil && event.Request.Data != "" {
+					event.Request.Data = "[FILTERED]"
+				}
+				return event
+			},
+		}); err != nil {
+			log.Printf("Warning: Sentry initialization failed: %v", err)
+		} else {
+			log.Printf("Sentry initialized successfully (Environment: %s)", cfg.AppEnv)
+			defer sentry.Flush(2 * time.Second)
+		}
+	} else {
+		log.Println("Info: SENTRY_DSN not configured, Sentry error tracking is disabled (no-op)")
+	}
 
 	// 2. Run database migrations
 	log.Println("Running database migrations...")

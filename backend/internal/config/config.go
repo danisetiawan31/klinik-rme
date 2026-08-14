@@ -22,6 +22,8 @@ type Config struct {
 	KlinikNama      string
 	KlinikJamBuka   string
 	KlinikJamTutup  string
+	SentryDSN       string
+	AppEnv          string
 }
 
 // Load reads environment variables and strictly validates mandatory variables.
@@ -122,6 +124,12 @@ func Load() (*Config, error) {
 		httpPort = "8080"
 	}
 
+	sentryDSN := os.Getenv("SENTRY_DSN")
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv == "" {
+		appEnv = "development"
+	}
+
 	cfg := &Config{
 		DBHost:          host,
 		DBPort:          port,
@@ -137,6 +145,8 @@ func Load() (*Config, error) {
 		KlinikNama:      klinikNama,
 		KlinikJamBuka:   klinikJamBuka,
 		KlinikJamTutup:  klinikJamTutup,
+		SentryDSN:       sentryDSN,
+		AppEnv:          appEnv,
 	}
 
 	return cfg, nil

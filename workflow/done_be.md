@@ -154,3 +154,11 @@
 - **Resend Invite Transactionality**: Invalidasi token lama & insert token invite baru dieksekusi dalam 1 transaksi DB eksplisit. Dispatch email dilakukan best-effort setelah commit untuk mencegah kegagalan SMTP menggagalkan transaksi DB.
 - **Robust Pre-check Last-Admin Guard**: Penghitungan jumlah admin aktif dilakukan secara preemptive (`q.CountUsersWithRole(ctx, "admin")`) khusus di operasi PATCH roles karena operasi ini tergolong jarang dan tidak concurrency-sensitive.
 - **Safety Handling Query Parameters**: Parameter integer optional pada list audit log (`recordId`, `actorId`) mengabaikan string non-numerik (seperti `abc`) sehingga fallback menjadi un-filtered secara aman tanpa menyebabkan error DB/500.
+
+---
+
+## Addendum — Sentry Observability & Error Tracking
+
+- **Fitur**: Integrasi `github.com/getsentry/sentry-go` pada Go + Gin backend. Konfigurasi `SentryDSN` & `AppEnv` di `config.go`, inisialisasi di `main.go` dengan `BeforeSend` data scrubber untuk menyensor PII/data klinis, serta pelaporan otomatis pada error 5xx di `RespondError` dan unhandled panic di `GlobalRecovery` lengkap dengan tag `requestId`. SDK otomatis berstatus *no-op* jika DSN tidak dikonfigurasi.
+- **Verifikasi**: Seluruh backend test suite (`go test -v -p 1 ./...`) lolos 100% (termasuk PostgreSQL 16 Testcontainers integration).
+
