@@ -1,0 +1,125 @@
+<div class="space-y-6">
+  <!-- Toast Error Notification -->
+  @if (errorMessage()) {
+    <app-toast
+      [message]="errorMessage() || ''"
+      type="error"
+      (dismiss)="errorMessage.set(null)"
+    />
+  }
+
+  <!-- Header Section -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-foreground font-heading">
+        Laporan Harian
+      </h1>
+      <p class="text-sm text-muted-foreground mt-1">
+        Rekapitulasi operasional kunjungan dan status pasien per hari.
+      </p>
+    </div>
+
+    <!-- Date Filter Toolbar -->
+    <div class="flex items-center gap-3">
+      <label for="laporan-tanggal-input" class="text-sm font-medium text-foreground whitespace-nowrap">
+        Tanggal:
+      </label>
+      <input
+        id="laporan-tanggal-input"
+        type="date"
+        [value]="tanggalFilter()"
+        (change)="onTanggalChange($any($event.target).value)"
+        class="kl-input cursor-pointer text-sm py-1.5 px-3 w-auto"
+      />
+    </div>
+  </div>
+
+  <!-- Loading State Indicator -->
+  @if (isLoading()) {
+    <div class="p-8 text-center text-muted-foreground">
+      <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-2"></div>
+      <p class="text-sm">Memuat data laporan...</p>
+    </div>
+  }
+
+  <!-- Summary Statistics Grid (3 Inline Cards) -->
+  @if (laporan(); as data) {
+    <div class="space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <!-- Card 1: Total Kunjungan -->
+        <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Total Kunjungan
+            </span>
+            <div class="h-8 w-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-foreground mt-3">
+            {{ data.totalKunjungan }}
+          </div>
+          <p class="text-xs text-muted-foreground mt-1">
+            Seluruh pasien yang mendaftar ke antrian
+          </p>
+        </div>
+
+        <!-- Card 2: Selesai Dilayani -->
+        <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-accent uppercase tracking-wider">
+              Selesai Dilayani
+            </span>
+            <div class="h-8 w-8 rounded-lg bg-muted flex items-center justify-center text-accent">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-accent mt-3">
+            {{ data.totalSelesai }}
+          </div>
+          <p class="text-xs text-muted-foreground mt-1">
+            Kunjungan dengan rekam medis selesai
+          </p>
+        </div>
+
+        <!-- Card 3: Tidak Hadir -->
+        <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Tidak Hadir
+            </span>
+            <div class="h-8 w-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-muted-foreground mt-3">
+            {{ data.totalTidakHadir }}
+          </div>
+          <p class="text-xs text-muted-foreground mt-1">
+            Pasien yang ditandai tidak hadir saat dipanggil
+          </p>
+        </div>
+      </div>
+
+      <!-- Info Banner: Date context -->
+      <div class="bg-card border border-border rounded-xl p-4 flex items-center justify-between text-xs text-muted-foreground">
+        <span>
+          Menampilkan data rekapitulasi tanggal: <strong class="text-foreground font-medium">{{ formatDate(data.tanggal) }}</strong>
+        </span>
+        <span class="font-mono text-[11px] bg-muted px-2 py-0.5 rounded border border-border">
+          {{ data.tanggal }}
+        </span>
+      </div>
+    </div>
+  }
+</div>

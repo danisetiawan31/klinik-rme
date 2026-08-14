@@ -128,6 +128,19 @@
 - Validasi `priorityReason` di client dibuat lebih ketat dari backend (wajib isi jika prioritas aktif) demi integritas audit operasional.
 - Helper `isStaff` di `PasienDetailComponent` memisahkan hak akses pendaftaran/edit data (petugas/admin) dari role dokter.
 
+---
+
+## Laporan Harian (Staff-Facing) — Backlog Item 19 (Selesai Penuh)
+
+- **Fitur**: Halaman rekapitulasi harian staff (`/laporan-harian`), integrasi `LaporanService` (`GET /api/v1/laporan/harian`), filter tanggal native `<input type="date">` (default hari ini dalam timezone `Asia/Jakarta` via `getJakartaISODate()`), auto-fetch saat inisialisasi dan saat tanggal filter diubah via event `(change)`, 3 kartu ringkasan inline (Total Kunjungan, Selesai Dilayani, Tidak Hadir) menggunakan token semantik Tailwind, loading state, dan penanganan error via `<app-toast>`.
+- **Routing & RBAC**: Mendaftarkan rute `laporan-harian` di `app.routes.ts` di bawah Shell dengan guard `roleGuard('petugas', 'dokter', 'admin')` (akses penuh seluruh role staff).
+- **Verifikasi**: Vitest (30 files, 152 unit tests) dan build production (`npx ng build`) PASS 100%. Self-check styling 0 hex literal & 0 bracket CSS variables.
+
+**Catatan Deviasi & Keputusan Teknis**:
+- Kartu ringkasan statistik ditulis inline di template `LaporanHarianComponent` (mengikuti pola kartu ringkasan di `AntrianDashboardComponent`) untuk menjaga kesederhanaan scope fitur tanpa menambah overhead registry.
+- Helper `formatJakartaDate()` dieksploitasi ulang untuk format label tanggal bahasa Indonesia di banner informasi bawah.
+
+
 
 
 

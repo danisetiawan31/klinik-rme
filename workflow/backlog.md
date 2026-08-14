@@ -43,4 +43,4 @@ Tiap item di sini akan jadi 1 `workflow/<nama_fitur>.md` spec begitu mulai diker
 - [ ] **16. Papan Antrian (publik)** — route terpisah tanpa guard staff, subscribe `RealtimeService`, refetch on notify.
 - [ ] **17. Rekam Medis** — form isi rekam medis (Reactive Forms + `FormArray` untuk `diagnosis[]`/`tindakan[]`), tampilan versi terkini, form addendum, riwayat pasien.
 - [ ] **18. Admin dashboard** — manajemen user (invite, **resend invite**, **edit email/nama**, roles), filter+detail audit log, regenerate display token.
-- [ ] **19. Laporan Harian** — gantung ke shape item 9.
+- [x] **19. Laporan Harian** (Selesai Penuh) — halaman rekapitulasi harian staff (/laporan-harian), filter native date input (Asia/Jakarta), 3 inline stat cards (Total Kunjungan, Selesai, Tidak Hadir), auto-fetch on init & on change, error handling toast.

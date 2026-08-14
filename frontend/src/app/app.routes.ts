@@ -70,6 +70,14 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/pasien/pasien.routes').then((m) => m.pasienRoutes),
       },
+      {
+        path: 'laporan-harian',
+        canActivate: [roleGuard('petugas', 'dokter', 'admin')],
+        loadComponent: () =>
+          import('./features/laporan/laporan-harian.component').then(
+            (m) => m.LaporanHarianComponent
+          ),
+      },
     ],
   },
   {
