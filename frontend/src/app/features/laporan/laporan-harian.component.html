@@ -26,16 +26,27 @@
     </div>
   </div>
 
-  <!-- Loading State Indicator -->
+  <!-- Loading State Indicator (3 Skeleton Cards) -->
   @if (isLoading()) {
-    <div class="p-8 text-center text-muted-foreground">
-      <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-2"></div>
-      <p class="text-sm">Memuat data laporan...</p>
+    <div class="space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        @for (i of [1, 2, 3]; track i) {
+          <hlm-card class="p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+              <hlm-skeleton class="h-4 w-28 rounded" />
+              <hlm-skeleton class="size-8 rounded-lg" />
+            </div>
+            <hlm-skeleton class="h-9 w-16 mt-3 rounded" />
+            <hlm-skeleton class="h-3 w-48 mt-2 rounded" />
+          </hlm-card>
+        }
+      </div>
+      <hlm-card class="p-4 flex flex-row items-center justify-between">
+        <hlm-skeleton class="h-4 w-64 rounded" />
+        <hlm-skeleton class="h-5 w-24 rounded" />
+      </hlm-card>
     </div>
-  }
-
-  <!-- Summary Statistics Grid (3 Spartan Cards) -->
-  @if (laporan(); as data) {
+  } @else if (laporan(); as data) {
     <div class="space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <!-- Card 1: Total Kunjungan -->

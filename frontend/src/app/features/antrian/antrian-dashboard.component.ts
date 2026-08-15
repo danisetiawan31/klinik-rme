@@ -20,6 +20,7 @@ import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { HlmDialog } from '../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../shared/ui/dialog/src/index';
+import { HlmSkeletonImports } from '../../shared/ui/skeleton/src/index';
 import { HlmTableImports } from '../../shared/ui/table/src/index';
 import { AntrianService } from './antrian.service';
 import { KunjunganListItem } from './antrian.types';
@@ -34,6 +35,7 @@ import { KunjunganListItem } from './antrian.types';
     HlmButton,
     ...HlmCardImports,
     ...HlmDialogImports,
+    ...HlmSkeletonImports,
     ...HlmTableImports,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,

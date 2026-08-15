@@ -22,7 +22,7 @@ import { NgTemplateOutlet, isPlatformServer } from '@angular/common';
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { type ClassValue } from 'clsx';
 import { cva } from 'class-variance-authority';
-import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmButton } from '../button/src/lib/hlm-button';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { classes, hlm } from '@spartan-ng/helm/utils';
 

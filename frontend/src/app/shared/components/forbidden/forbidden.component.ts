@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmButton } from '../../ui/button/src/lib/hlm-button';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({

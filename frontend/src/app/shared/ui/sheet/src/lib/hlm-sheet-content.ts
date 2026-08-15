@@ -14,7 +14,7 @@ import {
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { lucideX } from '@ng-icons/lucide';
 import { injectExposedSideProvider, injectExposesStateProvider } from '@spartan-ng/brain/core';
-import { HlmButton } from '@spartan-ng/helm/button';
+import { HlmButton } from '../../../button/src/lib/hlm-button';
 
 import { classes } from '@spartan-ng/helm/utils';
 import { HlmSheetClose } from './hlm-sheet-close';

@@ -186,9 +186,9 @@
   - Antrian: Tombol Panggil Berikutnya (`hlmBtn`), Lewati (`variant="secondary" size="sm"`), Tidak Hadir (`variant="destructive" size="sm"`).
   - Pasien: Registrasi Pasien Baru (`hlmBtn`), Aksi Detail (`variant="secondary" size="sm"`), Daftarkan ke Antrian (`hlmBtn`), Edit Biodata (`variant="secondary"`), Tombol Batal (`variant="outline"`), Simpan Form Pasien (`hlmBtn`).
   - Auth & Profil: Tombol submit Login, Forgot Password, Set Password, dan Ubah Kata Sandi Profil (`hlmBtn`).
-  - Pagination & Admin: Tombol Sebelumnya & Selanjutnya (`variant="outline" size="sm"`), Tombol Keluar Admin (`variant="secondary" size="sm"`).
+  - Pagination, Admin & Forbidden: Tombol Sebelumnya & Selanjutnya (`variant="outline" size="sm"`), Tombol Keluar Admin (`variant="secondary" size="sm"`), Tombol Kembali ke Beranda & Ganti Akun (`forbidden.component.*`).
 
-**File**: `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `pasien-form.*`, `pasien-edit.*`, `login.*`, `forgot-password.*`, `set-password.*`, `profil.*`, `pagination.*`, `admin-dashboard.*`.
+**File**: `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `pasien-form.*`, `pasien-edit.*`, `login.*`, `forgot-password.*`, `set-password.*`, `profil.*`, `pagination.*`, `admin-dashboard.*`, `forbidden.*`, `shell.*`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0), `kl-btn` references: **0 match**.
 
 ---
@@ -203,6 +203,21 @@
 - **DESIGN.md**: `Table` ditambahkan ke baris Spartan Primitive di Component Registry.
 
 **File**: `shared/ui/table/` (baru), `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
+
+---
+
+## Addendum — Integrasi Shimmer Loading Placeholder dengan Spartan Skeleton (HlmSkeleton)
+
+- **Primitive**: Direktif `HlmSkeleton` (`HlmSkeletonImports`) di `shared/ui/skeleton/` (`[hlmSkeleton], hlm-skeleton`).
+- **Shimmer Content Placeholders**: Menggantikan spinner putar dan teks statis "Memuat..." dengan skeleton placeholder berdenyut yang mempertahankan dimensi layout (Zero CLS):
+  - **Antrian Dashboard**: Skeleton tabel 4 baris lengkap (nomor, nama pasien, badge status, tombol aksi).
+  - **Pasien List**: Skeleton tabel 5 baris pada area hasil live-search.
+  - **Laporan Harian**: 3 kartu metrik statistik dan banner tanggal skeleton.
+  - **Pasien Detail**: Header banner skeleton (nama, ID badge, tombol aksi) + grid detail biodata & riwayat kunjungan.
+- **DESIGN.md**: `Skeleton` ditambahkan ke baris Spartan Primitive di Component Registry.
+
+**File**: `shared/ui/skeleton/` (baru), `antrian-dashboard.*`, `pasien-list.*`, `laporan-harian.*`, `pasien-detail.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
 

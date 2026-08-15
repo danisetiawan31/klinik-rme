@@ -105,9 +105,33 @@
     </div>
 
     @if (isLoading() && sortedAntrian().length === 0) {
-      <div class="p-12 text-center text-muted-foreground">
-        <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mb-2"></div>
-        <p class="text-sm">Memuat data antrian...</p>
+      <div hlmTableContainer>
+        <table hlmTable>
+          <thead hlmTableHeader>
+            <tr hlmTableRow>
+              <th hlmTableHead class="w-24">No. Antrian</th>
+              <th hlmTableHead>Nama Pasien</th>
+              <th hlmTableHead class="w-36">Status</th>
+              <th hlmTableHead class="w-28 text-center">Dilewati</th>
+              @if (hasAnyAction()) {
+                <th hlmTableHead class="text-right w-44">Aksi</th>
+              }
+            </tr>
+          </thead>
+          <tbody hlmTableBody>
+            @for (i of [1, 2, 3, 4]; track i) {
+              <tr hlmTableRow>
+                <td hlmTableCell><hlm-skeleton class="h-6 w-12 rounded" /></td>
+                <td hlmTableCell><hlm-skeleton class="h-5 w-40 rounded" /></td>
+                <td hlmTableCell><hlm-skeleton class="h-6 w-24 rounded-full" /></td>
+                <td hlmTableCell class="text-center"><hlm-skeleton class="h-5 w-8 mx-auto rounded" /></td>
+                @if (hasAnyAction()) {
+                  <td hlmTableCell class="text-right"><hlm-skeleton class="h-8 w-20 ml-auto rounded-full" /></td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
       </div>
     } @else if (sortedAntrian().length === 0) {
       <!-- Empty State -->
