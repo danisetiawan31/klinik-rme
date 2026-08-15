@@ -16,6 +16,7 @@ import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmDialog } from '../../../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../../../shared/ui/dialog/src/index';
+import { HlmTableImports } from '../../../../shared/ui/table/src/index';
 import { AntrianService } from '../../../antrian/antrian.service';
 import { PasienService } from '../../pasien.service';
 import { Pasien } from '../../pasien.types';
@@ -24,7 +25,7 @@ import { Pasien } from '../../pasien.types';
   selector: 'app-pasien-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, SensitiveValueComponent, HlmButton, ...HlmCardImports, ...HlmDialogImports],
+  imports: [RouterLink, SensitiveValueComponent, HlmButton, ...HlmCardImports, ...HlmDialogImports, ...HlmTableImports],
   templateUrl: './pasien-detail.component.html',
 })
 export class PasienDetailComponent implements OnInit {

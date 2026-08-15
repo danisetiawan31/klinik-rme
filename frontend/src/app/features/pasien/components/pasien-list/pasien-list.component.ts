@@ -13,6 +13,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
+import { HlmTableImports } from '../../../../shared/ui/table/src/index';
 import { PasienService } from '../../pasien.service';
 import { PasienSearchItem } from '../../pasien.types';
 
@@ -26,6 +27,7 @@ import { PasienSearchItem } from '../../pasien.types';
     PaginationComponent,
     SensitiveValueComponent,
     HlmButton,
+    ...HlmTableImports,
   ],
   templateUrl: './pasien-list.component.html',
 })

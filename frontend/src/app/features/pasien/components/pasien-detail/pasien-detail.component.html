@@ -148,31 +148,42 @@
       </hlm-card>
 
       <!-- ── Card 2: Riwayat Kunjungan Ringkas ── -->
-      <hlm-card class="shadow-2 p-6">
-        <h2 class="font-heading text-lg font-bold text-foreground mb-4 pb-2 border-b border-border">
-          Riwayat Kunjungan Ringkas
-        </h2>
+      <hlm-card class="shadow-2 overflow-hidden">
+        <div class="px-6 pt-6 pb-3 border-b border-border">
+          <h2 class="font-heading text-lg font-bold text-foreground">
+            Riwayat Kunjungan Ringkas
+          </h2>
+        </div>
 
         @if (pasien()!.riwayatKunjunganRingkas && pasien()!.riwayatKunjunganRingkas.length > 0) {
-          <ul class="list-none p-0 m-0 flex flex-col gap-2">
-            @for (kunjungan of pasien()!.riwayatKunjunganRingkas; track kunjungan.kunjunganId) {
-              <li class="flex items-center justify-between p-2.5 sm:px-3 bg-muted rounded-sm font-sans text-sm">
-                <div>
-                  <span class="font-semibold text-foreground">
-                    Kunjungan #{{ kunjungan.kunjunganId }}
-                  </span>
-                  <span class="block text-xs text-muted-foreground">
-                    {{ formatDate(kunjungan.tanggal) }}
-                  </span>
-                </div>
-
-                <!-- Status badge (DESIGN.md §2 status colors) -->
-                <span [class]="getStatusBadgeClass(kunjungan.status)">
-                  {{ getStatusLabel(kunjungan.status) }}
-                </span>
-              </li>
-            }
-          </ul>
+          <div hlmTableContainer>
+            <table hlmTable>
+              <thead hlmTableHeader>
+                <tr hlmTableRow>
+                  <th hlmTableHead>ID Kunjungan</th>
+                  <th hlmTableHead>Tanggal</th>
+                  <th hlmTableHead class="text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody hlmTableBody>
+                @for (kunjungan of pasien()!.riwayatKunjunganRingkas; track kunjungan.kunjunganId) {
+                  <tr hlmTableRow>
+                    <td hlmTableCell class="font-medium text-foreground">
+                      Kunjungan #{{ kunjungan.kunjunganId }}
+                    </td>
+                    <td hlmTableCell class="text-muted-foreground">
+                      {{ formatDate(kunjungan.tanggal) }}
+                    </td>
+                    <td hlmTableCell class="text-right">
+                      <span [class]="getStatusBadgeClass(kunjungan.status)">
+                        {{ getStatusLabel(kunjungan.status) }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
         } @else {
           <div class="p-8 text-center text-muted-foreground font-sans text-sm">
             Belum ada riwayat kunjungan recorded.

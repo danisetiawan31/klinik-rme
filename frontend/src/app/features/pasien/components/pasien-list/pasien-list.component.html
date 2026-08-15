@@ -112,23 +112,24 @@
       </div>
     } @else {
       <!-- Table list -->
-      <div class="overflow-x-auto">
-        <table class="w-full border-collapse text-left font-sans text-sm">
-          <thead>
-            <tr class="bg-muted text-foreground border-b border-border">
-              <th class="px-4 py-3 font-semibold">NIK</th>
-              <th class="px-4 py-3 font-semibold">Nama Lengkap</th>
-              <th class="px-4 py-3 font-semibold">Tanggal Lahir</th>
-              <th class="px-4 py-3 font-semibold text-right">Aksi</th>
+      <div hlmTableContainer>
+        <table hlmTable>
+          <thead hlmTableHeader>
+            <tr hlmTableRow>
+              <th hlmTableHead>NIK</th>
+              <th hlmTableHead>Nama Lengkap</th>
+              <th hlmTableHead>Tanggal Lahir</th>
+              <th hlmTableHead class="text-right">Aksi</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody hlmTableBody>
             @for (pasien of items(); track pasien.id) {
               <tr
-                class="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
+                hlmTableRow
+                class="cursor-pointer"
                 (click)="onSelectPasien(pasien.id)"
               >
-                <td class="px-4 py-3">
+                <td hlmTableCell>
                   @if (pasien.nik) {
                     <app-sensitive-value
                       mode="display"
@@ -140,13 +141,13 @@
                     </span>
                   }
                 </td>
-                <td class="px-4 py-3 font-semibold text-foreground">
+                <td hlmTableCell class="font-semibold text-foreground">
                   {{ pasien.nama }}
                 </td>
-                <td class="px-4 py-3 text-muted-foreground">
+                <td hlmTableCell class="text-muted-foreground">
                   {{ formatDate(pasien.tanggalLahir) }}
                 </td>
-                <td class="px-4 py-3 text-right">
+                <td hlmTableCell class="text-right">
                   <a
                     hlmBtn
                     variant="secondary"

@@ -191,5 +191,19 @@
 **File**: `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `pasien-form.*`, `pasien-edit.*`, `login.*`, `forgot-password.*`, `set-password.*`, `profil.*`, `pagination.*`, `admin-dashboard.*`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0), `kl-btn` references: **0 match**.
 
+---
+
+## Addendum — Migrasi Table / Data Table ke Spartan Table (HlmTable)
+
+- **Primitive**: Direktif Spartan Table (`HlmTableImports`) di `shared/ui/table/` (`HlmTableContainer`, `HlmTable`, `HlmTHead`, `HlmTBody`, `HlmTFoot`, `HlmTr`, `HlmTh`, `HlmTd`, `HlmCaption`).
+- **Antrian Dashboard**: Tabel antrian hari ini dimigrasi ke `div[hlmTableContainer]` + `table[hlmTable]`, `thead[hlmTableHeader]`, `tbody[hlmTableBody]`, `tr[hlmTableRow]`, `th[hlmTableHead]`, `td[hlmTableCell]`.
+- **Modul Pasien**:
+  - `pasien-list`: Tabel live-search & daftar pasien dimigrasi ke struktur `hlmTable`.
+  - `pasien-detail`: List riwayat kunjungan ringkas distandarisasi ke format `hlmTable` 3 kolom (ID Kunjungan, Tanggal, Status).
+- **DESIGN.md**: `Table` ditambahkan ke baris Spartan Primitive di Component Registry.
+
+**File**: `shared/ui/table/` (baru), `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
+
 
 
