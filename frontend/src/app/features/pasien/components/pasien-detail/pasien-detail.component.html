@@ -25,7 +25,7 @@
     </div>
   } @else if (pasien()) {
     <!-- Header banner -->
-    <div class="bg-card border border-border rounded-md shadow-2 p-6 mb-6 flex items-center justify-between flex-wrap gap-4">
+    <hlm-card class="shadow-2 p-6 mb-6 flex-row items-center justify-between flex-wrap gap-4">
       <div>
         <div class="flex items-center gap-3 mb-1">
           <h1 class="font-heading text-2xl font-bold text-foreground m-0">
@@ -82,12 +82,12 @@
           </a>
         </div>
       }
-    </div>
+    </hlm-card>
 
     <!-- Grid layout: Biodata + Riwayat Ringkas -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- ── Card 1: Biodata Lengkap ── -->
-      <div class="bg-card border border-border rounded-md shadow-2 p-6">
+      <hlm-card class="shadow-2 p-6">
         <h2 class="font-heading text-lg font-bold text-foreground mb-4 pb-2 border-b border-border">
           Biodata Lengkap
         </h2>
@@ -143,10 +143,10 @@
             }
           </dd>
         </dl>
-      </div>
+      </hlm-card>
 
       <!-- ── Card 2: Riwayat Kunjungan Ringkas ── -->
-      <div class="bg-card border border-border rounded-md shadow-2 p-6">
+      <hlm-card class="shadow-2 p-6">
         <h2 class="font-heading text-lg font-bold text-foreground mb-4 pb-2 border-b border-border">
           Riwayat Kunjungan Ringkas
         </h2>
@@ -176,7 +176,7 @@
             Belum ada riwayat kunjungan recorded.
           </div>
         }
-      </div>
+      </hlm-card>
     </div>
   }
 

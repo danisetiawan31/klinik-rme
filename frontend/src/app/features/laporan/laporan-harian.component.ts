@@ -6,6 +6,7 @@ import {
   signal,
 } from '@angular/core';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { formatJakartaDate, getJakartaISODate } from '../../core/utils/date.utils';
 import { LaporanService } from './laporan.service';
 import { LaporanHarian } from './laporan.types';
@@ -13,7 +14,7 @@ import { LaporanHarian } from './laporan.types';
 @Component({
   selector: 'app-laporan-harian',
   standalone: true,
-  imports: [],
+  imports: [...HlmCardImports],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './laporan-harian.component.html',
 })

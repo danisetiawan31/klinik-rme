@@ -14,6 +14,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { PasienService } from '../../pasien.service';
 import { PasienSearchItem } from '../../pasien.types';
 import { nikFormatValidator } from '../../pasien.validators';
@@ -22,7 +23,7 @@ import { nikFormatValidator } from '../../pasien.validators';
   selector: 'app-pasien-form',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ...HlmCardImports],
   templateUrl: './pasien-form.component.html',
 })
 export class PasienFormComponent {

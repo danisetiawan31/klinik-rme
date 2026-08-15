@@ -34,12 +34,12 @@
     </div>
   }
 
-  <!-- Summary Statistics Grid (3 Inline Cards) -->
+  <!-- Summary Statistics Grid (3 Spartan Cards) -->
   @if (laporan(); as data) {
     <div class="space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <!-- Card 1: Total Kunjungan -->
-        <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
+        <hlm-card class="p-6 shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Total Kunjungan
@@ -59,10 +59,10 @@
           <p class="text-xs text-muted-foreground mt-1">
             Seluruh pasien yang mendaftar ke antrian
           </p>
-        </div>
+        </hlm-card>
 
         <!-- Card 2: Selesai Dilayani -->
-        <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
+        <hlm-card class="p-6 shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-accent uppercase tracking-wider">
               Selesai Dilayani
@@ -79,10 +79,10 @@
           <p class="text-xs text-muted-foreground mt-1">
             Kunjungan dengan rekam medis selesai
           </p>
-        </div>
+        </hlm-card>
 
         <!-- Card 3: Tidak Hadir -->
-        <div class="bg-card border border-border rounded-xl p-6 shadow-sm">
+        <hlm-card class="p-6 shadow-sm">
           <div class="flex items-center justify-between">
             <span class="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Tidak Hadir
@@ -100,18 +100,18 @@
           <p class="text-xs text-muted-foreground mt-1">
             Pasien yang ditandai tidak hadir saat dipanggil
           </p>
-        </div>
+        </hlm-card>
       </div>
 
       <!-- Info Banner: Date context -->
-      <div class="bg-card border border-border rounded-xl p-4 flex items-center justify-between text-xs text-muted-foreground">
+      <hlm-card class="p-4 flex flex-row items-center justify-between text-xs text-muted-foreground">
         <span>
           Menampilkan data rekapitulasi tanggal: <strong class="text-foreground font-medium">{{ formatDate(data.tanggal) }}</strong>
         </span>
         <span class="font-mono text-[11px] bg-muted px-2 py-0.5 rounded border border-border">
           {{ data.tanggal }}
         </span>
-      </div>
+      </hlm-card>
     </div>
   }
 </div>

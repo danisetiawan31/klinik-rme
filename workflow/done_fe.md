@@ -162,5 +162,19 @@
 **File**: `shared/ui/dialog/` (baru), `antrian-dashboard.*`, `pasien-detail.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
+---
+
+## Addendum — Migrasi Card & Widget Statistik ke Spartan Card (HlmCard)
+
+- **Primitive**: `npx ng g @spartan-ng/cli:ui card` → `shared/ui/card/` (9 file, 0 hardcoded hex).
+- **Antrian Dashboard**: 4 kartu ringkasan antrian `div.bg-card` → `<hlm-card size="sm">` + `<div hlmCardContent>`.
+- **Laporan Harian**: 3 kartu metrik statistik dan banner tanggal `div.bg-card` → `<hlm-card>` terstruktur.
+- **Auth & Profil**: Kontainer kartu form pada Login, Forgot Password, Set Password, dan Profil → `<hlm-card>`.
+- **Modul Pasien**: Kontainer form pendaftaran baru, form edit, serta kartu banner/biodata/riwayat pada Pasien Detail → `<hlm-card>`.
+- **DESIGN.md**: `Card` ditambahkan ke baris Spartan Primitive di Component Registry.
+
+**File**: `shared/ui/card/` (baru), `antrian-dashboard.*`, `laporan-harian.*`, `login.*`, `forgot-password.*`, `set-password.*`, `profil.*`, `pasien-form.*`, `pasien-edit.*`, `pasien-detail.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
+
 
 

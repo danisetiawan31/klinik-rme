@@ -11,13 +11,14 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmCardImports } from '../../../shared/ui/card/src/index';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ...HlmCardImports],
   templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent {

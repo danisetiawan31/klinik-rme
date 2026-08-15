@@ -17,6 +17,7 @@ import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-s
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
+import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { HlmDialog } from '../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../shared/ui/dialog/src/index';
 import { AntrianService } from './antrian.service';
@@ -30,6 +31,7 @@ import { KunjunganListItem } from './antrian.types';
     PriorityBadgeComponent,
     ClinicStatusIndicatorComponent,
     HlmButton,
+    ...HlmCardImports,
     ...HlmDialogImports,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
