@@ -1,10 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { toast } from '@spartan-ng/brain/sonner';
+import { vi } from 'vitest';
 import { ToastComponent } from './toast.component';
 
 describe('ToastComponent', () => {
   let fixture: ComponentFixture<ToastComponent>;
 
   beforeEach(async () => {
+    vi.spyOn(toast, 'error').mockImplementation(() => '1' as any);
+    vi.spyOn(toast, 'success').mockImplementation(() => '2' as any);
+    vi.spyOn(toast, 'info').mockImplementation(() => '3' as any);
+
     await TestBed.configureTestingModule({
       imports: [ToastComponent],
     }).compileComponents();
@@ -12,37 +18,38 @@ describe('ToastComponent', () => {
     fixture = TestBed.createComponent(ToastComponent);
   });
 
-  it('should not render anything when message is empty', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should not trigger toast when message is empty', () => {
     fixture.componentRef.setInput('message', '');
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.children.length).toBe(0);
+    expect(toast.error).not.toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
+    expect(toast.info).not.toHaveBeenCalled();
   });
 
-  it('should render top-center toast with role="alert" and aria-live="assertive" for error type', () => {
+  it('should trigger Spartan toast.error for error type', () => {
     fixture.componentRef.setInput('message', 'Email atau password salah');
     fixture.componentRef.setInput('type', 'error');
     fixture.detectChanges();
 
-    const toastEl = fixture.nativeElement.querySelector('[role="alert"]');
-    expect(toastEl).toBeTruthy();
-    expect(toastEl.getAttribute('aria-live')).toBe('assertive');
-    expect(toastEl.textContent).toContain('Email atau password salah');
+    expect(toast.error).toHaveBeenCalledWith(
+      'Email atau password salah',
+      expect.objectContaining({ onDismiss: expect.any(Function) })
+    );
   });
 
-  it('should emit dismiss event when X button is clicked', () => {
-    fixture.componentRef.setInput('message', 'Test Error');
+  it('should trigger Spartan toast.success for success type', () => {
+    fixture.componentRef.setInput('message', 'Data berhasil disimpan');
+    fixture.componentRef.setInput('type', 'success');
     fixture.detectChanges();
 
-    let dismissed = false;
-    fixture.componentInstance.dismiss.subscribe(() => {
-      dismissed = true;
-    });
-
-    const btn = fixture.nativeElement.querySelector('button[aria-label="Tutup notifikasi"]') as HTMLButtonElement;
-    expect(btn).toBeTruthy();
-    btn.click();
-
-    expect(dismissed).toBe(true);
+    expect(toast.success).toHaveBeenCalledWith(
+      'Data berhasil disimpan',
+      expect.objectContaining({ onDismiss: expect.any(Function) })
+    );
   });
 });

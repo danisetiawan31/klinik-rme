@@ -14,10 +14,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorEnvelope } from '../../../core/types/api-response.type';
 import { SensitiveValueComponent } from '../../../shared/components/sensitive-value/sensitive-value.component';
-import { ToastComponent } from '../../../shared/components/toast/toast.component';
 
 const passwordsMatchValidator: ValidatorFn = (
   control: AbstractControl
@@ -34,7 +34,7 @@ const passwordsMatchValidator: ValidatorFn = (
   selector: 'app-set-password',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, SensitiveValueComponent, ToastComponent],
+  imports: [ReactiveFormsModule, RouterLink, SensitiveValueComponent],
   templateUrl: './set-password.component.html',
 })
 export class SetPasswordComponent implements OnInit {
@@ -101,11 +101,9 @@ export class SetPasswordComponent implements OnInit {
         const parsedEnvelope: ErrorEnvelope | null = err?.error?.error ? err.error : (err as ErrorEnvelope);
         const code = parsedEnvelope?.error?.code || err?.code;
 
-        if (code === 'INVALID_TOKEN' || err?.status === 400 && err?.error?.error?.code === 'INVALID_TOKEN') {
-          // Token expired, consumed, or invalid -> render Token Error State card (NOT Toast)
+        if (code === 'INVALID_TOKEN' || (err?.status === 400 && err?.error?.error?.code === 'INVALID_TOKEN')) {
           this.hasTokenError.set(true);
         } else {
-          // Technical error (Network/500/Timeout) -> render Toast notification
           let message = 'Gagal menghubungi server. Silakan periksa koneksi internet Anda dan coba lagi.';
           if (parsedEnvelope?.error?.message) {
             message = parsedEnvelope.error.message;
@@ -113,6 +111,7 @@ export class SetPasswordComponent implements OnInit {
             message = err.message;
           }
           this.errorMessage.set(message);
+          toast.error(message);
         }
       },
     });

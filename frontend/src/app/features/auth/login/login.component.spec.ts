@@ -1,7 +1,8 @@
 import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../core/auth/auth.service';
 import { LoginComponent } from './login.component';
 
@@ -45,6 +46,10 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('should render default login form state', () => {
     const heading = fixture.nativeElement.querySelector('h1');
     expect(heading.textContent).toContain('Masuk');
@@ -58,13 +63,19 @@ describe('LoginComponent', () => {
     expect(submitBtn).toBeTruthy();
   });
 
-  it('should render error toast when authError signal has a value', () => {
+  it('should trigger toast.error when login fails', () => {
+    const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '' as any);
+    authServiceSpy.login.mockReturnValue(throwError(() => new Error('error')));
     authErrorSignal.set('Email atau password salah');
-    fixture.detectChanges();
 
-    const toastEl = fixture.nativeElement.querySelector('app-toast');
-    expect(toastEl).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain('Email atau password salah');
+    component.loginForm.setValue({
+      email: 'petugas@kliniksehat.id',
+      password: 'password123',
+    });
+
+    component.onSubmit();
+
+    expect(toastSpy).toHaveBeenCalledWith('Email atau password salah');
   });
 
   it('should render loading spinner and disable submit button when isLoading is true', () => {

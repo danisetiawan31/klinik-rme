@@ -1,7 +1,6 @@
-import { signal, WritableSignal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../core/auth/auth.service';
 import { UserResponse } from '../../core/auth/auth.types';
 import { ProfilComponent } from './profil.component';
@@ -9,35 +8,35 @@ import { ProfilComponent } from './profil.component';
 describe('ProfilComponent', () => {
   let component: ProfilComponent;
   let fixture: ComponentFixture<ProfilComponent>;
-  let currentUserSignal: WritableSignal<UserResponse | null>;
   let authServiceSpy: {
+    currentUser: ReturnType<typeof vi.fn>;
     changePassword: ReturnType<typeof vi.fn>;
-    currentUser: WritableSignal<UserResponse | null>;
+  };
+
+  const mockUser: UserResponse = {
+    id: 1,
+    nama: 'Dr. Budi Santoso',
+    roles: ['dokter'],
   };
 
   beforeEach(async () => {
-    currentUserSignal = signal<UserResponse | null>({
-      id: 10,
-      nama: 'Dr. Budi Santoso',
-      roles: ['dokter'],
-    });
-
     authServiceSpy = {
+      currentUser: vi.fn().mockReturnValue(mockUser),
       changePassword: vi.fn(),
-      currentUser: currentUserSignal,
     };
 
     await TestBed.configureTestingModule({
       imports: [ProfilComponent],
-      providers: [
-        provideRouter([]),
-        { provide: AuthService, useValue: authServiceSpy },
-      ],
+      providers: [{ provide: AuthService, useValue: authServiceSpy }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProfilComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should render read-only user info from currentUser signal', () => {
@@ -47,27 +46,20 @@ describe('ProfilComponent', () => {
   });
 
   it('should validate passwordBaru min 8 characters and password confirmation mismatch', () => {
-    const newPasswordCtrl = component.changePasswordForm.controls.passwordBaru;
-    const konfirmasiCtrl = component.changePasswordForm.controls.konfirmasiPassword;
+    const form = component.changePasswordForm;
 
-    // Minlength test
-    newPasswordCtrl.setValue('short');
-    newPasswordCtrl.markAsTouched();
+    component.newPasswordControl.setValue('short');
+    component.newPasswordControl.markAsTouched();
+    expect(component.newPasswordControl.errors?.['minlength']).toBeTruthy();
+
+    component.newPasswordControl.setValue('validPassword123');
+    component.konfirmasiControl.setValue('differentPassword123');
+    component.konfirmasiControl.markAsTouched();
+    expect(form.errors?.['passwordsMismatch']).toBe(true);
+
     fixture.detectChanges();
-
-    expect(newPasswordCtrl.valid).toBe(false);
-    expect(newPasswordCtrl.errors?.['minlength']).toBeTruthy();
-    expect(fixture.nativeElement.textContent).toContain('Kata sandi baru minimal 8 karakter');
-
-    // Mismatch test
-    newPasswordCtrl.setValue('password123');
-    konfirmasiCtrl.setValue('password888');
-    konfirmasiCtrl.markAsTouched();
-    component.changePasswordForm.markAsTouched();
-    fixture.detectChanges();
-
-    expect(component.changePasswordForm.errors?.['passwordsMismatch']).toBe(true);
-    expect(fixture.nativeElement.textContent).toContain('Konfirmasi kata sandi tidak cocok');
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.textContent).toContain('Konfirmasi kata sandi tidak cocok');
   });
 
   it('should render inline error under passwordLama when authService.changePassword returns HTTP 400 INVALID_PASSWORD', () => {
@@ -77,14 +69,14 @@ describe('ProfilComponent', () => {
         error: {
           error: {
             code: 'INVALID_PASSWORD',
-            message: 'Password lama tidak sesuai',
+            message: 'Kata sandi saat ini salah',
           },
         },
       }))
     );
 
     component.changePasswordForm.setValue({
-      passwordLama: 'passSalah123',
+      passwordLama: 'salahPassword',
       passwordBaru: 'passwordBaru123',
       konfirmasiPassword: 'passwordBaru123',
     });
@@ -92,14 +84,15 @@ describe('ProfilComponent', () => {
     component.onSubmit();
     fixture.detectChanges();
 
-    expect(authServiceSpy.changePassword).toHaveBeenCalledWith('passSalah123', 'passwordBaru123');
-    expect(component.oldPasswordError()).toBe('Password lama tidak sesuai');
+    expect(authServiceSpy.changePassword).toHaveBeenCalledWith('salahPassword', 'passwordBaru123');
+    expect(component.oldPasswordError()).toBe('Kata sandi saat ini salah');
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Password lama tidak sesuai');
+    expect(compiled.textContent).toContain('Kata sandi saat ini salah');
   });
 
-  it('should render ToastComponent error when technical HTTP 500 error occurs', () => {
+  it('should trigger toast.error when technical HTTP 500 error occurs', () => {
+    const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '' as any);
     authServiceSpy.changePassword.mockReturnValue(
       throwError(() => ({
         status: 500,
@@ -122,14 +115,11 @@ describe('ProfilComponent', () => {
     fixture.detectChanges();
 
     expect(component.oldPasswordError()).toBeNull();
-    expect(component.toastType()).toBe('error');
-    expect(component.toastMessage()).toBe('Gagal memperbarui password di server');
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Gagal memperbarui password di server');
+    expect(toastSpy).toHaveBeenCalledWith('Gagal memperbarui password di server');
   });
 
-  it('should call authService.changePassword, render success ToastComponent, and reset form on valid submission', () => {
+  it('should call authService.changePassword, trigger toast.success, and reset form on valid submission', () => {
+    const toastSpy = vi.spyOn(toast, 'success').mockImplementation(() => '' as any);
     authServiceSpy.changePassword.mockReturnValue(of(undefined));
 
     component.changePasswordForm.setValue({
@@ -142,8 +132,7 @@ describe('ProfilComponent', () => {
     fixture.detectChanges();
 
     expect(authServiceSpy.changePassword).toHaveBeenCalledWith('passLama123', 'passwordBaru123');
-    expect(component.toastType()).toBe('success');
-    expect(component.toastMessage()).toBe('Password berhasil diubah');
+    expect(toastSpy).toHaveBeenCalledWith('Password berhasil diubah');
 
     // Form controls should be reset to empty/null
     expect(component.changePasswordForm.value.passwordLama).toBeFalsy();

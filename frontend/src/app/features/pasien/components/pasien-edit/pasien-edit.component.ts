@@ -11,7 +11,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ToastComponent } from '../../../../shared/components/toast/toast.component';
+import { toast } from '@spartan-ng/brain/sonner';
 import { PasienService } from '../../pasien.service';
 import { nikFormatValidator } from '../../pasien.validators';
 
@@ -19,7 +19,7 @@ import { nikFormatValidator } from '../../pasien.validators';
   selector: 'app-pasien-edit',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ToastComponent],
+  imports: [ReactiveFormsModule],
   templateUrl: './pasien-edit.component.html',
 })
 export class PasienEditComponent implements OnInit {

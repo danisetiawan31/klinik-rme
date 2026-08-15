@@ -142,10 +142,13 @@
 
 ---
 
-## Addendum — Sentry Observability & Global Error Handling
+## Addendum — Spartan UI Modernization (Sidebar-Inset & Sonner Toast)
 
-- **Fitur**: Integrasi `@sentry/angular` pada Frontend Angular. Konfigurasi `sentryDsn` di `environment.ts`, inisialisasi di `app.config.ts` dengan filter sanitasi `beforeSend` (menyensor PII & data rekam medis), dan registrasi provider global `ErrorHandler` (`Sentry.createErrorHandler()`). Penyesuaian `maximumWarning` initial bundle budget di `angular.json` ke 750kB. SDK otomatis berstatus *no-op* jika DSN tidak dikonfigurasi.
-- **Verifikasi**: Vitest (30 test files, 152 unit tests) dan build production (`npx ng build`) PASS 100%.
+- **Spartan Sidebar-Inset (`shared/ui/sidebar`)**: Implementasi struktur sidebar resmi Spartan (`sidebar-inset`) pada `ShellComponent` lengkap dengan collapsible icon mode, layout inset responsif, header medical health cross icon, dan bottom avatar profil terpusat.
+- **Spartan Sonner Toaster (`shared/ui/sonner`)**: Integrasi `ngx-sonner` & `@spartan-ng/brain/sonner` (`HlmToaster`) dengan konfigurasi semantik tema tokens, posisi default `top-right`, dan host global pada `app.html`.
+- **Migrasi Terpusat Lintas Halaman**: Seluruh fitur (Antrian, Pasien Form/Detail/Edit/List, Login, Forgot Password, Set Password, Profil, Laporan Harian) dimigrasikan dari template toast lokal ke pemanggilan programatik langsung `toast.success()`, `toast.error()`, `toast.info()`.
+- **Verifikasi**: Vitest (30 test files, 154 unit tests) PASS 100%. GitNexus change detection: 0 affected processes (risk level: low).
+
 
 
 

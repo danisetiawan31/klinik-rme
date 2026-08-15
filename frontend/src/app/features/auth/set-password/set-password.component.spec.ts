@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../core/auth/auth.service';
 import { SetPasswordComponent } from './set-password.component';
 
@@ -11,7 +12,7 @@ describe('SetPasswordComponent', () => {
     resetPassword: ReturnType<typeof vi.fn>;
   };
 
-  const setupTestBed = async (queryParams: Record<string, string> = { token: 'valid_token_123' }) => {
+  const createComponent = async (queryParams: Record<string, string>) => {
     authServiceSpy = {
       resetPassword: vi.fn(),
     };
@@ -24,7 +25,9 @@ describe('SetPasswordComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { queryParams },
+            snapshot: {
+              queryParams,
+            },
           },
         },
       ],
@@ -35,47 +38,47 @@ describe('SetPasswordComponent', () => {
     fixture.detectChanges();
   };
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe('With valid token in queryParams', () => {
     beforeEach(async () => {
-      await setupTestBed({ token: 'valid_token_123' });
+      await createComponent({ token: 'valid-test-token-123' });
+    });
+
+    it('should initialize token from queryParams and not set token error', () => {
+      expect(component.token()).toBe('valid-test-token-123');
+      expect(component.hasTokenError()).toBe(false);
     });
 
     it('should validate password min 8 chars and confirmation mismatch', () => {
-      const passwordCtrl = component.resetForm.controls.passwordBaru;
-      const konfirmasiCtrl = component.resetForm.controls.konfirmasiPassword;
-
-      // Password < 8 chars
-      passwordCtrl.setValue('pass');
-      passwordCtrl.markAsTouched();
+      component.resetForm.controls.passwordBaru.setValue('short');
+      component.resetForm.controls.passwordBaru.markAsTouched();
+      component.resetForm.controls.konfirmasiPassword.setValue('different');
+      component.resetForm.controls.konfirmasiPassword.markAsTouched();
       fixture.detectChanges();
 
-      expect(passwordCtrl.valid).toBe(false);
-      expect(passwordCtrl.errors?.['minlength']).toBeTruthy();
-      expect(fixture.nativeElement.textContent).toContain('Password baru minimal 8 karakter');
-
-      // Mismatch
-      passwordCtrl.setValue('password123');
-      konfirmasiCtrl.setValue('password999');
-      konfirmasiCtrl.markAsTouched();
-      component.resetForm.markAsTouched();
-      fixture.detectChanges();
-
+      expect(component.resetForm.controls.passwordBaru.errors?.['minlength']).toBeTruthy();
       expect(component.resetForm.errors?.['passwordsMismatch']).toBe(true);
-      expect(fixture.nativeElement.textContent).toContain('Konfirmasi password tidak cocok');
+
+      const compiled = fixture.nativeElement as HTMLElement;
+      expect(compiled.textContent).toContain('Password baru minimal 8 karakter');
+      expect(compiled.textContent).toContain('Konfirmasi password tidak cocok');
     });
 
     it('should call authService.resetPassword and render Success State card on valid submit', () => {
       authServiceSpy.resetPassword.mockReturnValue(of(undefined));
 
       component.resetForm.setValue({
-        passwordBaru: 'password123',
-        konfirmasiPassword: 'password123',
+        passwordBaru: 'passwordBaru123',
+        konfirmasiPassword: 'passwordBaru123',
       });
 
       component.onSubmit();
       fixture.detectChanges();
 
-      expect(authServiceSpy.resetPassword).toHaveBeenCalledWith('valid_token_123', 'password123');
+      expect(authServiceSpy.resetPassword).toHaveBeenCalledWith('valid-test-token-123', 'passwordBaru123');
       expect(component.isSubmitted()).toBe(true);
 
       const compiled = fixture.nativeElement as HTMLElement;
@@ -90,7 +93,7 @@ describe('SetPasswordComponent', () => {
           error: {
             error: {
               code: 'INVALID_TOKEN',
-              message: 'Token reset/invite tidak valid, expired, atau sudah digunakan',
+              message: 'Token reset password tidak valid atau sudah kadaluarsa',
             },
           },
         }))
@@ -111,7 +114,8 @@ describe('SetPasswordComponent', () => {
       expect(compiled.textContent).toContain('Minta Link Baru');
     });
 
-    it('should render ToastComponent error and keep form active when technical HTTP 500 error occurs', () => {
+    it('should trigger toast.error and keep form active when technical HTTP 500 error occurs', () => {
+      const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '' as any);
       authServiceSpy.resetPassword.mockReturnValue(
         throwError(() => ({
           status: 500,
@@ -135,18 +139,16 @@ describe('SetPasswordComponent', () => {
       expect(component.hasTokenError()).toBe(false);
       expect(component.isSubmitted()).toBe(false);
       expect(component.errorMessage()).toBe('Koneksi database terputus');
-
-      const compiled = fixture.nativeElement as HTMLElement;
-      expect(compiled.textContent).toContain('Koneksi database terputus');
+      expect(toastSpy).toHaveBeenCalledWith('Koneksi database terputus');
     });
   });
 
   describe('Without token in queryParams', () => {
     beforeEach(async () => {
-      await setupTestBed({});
+      await createComponent({});
     });
 
-    it('should render Token Error State card immediately when token is missing', () => {
+    it('should show token error screen immediately on load', () => {
       expect(component.hasTokenError()).toBe(true);
 
       const compiled = fixture.nativeElement as HTMLElement;

@@ -5,15 +5,15 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { toast } from '@spartan-ng/brain/sonner';
 import { formatJakartaDate, getJakartaISODate } from '../../core/utils/date.utils';
-import { ToastComponent } from '../../shared/components/toast/toast.component';
 import { LaporanService } from './laporan.service';
 import { LaporanHarian } from './laporan.types';
 
 @Component({
   selector: 'app-laporan-harian',
   standalone: true,
-  imports: [ToastComponent],
+  imports: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './laporan-harian.component.html',
 })
@@ -51,6 +51,7 @@ export class LaporanHarianComponent implements OnInit {
           err?.error?.error?.message ??
           'Gagal memuat laporan harian. Silakan coba lagi.';
         this.errorMessage.set(msg);
+        toast.error(msg);
       },
     });
   }

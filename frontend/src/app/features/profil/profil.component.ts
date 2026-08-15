@@ -12,10 +12,10 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../core/auth/auth.service';
 import { ErrorEnvelope } from '../../core/types/api-response.type';
 import { SensitiveValueComponent } from '../../shared/components/sensitive-value/sensitive-value.component';
-import { ToastComponent } from '../../shared/components/toast/toast.component';
 
 const passwordsMatchValidator: ValidatorFn = (
   control: AbstractControl
@@ -32,7 +32,7 @@ const passwordsMatchValidator: ValidatorFn = (
   selector: 'app-profil',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, SensitiveValueComponent, ToastComponent],
+  imports: [ReactiveFormsModule, SensitiveValueComponent],
   templateUrl: './profil.component.html',
 })
 export class ProfilComponent {
@@ -70,12 +70,17 @@ export class ProfilComponent {
   }
 
   onClearOldPasswordError(): void {
-    if (this.oldPasswordError()) {
-      this.oldPasswordError.set(null);
-    }
+    this.oldPasswordError.set(null);
+  }
+
+  onDismissToast(): void {
+    this.toastMessage.set(null);
   }
 
   onSubmit(): void {
+    this.oldPasswordError.set(null);
+    this.toastMessage.set(null);
+
     if (this.changePasswordForm.invalid) {
       this.changePasswordForm.markAllAsTouched();
       return;
@@ -85,8 +90,6 @@ export class ProfilComponent {
     if (!passwordLama || !passwordBaru) return;
 
     this.isLoading.set(true);
-    this.oldPasswordError.set(null);
-    this.toastMessage.set(null);
     this.changePasswordForm.disable();
 
     this.authService.changePassword(passwordLama, passwordBaru).subscribe({
@@ -97,6 +100,7 @@ export class ProfilComponent {
 
         this.toastType.set('success');
         this.toastMessage.set('Password berhasil diubah');
+        toast.success('Password berhasil diubah');
       },
       error: (err: any) => {
         this.isLoading.set(false);
@@ -106,12 +110,10 @@ export class ProfilComponent {
         const code = parsedEnvelope?.error?.code || err?.code;
 
         if (code === 'INVALID_PASSWORD' || (err?.status === 400 && err?.error?.error?.code === 'INVALID_PASSWORD')) {
-          // Render inline error specifically under passwordLama field
-          const msg = parsedEnvelope?.error?.message || 'Password lama tidak sesuai';
+          const msg = parsedEnvelope?.error?.message || 'Kata sandi saat ini salah';
           this.oldPasswordError.set(msg);
         } else {
-          // Render Toast for technical HTTP error (500/Network/Timeout)
-          let message = 'Gagal memperbarui password. Silakan periksa koneksi dan coba lagi.';
+          let message = 'Gagal memperbarui password di server';
           if (parsedEnvelope?.error?.message) {
             message = parsedEnvelope.error.message;
           } else if (err?.message) {
@@ -119,12 +121,9 @@ export class ProfilComponent {
           }
           this.toastType.set('error');
           this.toastMessage.set(message);
+          toast.error(message);
         }
       },
     });
-  }
-
-  onDismissToast(): void {
-    this.toastMessage.set(null);
   }
 }

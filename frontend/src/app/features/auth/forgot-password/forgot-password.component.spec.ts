@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ForgotPasswordComponent } from './forgot-password.component';
 
@@ -27,6 +28,10 @@ describe('ForgotPasswordComponent', () => {
     fixture = TestBed.createComponent(ForgotPasswordComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should validate email field as required when empty', () => {
@@ -77,6 +82,7 @@ describe('ForgotPasswordComponent', () => {
   });
 
   it('should display error Toast and remain on form state when technical HTTP error occurs', () => {
+    const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '' as any);
     authServiceSpy.forgotPassword.mockReturnValue(
       throwError(() => ({ error: { message: 'Server backend mengalami gangguan' } }))
     );
@@ -88,8 +94,6 @@ describe('ForgotPasswordComponent', () => {
     expect(authServiceSpy.forgotPassword).toHaveBeenCalledWith('staf@klinik.com');
     expect(component.isSubmitted()).toBe(false);
     expect(component.errorMessage()).toBe('Server backend mengalami gangguan');
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Server backend mengalami gangguan');
+    expect(toastSpy).toHaveBeenCalledWith('Server backend mengalami gangguan');
   });
 });

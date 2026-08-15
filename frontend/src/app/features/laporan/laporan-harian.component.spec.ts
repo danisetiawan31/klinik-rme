@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { toast } from '@spartan-ng/brain/sonner';
 import { getJakartaISODate } from '../../core/utils/date.utils';
 import { LaporanHarianComponent } from './laporan-harian.component';
 import { LaporanService } from './laporan.service';
@@ -29,6 +30,10 @@ describe('LaporanHarianComponent', () => {
 
     fixture = TestBed.createComponent(LaporanHarianComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should create and initialize default tanggalFilter to today in Asia/Jakarta timezone', () => {
@@ -78,6 +83,7 @@ describe('LaporanHarianComponent', () => {
   });
 
   it('should display error toast when getLaporanHarian fails with 400 TANGGAL_INVALID', () => {
+    const toastSpy = vi.spyOn(toast, 'error').mockImplementation(() => '' as any);
     mockLaporanService.getLaporanHarian.mockReturnValue(
       throwError(() => ({
         error: {
@@ -92,8 +98,7 @@ describe('LaporanHarianComponent', () => {
     expect(component.errorMessage()).toBe(
       'Format tanggal tidak valid. Gunakan format YYYY-MM-DD.'
     );
-    const compiled = fixture.nativeElement;
-    expect(compiled.textContent).toContain(
+    expect(toastSpy).toHaveBeenCalledWith(
       'Format tanggal tidak valid. Gunakan format YYYY-MM-DD.'
     );
   });

@@ -31,6 +31,7 @@ export class AuthService {
       .pipe(
         tap((res) => {
           this.currentUser.set(res.user);
+          this.isInitialized.set(true);
           this.authError.set(null);
         }),
         catchError((err: any) => {

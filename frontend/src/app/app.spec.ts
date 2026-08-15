@@ -3,6 +3,18 @@ import { App } from './app';
 
 describe('App', () => {
   beforeEach(async () => {
+    if (!window.matchMedia) {
+      window.matchMedia = () =>
+        ({
+          matches: false,
+          addListener: () => {},
+          removeListener: () => {},
+          addEventListener: () => {},
+          removeEventListener: () => {},
+          dispatchEvent: () => false,
+        }) as unknown as MediaQueryList;
+    }
+
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();

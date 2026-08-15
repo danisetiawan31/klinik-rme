@@ -8,13 +8,13 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../core/auth/auth.service';
 import { KlinikService } from '../../core/klinik/klinik.service';
 import { RealtimeService } from '../../core/realtime/realtime.service';
 import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-status-indicator/clinic-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
-import { ToastComponent } from '../../shared/components/toast/toast.component';
 import { AntrianService } from './antrian.service';
 import { KunjunganListItem } from './antrian.types';
 
@@ -25,7 +25,6 @@ import { KunjunganListItem } from './antrian.types';
     StatusBadgeComponent,
     PriorityBadgeComponent,
     ClinicStatusIndicatorComponent,
-    ToastComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './antrian-dashboard.component.html',
@@ -41,7 +40,7 @@ export class AntrianDashboardComponent implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly isSubmittingAction = signal<boolean>(false);
 
-  // Toast feedback state
+  // Toast feedback state for testing & programmatic feedback
   readonly toastMessage = signal<string | null>(null);
   readonly toastType = signal<'error' | 'success' | 'info'>('info');
 
@@ -60,7 +59,6 @@ export class AntrianDashboardComponent implements OnInit {
   readonly lastUpdateAt = this.realtimeService.lastUpdateAt;
   readonly klinikInfo = this.klinikService.klinikInfo;
   readonly isBuka = computed(() => {
-    // Recomputes whenever klinikInfo changes OR when realtime update arrives
     this.lastUpdateAt();
     return this.klinikService.isKlinikBuka(this.klinikInfo());
   });
@@ -91,12 +89,10 @@ export class AntrianDashboardComponent implements OnInit {
   );
 
   constructor() {
-    // Lifecycle cleanup: cleanly disconnect WebSocket on component destruction
     this.destroyRef.onDestroy(() => {
       this.realtimeService.disconnect();
     });
 
-    // Reactive refetch: dual-condition trigger (lastUpdateAt change OR connectionStatus === 'connected')
     effect(() => {
       const updateTime = this.lastUpdateAt();
       const status = this.connectionStatus();
@@ -108,7 +104,6 @@ export class AntrianDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Connect to WebSocket on init
     this.realtimeService.connect();
 
     if (!this.klinikInfo()) {
@@ -134,6 +129,7 @@ export class AntrianDashboardComponent implements OnInit {
         }
         this.toastType.set('error');
         this.toastMessage.set(msg);
+        toast.error(msg);
         this.isLoading.set(false);
       },
     });
@@ -152,9 +148,12 @@ export class AntrianDashboardComponent implements OnInit {
         if (!res) {
           this.toastType.set('info');
           this.toastMessage.set('Antrian kosong, tidak ada pasien menunggu');
+          toast.info('Antrian kosong, tidak ada pasien menunggu');
         } else {
+          const msg = `Berhasil memanggil antrian #${res.nomorAntrian} (${res.pasienNama})`;
           this.toastType.set('success');
-          this.toastMessage.set(`Berhasil memanggil antrian #${res.nomorAntrian} (${res.pasienNama})`);
+          this.toastMessage.set(msg);
+          toast.success(msg);
           this.loadAntrian();
         }
       },
@@ -168,6 +167,7 @@ export class AntrianDashboardComponent implements OnInit {
         }
         this.toastType.set('error');
         this.toastMessage.set(msg);
+        toast.error(msg);
       },
     });
   }
@@ -182,8 +182,10 @@ export class AntrianDashboardComponent implements OnInit {
     this.antrianService.lewati(item.id).subscribe({
       next: () => {
         this.isSubmittingAction.set(false);
+        const msg = `Pasien antrian #${item.nomorAntrian} dilewati dan dikembalikan ke antrian`;
         this.toastType.set('success');
-        this.toastMessage.set(`Pasien antrian #${item.nomorAntrian} dilewati dan dikembalikan ke antrian`);
+        this.toastMessage.set(msg);
+        toast.success(msg);
         this.loadAntrian();
       },
       error: (err) => {
@@ -196,7 +198,7 @@ export class AntrianDashboardComponent implements OnInit {
         }
         this.toastType.set('error');
         this.toastMessage.set(msg);
-        // Refetch on error (e.g. 409 stale status) to resynchronize local state
+        toast.error(msg);
         this.loadAntrian();
       },
     });
@@ -225,8 +227,10 @@ export class AntrianDashboardComponent implements OnInit {
       next: () => {
         this.isSubmittingAction.set(false);
         this.confirmTidakHadirKunjungan.set(null);
+        const msg = `Pasien antrian #${target.nomorAntrian} (${target.pasienNama}) ditandai tidak hadir`;
         this.toastType.set('success');
-        this.toastMessage.set(`Pasien antrian #${target.nomorAntrian} (${target.pasienNama}) ditandai tidak hadir`);
+        this.toastMessage.set(msg);
+        toast.success(msg);
         this.loadAntrian();
       },
       error: (err) => {
@@ -240,6 +244,7 @@ export class AntrianDashboardComponent implements OnInit {
         }
         this.toastType.set('error');
         this.toastMessage.set(msg);
+        toast.error(msg);
         this.loadAntrian();
       },
     });

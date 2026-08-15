@@ -1,176 +1,151 @@
-<div class="min-h-screen bg-background font-sans flex flex-col">
-  <!-- Top Navigation Header -->
-  <header
-    class="h-16 bg-card border-b border-border px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30 shadow-1"
-  >
-    <div class="flex items-center gap-3">
-      <!-- Mobile Drawer Trigger (< lg) -->
-      <hlm-sheet side="left">
+<hlm-sidebar-wrapper>
+  <!-- 1. Spartan Inset Sidebar Component -->
+  <hlm-sidebar variant="inset" collapsible="icon">
+    <!-- Sidebar Header: Clinic Brand with Health Icon -->
+    <hlm-sidebar-header>
+      <a routerLink="/" class="flex items-center gap-2.5 p-1 rounded-lg hover:bg-muted/60 transition-colors select-none group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center">
+        <!-- Medical Health Cross Icon -->
+        <div class="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-xs shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>
+          </svg>
+        </div>
+        <div class="grid flex-1 text-left text-sm leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
+          <span class="truncate font-semibold text-foreground text-xs">{{ klinikName() }}</span>
+          <span class="truncate text-[10px] text-muted-foreground">Sistem RME & Antrian</span>
+        </div>
+      </a>
+    </hlm-sidebar-header>
+
+    <!-- Sidebar Content: Grouped Navigation -->
+    <hlm-sidebar-content>
+      @for (group of navGroups(); track group.title) {
+        <hlm-sidebar-group>
+          <div hlmSidebarGroupLabel>{{ group.title }}</div>
+          <div hlmSidebarGroupContent>
+            <ul hlmSidebarMenu>
+              @for (item of group.items; track item.route) {
+                <li hlmSidebarMenuItem>
+                  <a
+                    hlmSidebarMenuButton
+                    [routerLink]="item.route"
+                    routerLinkActive
+                    #rla="routerLinkActive"
+                    [isActive]="rla.isActive"
+                    [routerLinkActiveOptions]="{ exact: item.route === '/' }"
+                    [title]="item.label"
+                  >
+                    <span [innerHTML]="item.iconSvg | safeHtml" class="shrink-0 flex items-center"></span>
+                    <span class="truncate group-data-[collapsible=icon]:hidden">{{ item.label }}</span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        </hlm-sidebar-group>
+      }
+    </hlm-sidebar-content>
+
+    <!-- Sidebar Footer: Compact User Profile Card with Dropdown -->
+    <hlm-sidebar-footer>
+      <ul hlmSidebarMenu>
+        <li hlmSidebarMenuItem>
+          <button
+            hlmSidebarMenuButton
+            size="lg"
+            [hlmDropdownMenuTrigger]="userMenu"
+            class="data-[state=open]:bg-muted hover:bg-muted p-1.5 rounded-lg transition-colors border border-border/40 cursor-pointer group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:border-0"
+            aria-label="Menu Pengguna"
+          >
+            <hlm-avatar size="sm" class="bg-primary text-primary-foreground font-semibold text-xs shrink-0 ring-1 ring-border">
+              <span hlmAvatarFallback>{{ userInitial() }}</span>
+            </hlm-avatar>
+            <div class="grid flex-1 text-left text-xs leading-tight min-w-0 ml-1 group-data-[collapsible=icon]:hidden">
+              <span class="truncate font-semibold text-foreground">{{ userName() }}</span>
+              <span class="truncate text-[10px] text-muted-foreground capitalize">{{ primaryRole() }}</span>
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden">
+              <path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>
+            </svg>
+          </button>
+
+          <!-- Dropdown Menu Content -->
+          <ng-template #userMenu>
+            <div hlmDropdownMenu class="w-60 p-1.5 bg-card border border-border rounded-xl shadow-3">
+              <div class="px-3 py-2 border-b border-border/80 mb-1">
+                <p class="text-[10px] text-muted-foreground font-medium">Akun Masuk</p>
+                <p class="text-xs font-bold text-foreground truncate mt-0.5">{{ userName() }}</p>
+                <p class="text-[10px] text-primary font-semibold capitalize mt-0.5">{{ primaryRole() }}</p>
+              </div>
+              <div class="py-0.5 space-y-0.5">
+                <a
+                  routerLink="/profil"
+                  hlmDropdownMenuItem
+                  class="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted rounded-lg cursor-pointer transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
+                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <span>Pengaturan Akun</span>
+                </a>
+                <button
+                  hlmDropdownMenuItem
+                  (click)="logout()"
+                  class="w-full flex items-center gap-2 px-3 py-2 text-xs text-destructive hover:bg-destructive/10 rounded-lg cursor-pointer transition-colors"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" x2="9" y1="12" y2="12"/>
+                  </svg>
+                  <span>Keluar (Logout)</span>
+                </button>
+              </div>
+            </div>
+          </ng-template>
+        </li>
+      </ul>
+    </hlm-sidebar-footer>
+
+    <button hlmSidebarRail></button>
+  </hlm-sidebar>
+
+  <!-- 2. Spartan Inset Main Container -->
+  <main hlmSidebarInset class="flex flex-col min-h-screen bg-background">
+    <!-- Top Inset Header Bar -->
+    <header class="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border/80 bg-card px-4 sticky top-0 z-10 transition-[width,height] ease-linear">
+      <div class="flex items-center gap-3">
         <button
-          hlmBtn
+          hlmSidebarTrigger
           variant="ghost"
           size="icon"
-          hlmSheetTrigger
-          class="lg:hidden text-foreground cursor-pointer"
-          aria-label="Buka Menu Sidebar"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="4" x2="20" y1="12" y2="12"/>
-            <line x1="4" x2="20" y1="6" y2="6"/>
-            <line x1="4" x2="20" y1="18" y2="18"/>
-          </svg>
-        </button>
-        <hlm-sheet-content class="w-72 p-0 bg-card border-r border-border">
-          <div class="p-6 border-b border-border flex items-center gap-3">
-            <div class="h-9 w-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-              K
-            </div>
-            <div>
-              <h2 class="font-heading font-bold text-base text-foreground">
-                Klinik RME
-              </h2>
-              <p class="text-xs text-muted-foreground">Sistem Staff Klinik</p>
-            </div>
+          class="h-8 w-8 text-foreground hover:bg-muted rounded-md cursor-pointer"
+          aria-label="Toggle Sidebar"
+        ></button>
+        <div class="h-4 w-px bg-border"></div>
+        <div class="flex items-center gap-2">
+          <!-- Medical Icon in Topbar -->
+          <div class="h-6 w-6 rounded bg-primary text-primary-foreground flex items-center justify-center shadow-2xs shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>
+            </svg>
           </div>
-          <nav class="p-4 space-y-1">
-            @for (item of navItems(); track item.route) {
-              <a
-                [routerLink]="item.route"
-                routerLinkActive="bg-primary text-primary-foreground"
-                [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-colors"
-              >
-                <span [innerHTML]="item.iconSvg" class="flex items-center"></span>
-                <span>{{ item.label }}</span>
-              </a>
-            }
-          </nav>
-        </hlm-sheet-content>
-      </hlm-sheet>
-
-      <!-- Desktop Sidebar Toggle Toggle (lg+) -->
-      <button
-        hlmBtn
-        variant="ghost"
-        size="icon"
-        (click)="toggleDesktopSidebar()"
-        class="hidden lg:flex text-foreground cursor-pointer"
-        aria-label="Toggle Sidebar Desktop"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect width="18" height="18" x="3" y="3" rx="2"/>
-          <path d="M9 3v18"/>
-        </svg>
-      </button>
-
-      <!-- Brand Logo -->
-      <a routerLink="/" class="flex items-center gap-2.5">
-        <div class="h-8 w-8 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold text-base shadow-sm">
-          K
-        </div>
-        <span class="font-heading text-lg font-bold text-foreground hidden sm:inline-block tracking-tight">
-          Klinik RME
-        </span>
-      </a>
-    </div>
-
-    <!-- Header Controls (Status & User Menu) -->
-    <div class="flex items-center gap-3 sm:gap-4">
-      <!-- Clinic Status Badge -->
-      <app-clinic-status-indicator />
-
-      <!-- User Menu Dropdown -->
-      <div class="relative">
-        <button
-          hlmBtn
-          variant="ghost"
-          [hlmDropdownMenuTrigger]="userMenu"
-          class="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-muted transition-colors cursor-pointer"
-          aria-label="Menu Pengguna"
-        >
-          <hlm-avatar size="sm" class="bg-primary text-primary-foreground font-semibold text-xs">
-            <span hlmAvatarFallback>{{ userInitial() }}</span>
-          </hlm-avatar>
-          <span class="text-sm font-medium text-foreground hidden md:inline-block max-w-[120px] truncate">
-            {{ userName() }}
+          <span class="text-xs font-semibold text-foreground hidden sm:inline-block">
+            {{ klinikName() }}
           </span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
-            <path d="m6 9 6 6 6-6"/>
-          </svg>
-        </button>
-
-        <!-- Dropdown Menu Content -->
-        <ng-template #userMenu>
-          <div hlmDropdownMenu class="w-56 p-1 bg-card border border-border rounded-md shadow-3">
-            <div class="px-3 py-2.5 border-b border-border">
-              <p class="text-xs text-muted-foreground">Masuk sebagai</p>
-              <p class="text-sm font-semibold text-foreground truncate mt-0.5">
-                {{ userName() }}
-              </p>
-              <p class="text-xs text-primary font-medium mt-0.5 capitalize">
-                {{ primaryRole() }}
-              </p>
-            </div>
-            <div class="py-1">
-              <a
-                routerLink="/profil"
-                hlmDropdownMenuItem
-                class="w-full flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-muted rounded-sm cursor-pointer transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-                  <circle cx="12" cy="12" r="3"/>
-                </svg>
-                Pengaturan Akun
-              </a>
-              <button
-                hlmDropdownMenuItem
-                (click)="logout()"
-                class="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-red-50 rounded-sm cursor-pointer transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                  <polyline points="16 17 21 12 16 7"/>
-                  <line x1="21" x2="9" y1="12" y2="12"/>
-                </svg>
-                Keluar (Logout)
-              </button>
-            </div>
-          </div>
-        </ng-template>
+        </div>
       </div>
-    </div>
-  </header>
 
-  <!-- Shell Content Body (Desktop Sidebar + Main Area) -->
-  <div class="flex-1 flex overflow-hidden">
-    <!-- Desktop Sidebar (lg+) -->
-    <aside
-      class="hidden lg:flex flex-col border-r border-border bg-card transition-all duration-300 z-20 shrink-0"
-      [class.w-64]="!isSidebarCollapsed()"
-      [class.w-20]="isSidebarCollapsed()"
-    >
-      <nav class="flex-1 p-3 space-y-1.5 overflow-y-auto">
-        @for (item of navItems(); track item.route) {
-          <a
-            [routerLink]="item.route"
-            routerLinkActive="bg-primary text-primary-foreground"
-            [routerLinkActiveOptions]="{ exact: item.route === '/' }"
-            class="flex items-center gap-3.5 px-3.5 py-2.5 rounded-md text-sm font-medium text-foreground hover:bg-muted transition-all group"
-            [title]="isSidebarCollapsed() ? item.label : ''"
-          >
-            <span [innerHTML]="item.iconSvg" class="flex items-center shrink-0"></span>
-            @if (!isSidebarCollapsed()) {
-              <span class="truncate">{{ item.label }}</span>
-            }
-          </a>
-        }
-      </nav>
-    </aside>
+      <!-- Right Header Actions -->
+      <div class="flex items-center gap-3">
+        <app-clinic-status-indicator />
+      </div>
+    </header>
 
-    <!-- Main Content Workspace Area -->
-    <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+    <!-- Main Workspace Outlet -->
+    <div class="flex-1 p-4 sm:p-6 lg:p-8">
       <router-outlet />
-    </main>
-  </div>
-</div>
+    </div>
+  </main>
+</hlm-sidebar-wrapper>

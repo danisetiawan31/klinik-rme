@@ -6,11 +6,11 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { KlinikService } from '../../../../core/klinik/klinik.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
-import { ToastComponent } from '../../../../shared/components/toast/toast.component';
 import { AntrianService } from '../../../antrian/antrian.service';
 import { PasienService } from '../../pasien.service';
 import { Pasien } from '../../pasien.types';
@@ -19,11 +19,12 @@ import { Pasien } from '../../pasien.types';
   selector: 'app-pasien-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, SensitiveValueComponent, ToastComponent],
+  imports: [RouterLink, SensitiveValueComponent],
   templateUrl: './pasien-detail.component.html',
 })
 export class PasienDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private pasienService = inject(PasienService);
   private antrianService = inject(AntrianService);
   private klinikService = inject(KlinikService);
@@ -53,9 +54,11 @@ export class PasienDetailComponent implements OnInit {
   readonly isSubmitting = signal<boolean>(false);
 
   ngOnInit(): void {
-    const state = history.state as { successMessage?: string };
+    const nav = this.router.getCurrentNavigation();
+    const state = (nav?.extras?.state ?? history.state) as { successMessage?: string };
     if (state?.successMessage) {
       this.successMessage.set(state.successMessage);
+      toast.success(state.successMessage);
     }
 
     if (!this.klinikInfo()) {
@@ -89,6 +92,7 @@ export class PasienDetailComponent implements OnInit {
           err?.error?.message ??
           'Gagal mengambil detail pasien. Silakan coba lagi.';
         this.errorMessage.set(msg);
+        toast.error(msg);
       },
     });
   }
@@ -137,9 +141,9 @@ export class PasienDetailComponent implements OnInit {
         next: (res) => {
           this.isSubmitting.set(false);
           this.showDaftarModal.set(false);
-          this.successMessage.set(
-            `Pasien berhasil didaftarkan ke antrian hari ini dengan Nomor Antrian #${res.nomorAntrian}.`
-          );
+          const msg = `Pasien berhasil didaftarkan ke antrian hari ini dengan Nomor Antrian #${res.nomorAntrian}.`;
+          this.successMessage.set(msg);
+          toast.success(msg);
           // Refetch patient detail to update riwayatKunjunganRingkas without page redirect
           this.fetchDetail(p.id);
         },
@@ -155,6 +159,7 @@ export class PasienDetailComponent implements OnInit {
             msg = err.error.error.message;
           }
           this.errorMessage.set(msg);
+          toast.error(msg);
         },
       });
   }

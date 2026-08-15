@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
 
+import { SafeHtmlPipe } from '../../../shared/pipes/safe-html.pipe';
+
 export interface NavShortcut {
   label: string;
   route: string;
@@ -12,7 +14,7 @@ export interface NavShortcut {
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, SafeHtmlPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './landing.component.html',
 })

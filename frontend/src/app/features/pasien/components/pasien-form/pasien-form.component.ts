@@ -13,7 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastComponent } from '../../../../shared/components/toast/toast.component';
+import { toast } from '@spartan-ng/brain/sonner';
 import { PasienService } from '../../pasien.service';
 import { PasienSearchItem } from '../../pasien.types';
 import { nikFormatValidator } from '../../pasien.validators';
@@ -22,7 +22,7 @@ import { nikFormatValidator } from '../../pasien.validators';
   selector: 'app-pasien-form',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ToastComponent],
+  imports: [ReactiveFormsModule],
   templateUrl: './pasien-form.component.html',
 })
 export class PasienFormComponent {
@@ -59,16 +59,18 @@ export class PasienFormComponent {
     const val = this.nikCtrl.value ?? '';
     this.nikDuplicateWarning.set(null);
 
-    if (!/^\d{16}$/.test(val)) return;
+    const trimmed = val.trim();
+    if (trimmed.length !== 16 || !/^\d{16}$/.test(trimmed)) {
+      return;
+    }
 
     this.isCheckingNik.set(true);
-    this.pasienService.searchByNik(val).subscribe({
+    this.pasienService.searchByNik(trimmed).subscribe({
       next: (results) => {
         this.isCheckingNik.set(false);
         this.nikDuplicateWarning.set(results.length > 0 ? results[0] : null);
       },
       error: () => {
-        // Silently ignore duplicate-check errors — non-critical, non-blocking
         this.isCheckingNik.set(false);
       },
     });
@@ -100,6 +102,7 @@ export class PasienFormComponent {
         next: (pasien) => {
           this.isLoading.set(false);
           this.form.enable();
+          toast.success(`Pasien ${pasien.nama} berhasil didaftarkan`);
           this.router.navigate(['/pasien', pasien.id]);
         },
         error: (err: any) => {
@@ -109,6 +112,7 @@ export class PasienFormComponent {
             err?.error?.error?.message ??
             'Gagal mendaftarkan pasien. Silakan coba lagi.';
           this.errorMessage.set(message);
+          toast.error(message);
         },
       });
   }
