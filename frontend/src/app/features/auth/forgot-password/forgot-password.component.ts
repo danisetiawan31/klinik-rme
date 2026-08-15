@@ -13,13 +13,22 @@ import { RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../shared/ui/card/src/index';
+import { HlmInput } from '../../../shared/ui/input/src/lib/hlm-input';
+import { HlmLabel } from '../../../shared/ui/label/src/lib/hlm-label';
 import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, HlmButton, ...HlmCardImports],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    HlmButton,
+    HlmInput,
+    HlmLabel,
+    ...HlmCardImports,
+  ],
   templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent {

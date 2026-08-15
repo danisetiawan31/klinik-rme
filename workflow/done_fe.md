@@ -220,5 +220,20 @@
 **File**: `shared/ui/skeleton/` (baru), `antrian-dashboard.*`, `pasien-list.*`, `laporan-harian.*`, `pasien-detail.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
+---
+
+## Addendum — Form Controls Tahap 1: Primitives & Migrasi Modul Auth / Sensitive Value
+
+- **Primitives**: Direktif `HlmInput` (`[hlmInput]`), `HlmLabel` (`[hlmLabel]`), dan `HlmTextarea` (`[hlmTextarea]`) di `shared/ui/{input,label,textarea}/`.
+- **Sensitive Value**: Input password & NIK masking dimigrasi ke `hlmInput` dengan atribut aksesibilitas penuh (`[id]`, `[name]`, `[title]`, `placeholder`, `[attr.aria-label]`).
+- **Modul Auth**:
+  - `login`: Field email & password dimigrasi ke `hlmLabel` + `hlmInput`.
+  - `forgot-password`: Field email terdaftar dimigrasi ke `hlmLabel` + `hlmInput`.
+  - `set-password`: Field password baru & konfirmasi dimigrasi ke `hlmLabel` + `hlmInput`.
+- **Aksesibilitas Shell**: Menambahkan `aria-label` dan `title` pada `hlmSidebarRail` dan `hlmSidebarTrigger` di `shell.component.html`.
+
+**File**: `shared/ui/input/` (baru), `shared/ui/label/` (baru), `shared/ui/textarea/` (baru), `sensitive-value.*`, `login.*`, `forgot-password.*`, `set-password.*`, `shell.*`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
+
 
 

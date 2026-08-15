@@ -1,26 +1,32 @@
 @if (mode() === 'input') {
-  <div class="kl-pw-wrap">
+  <div class="relative w-full">
     <input
+      hlmInput
+      [id]="id() || 'sensitive-input'"
+      [name]="name() || id() || 'sensitive-input'"
       [type]="isRevealed() ? 'text' : 'password'"
-      [placeholder]="placeholder()"
+      [placeholder]="placeholder() || 'Kata sandi'"
+      placeholder="Kata sandi"
+      [title]="placeholder() || 'Kata sandi'"
+      title="Kata sandi"
       [disabled]="isDisabled()"
       [value]="value()"
       (input)="onInput($event)"
       (blur)="onBlur()"
-      class="kl-input pr-10"
+      class="pr-10"
       autocomplete="current-password"
       [attr.aria-label]="placeholder() || 'Kata sandi'"
     />
     <button
       type="button"
-      class="kl-pw-toggle"
+      class="absolute right-0 top-0 h-9 w-9 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer disabled:pointer-events-none disabled:opacity-50"
       (click)="toggleReveal()"
       [disabled]="isDisabled()"
       [attr.aria-label]="isRevealed() ? 'Sembunyikan password' : 'Tampilkan password'"
       [attr.aria-pressed]="isRevealed()"
     >
       @if (isRevealed()) {
-        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
           viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
           aria-hidden="true">
@@ -30,7 +36,7 @@
           <line x1="2" y1="2" x2="22" y2="22"/>
         </svg>
       } @else {
-        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
           viewBox="0 0 24 24" fill="none" stroke="currentColor"
           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
           aria-hidden="true">
@@ -46,7 +52,7 @@
     {{ formattedDisplayValue() }}
     <button
       type="button"
-      class="kl-pw-toggle static translate-none w-[22px] h-[22px]"
+      class="h-6 w-6 inline-flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded-md"
       (click)="toggleReveal()"
       [attr.aria-label]="isRevealed() ? 'Sembunyikan NIK' : 'Tampilkan NIK'"
       [attr.aria-pressed]="isRevealed()"

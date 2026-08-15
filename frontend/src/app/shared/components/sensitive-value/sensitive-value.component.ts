@@ -6,10 +6,12 @@ import {
   signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { HlmInput } from '../../ui/input/src/lib/hlm-input';
 
 @Component({
   selector: 'app-sensitive-value',
   standalone: true,
+  imports: [HlmInput],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
