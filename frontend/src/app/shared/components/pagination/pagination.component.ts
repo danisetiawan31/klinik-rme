@@ -5,11 +5,13 @@ import {
   input,
   output,
 } from '@angular/core';
+import { HlmButton } from '../../ui/button/src/lib/hlm-button';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [HlmButton],
   templateUrl: './pagination.component.html',
 })
 export class PaginationComponent {

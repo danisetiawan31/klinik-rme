@@ -243,22 +243,23 @@
       <!-- ── Actions ── -->
       <div class="flex gap-3 justify-end pt-2">
         <button
+          hlmBtn
+          variant="outline"
           type="button"
-          class="kl-btn-secondary"
           [disabled]="isLoading()"
           (click)="onCancel()"
         >
           Batal
         </button>
         <button
+          hlmBtn
           type="submit"
-          class="kl-btn-primary"
           [disabled]="isLoading()"
           [attr.aria-busy]="isLoading() ? 'true' : null"
         >
           @if (isLoading()) {
             <svg
-              class="kl-spinner" xmlns="http://www.w3.org/2000/svg"
+              class="kl-spinner mr-2" xmlns="http://www.w3.org/2000/svg"
               width="16" height="16" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round" aria-hidden="true"

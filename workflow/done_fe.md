@@ -176,5 +176,20 @@
 **File**: `shared/ui/card/` (baru), `antrian-dashboard.*`, `laporan-harian.*`, `login.*`, `forgot-password.*`, `set-password.*`, `profil.*`, `pasien-form.*`, `pasien-edit.*`, `pasien-detail.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
+---
+
+## Addendum — Migrasi Button & Tombol Aksi ke Spartan Button (HlmButton)
+
+- **Standarisasi Semantik**: Menggantikan seluruh class manual ad-hoc `kl-btn-*` dan inline utility tailwind dengan direktif `button[hlmBtn]` / `a[hlmBtn]` dengan varian semantik (`default`, `outline`, `secondary`, `destructive`) dan ukuran (`size="sm" | "default"`).
+- **Fitur Anti-Spam & Disabled**: `HlmButton` mengaktifkan `data-disabled:pointer-events-none` dan `data-disabled:opacity-50` saat tombol dalam kondisi `[disabled]="isLoading()"` untuk mencegah klik ganda/spam request.
+- **Cakupan Halaman**:
+  - Antrian: Tombol Panggil Berikutnya (`hlmBtn`), Lewati (`variant="secondary" size="sm"`), Tidak Hadir (`variant="destructive" size="sm"`).
+  - Pasien: Registrasi Pasien Baru (`hlmBtn`), Aksi Detail (`variant="secondary" size="sm"`), Daftarkan ke Antrian (`hlmBtn`), Edit Biodata (`variant="secondary"`), Tombol Batal (`variant="outline"`), Simpan Form Pasien (`hlmBtn`).
+  - Auth & Profil: Tombol submit Login, Forgot Password, Set Password, dan Ubah Kata Sandi Profil (`hlmBtn`).
+  - Pagination & Admin: Tombol Sebelumnya & Selanjutnya (`variant="outline" size="sm"`), Tombol Keluar Admin (`variant="secondary" size="sm"`).
+
+**File**: `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `pasien-form.*`, `pasien-edit.*`, `login.*`, `forgot-password.*`, `set-password.*`, `profil.*`, `pagination.*`, `admin-dashboard.*`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0), `kl-btn` references: **0 match**.
+
 
 

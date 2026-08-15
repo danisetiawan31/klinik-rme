@@ -12,8 +12,9 @@
     </div>
 
     <a
+      hlmBtn
       routerLink="/pasien/baru"
-      class="kl-btn-primary no-underline inline-flex items-center gap-2"
+      class="no-underline inline-flex items-center gap-2"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -147,8 +148,11 @@
                 </td>
                 <td class="px-4 py-3 text-right">
                   <a
+                    hlmBtn
+                    variant="secondary"
+                    size="sm"
                     [routerLink]="['/pasien', pasien.id]"
-                    class="kl-btn-secondary px-2.5 py-1 text-xs no-underline"
+                    class="no-underline"
                     (click)="$event.stopPropagation()"
                   >
                     Detail &rarr;

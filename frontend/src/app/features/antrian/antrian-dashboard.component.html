@@ -16,10 +16,10 @@
       <!-- Global Doctor Action: Panggil Berikutnya -->
       @if (isDokter()) {
         <button
+          hlmBtn
           type="button"
           (click)="onPanggilBerikutnya()"
           [disabled]="isSubmittingAction() || !isBuka()"
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm cursor-pointer"
           [title]="!isBuka() ? 'Pendaftaran ditutup karena klinik sudah tutup' : 'Panggil pasien berikutnya sesuai urutan prioritas'"
         >
           <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,10 +169,12 @@
                       <!-- Dokter action: Lewati (hanya status 'dipanggil') -->
                       @if (isDokter() && item.status === 'dipanggil') {
                         <button
+                          hlmBtn
+                          variant="secondary"
+                          size="sm"
                           type="button"
                           (click)="onLewati(item)"
                           [disabled]="isSubmittingAction()"
-                          class="px-2.5 py-1 text-xs font-medium rounded-md border border-border bg-muted hover:bg-muted/80 text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                           title="Lewati pasien dan kembalikan ke status menunggu"
                         >
                           Lewati
@@ -182,10 +184,12 @@
                       <!-- Dokter/Admin action: Tandai Tidak Hadir (hanya status 'menunggu') -->
                       @if ((isDokter() || isAdmin()) && item.status === 'menunggu') {
                         <button
+                          hlmBtn
+                          variant="destructive"
+                          size="sm"
                           type="button"
                           (click)="openConfirmTidakHadir(item)"
                           [disabled]="isSubmittingAction()"
-                          class="px-2.5 py-1 text-xs font-medium rounded-md border border-destructive/30 bg-destructive/10 hover:bg-destructive/20 text-destructive transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                           title="Tandai pasien tidak hadir secara permanen"
                         >
                           Tidak Hadir

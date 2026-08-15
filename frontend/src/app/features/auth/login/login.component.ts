@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmButton } from '../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../shared/ui/card/src/index';
 import { AuthService } from '../../../core/auth/auth.service';
 import { SensitiveValueComponent } from '../../../shared/components/sensitive-value/sensitive-value.component';
@@ -18,7 +19,7 @@ import { SensitiveValueComponent } from '../../../shared/components/sensitive-va
   selector: 'app-login',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, RouterLink, SensitiveValueComponent, ...HlmCardImports],
+  imports: [ReactiveFormsModule, RouterLink, SensitiveValueComponent, HlmButton, ...HlmCardImports],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {

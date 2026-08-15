@@ -12,6 +12,7 @@ import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
+import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { PasienService } from '../../pasien.service';
 import { PasienSearchItem } from '../../pasien.types';
 
@@ -24,6 +25,7 @@ import { PasienSearchItem } from '../../pasien.types';
     RouterLink,
     PaginationComponent,
     SensitiveValueComponent,
+    HlmButton,
   ],
   templateUrl: './pasien-list.component.html',
 })

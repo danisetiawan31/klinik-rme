@@ -12,6 +12,7 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { PasienService } from '../../pasien.service';
 import { nikFormatValidator } from '../../pasien.validators';
@@ -20,7 +21,7 @@ import { nikFormatValidator } from '../../pasien.validators';
   selector: 'app-pasien-edit',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, ...HlmCardImports],
+  imports: [ReactiveFormsModule, HlmButton, ...HlmCardImports],
   templateUrl: './pasien-edit.component.html',
 })
 export class PasienEditComponent implements OnInit {

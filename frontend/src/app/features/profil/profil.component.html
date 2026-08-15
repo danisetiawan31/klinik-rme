@@ -138,13 +138,14 @@
       <!-- Submit Button -->
       <div class="pt-2">
         <button
+          hlmBtn
           type="submit"
-          class="kl-btn-primary sm:w-auto px-6"
+          class="sm:w-auto px-6"
           [disabled]="isLoading()"
           [attr.aria-busy]="isLoading() ? 'true' : null"
         >
           @if (isLoading()) {
-            <svg class="kl-spinner" xmlns="http://www.w3.org/2000/svg"
+            <svg class="kl-spinner mr-2" xmlns="http://www.w3.org/2000/svg"
               width="16" height="16" viewBox="0 0 24 24"
               fill="none" stroke="currentColor" stroke-width="2.5"
               stroke-linecap="round" aria-hidden="true">

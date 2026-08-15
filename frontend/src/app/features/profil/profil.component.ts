@@ -13,6 +13,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { toast } from '@spartan-ng/brain/sonner';
+import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { AuthService } from '../../core/auth/auth.service';
 import { ErrorEnvelope } from '../../core/types/api-response.type';
@@ -33,7 +34,7 @@ const passwordsMatchValidator: ValidatorFn = (
   selector: 'app-profil',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, SensitiveValueComponent, ...HlmCardImports],
+  imports: [ReactiveFormsModule, SensitiveValueComponent, HlmButton, ...HlmCardImports],
   templateUrl: './profil.component.html',
 })
 export class ProfilComponent {

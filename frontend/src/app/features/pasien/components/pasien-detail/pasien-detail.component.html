@@ -45,10 +45,10 @@
         <div class="flex items-center gap-3">
           <!-- Button 1: Daftarkan ke Antrian -->
           <button
+            hlmBtn
             type="button"
             (click)="openDaftarModal()"
             [disabled]="!isKlinikBuka() || isSubmitting()"
-            class="kl-btn-primary inline-flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             [title]="!isKlinikBuka() ? 'Pendaftaran ditutup karena klinik sudah tutup' : 'Daftarkan pasien ke antrian hari ini'"
           >
             <svg
@@ -66,8 +66,10 @@
 
           <!-- Button 2: Edit Biodata -->
           <a
+            hlmBtn
+            variant="secondary"
             [routerLink]="['/pasien', pasien()!.id, 'edit']"
-            class="kl-btn-secondary no-underline inline-flex items-center gap-2"
+            class="no-underline"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

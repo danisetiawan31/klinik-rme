@@ -12,9 +12,11 @@
       </span>
     </div>
     <button
+      hlmBtn
+      variant="secondary"
+      size="sm"
       type="button"
       (click)="authService.logout().subscribe()"
-      class="px-4 py-2 bg-muted text-foreground hover:bg-border font-medium text-sm rounded-sm transition-all cursor-pointer"
     >
       Keluar
     </button>

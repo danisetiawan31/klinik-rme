@@ -14,8 +14,10 @@
   <!-- Navigation buttons -->
   <div class="flex gap-2">
     <button
+      hlmBtn
+      variant="outline"
+      size="sm"
       type="button"
-      class="px-3 py-1 text-xs border border-border text-foreground hover:bg-muted font-medium rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       [disabled]="isPrevDisabled()"
       (click)="onPrev()"
       aria-label="Halaman sebelumnya"
@@ -23,8 +25,10 @@
       &larr; Sebelumnya
     </button>
     <button
+      hlmBtn
+      variant="outline"
+      size="sm"
       type="button"
-      class="px-3 py-1 text-xs border border-border text-foreground hover:bg-muted font-medium rounded-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       [disabled]="isNextDisabled()"
       (click)="onNext()"
       aria-label="Halaman selanjutnya"
