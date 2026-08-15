@@ -19,7 +19,8 @@
       "@spartan-ng/helm/dropdown-menu": ["./src/app/shared/ui/dropdown-menu/src/index.ts"],
       "@spartan-ng/helm/sheet": ["./src/app/shared/ui/sheet/src/index.ts"],
       "@spartan-ng/helm/utils": ["./src/app/shared/ui/utils/src/index.ts"],
-      "@spartan-ng/helm/*": ["./src/app/shared/ui/*/src/index.ts"]
+      "@spartan-ng/helm/*": ["./src/app/shared/ui/*/src/index.ts"],
+      "@spartan-ng/helm/dialog": ["./src/app/shared/ui/dialog/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

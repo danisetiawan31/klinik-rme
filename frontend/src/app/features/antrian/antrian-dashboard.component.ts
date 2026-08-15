@@ -7,6 +7,7 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../core/auth/auth.service';
@@ -15,6 +16,9 @@ import { RealtimeService } from '../../core/realtime/realtime.service';
 import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-status-indicator/clinic-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
+import { HlmDialog } from '../../shared/ui/dialog/src/lib/hlm-dialog';
+import { HlmDialogImports } from '../../shared/ui/dialog/src/index';
 import { AntrianService } from './antrian.service';
 import { KunjunganListItem } from './antrian.types';
 
@@ -25,6 +29,8 @@ import { KunjunganListItem } from './antrian.types';
     StatusBadgeComponent,
     PriorityBadgeComponent,
     ClinicStatusIndicatorComponent,
+    HlmButton,
+    ...HlmDialogImports,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './antrian-dashboard.component.html',
@@ -35,6 +41,9 @@ export class AntrianDashboardComponent implements OnInit {
   private klinikService = inject(KlinikService);
   private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
+
+  // ViewChild reference to Spartan Dialog for programmatic open/close
+  readonly confirmDialog = viewChild<HlmDialog>('confirmTidakHadirDialog');
 
   readonly antrianList = signal<KunjunganListItem[]>([]);
   readonly isLoading = signal<boolean>(false);
@@ -209,10 +218,12 @@ export class AntrianDashboardComponent implements OnInit {
    */
   openConfirmTidakHadir(item: KunjunganListItem): void {
     this.confirmTidakHadirKunjungan.set(item);
+    this.confirmDialog()?.open();
   }
 
   cancelConfirmTidakHadir(): void {
     this.confirmTidakHadirKunjungan.set(null);
+    this.confirmDialog()?.close();
   }
 
   /**
@@ -227,6 +238,7 @@ export class AntrianDashboardComponent implements OnInit {
       next: () => {
         this.isSubmittingAction.set(false);
         this.confirmTidakHadirKunjungan.set(null);
+        this.confirmDialog()?.close();
         const msg = `Pasien antrian #${target.nomorAntrian} (${target.pasienNama}) ditandai tidak hadir`;
         this.toastType.set('success');
         this.toastMessage.set(msg);
@@ -236,6 +248,7 @@ export class AntrianDashboardComponent implements OnInit {
       error: (err) => {
         this.isSubmittingAction.set(false);
         this.confirmTidakHadirKunjungan.set(null);
+        this.confirmDialog()?.close();
         let msg = 'Gagal menandai pasien tidak hadir';
         if (err?.error?.message) {
           msg = err.error.message;

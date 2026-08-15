@@ -145,7 +145,8 @@ describe('PasienDetailComponent (with Tahap 3 Queue Registration)', () => {
     fixture.detectChanges();
 
     expect(component.showDaftarModal()).toBe(true);
-    expect(fixture.nativeElement.textContent).toContain('Daftarkan ke Antrian Hari Ini');
+    // Spartan Dialog renders via CDK overlay portal into document.body (outside nativeElement)
+    expect(document.body.textContent).toContain('Daftarkan ke Antrian Hari Ini');
 
     component.closeDaftarModal();
     fixture.detectChanges();

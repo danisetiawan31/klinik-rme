@@ -279,7 +279,8 @@ describe('AntrianDashboardComponent', () => {
       fixture.detectChanges();
 
       expect(component.confirmTidakHadirKunjungan()).toEqual(menungguItem);
-      expect(fixture.nativeElement.textContent).toContain('Konfirmasi Tidak Hadir');
+      // Spartan Dialog renders via CDK overlay portal into document.body (outside nativeElement)
+      expect(document.body.textContent).toContain('Konfirmasi Tidak Hadir');
 
       // Cancel
       component.cancelConfirmTidakHadir();

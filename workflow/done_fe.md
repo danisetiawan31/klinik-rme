@@ -149,9 +149,18 @@
 - **Migrasi Terpusat Lintas Halaman**: Seluruh fitur (Antrian, Pasien Form/Detail/Edit/List, Login, Forgot Password, Set Password, Profil, Laporan Harian) dimigrasikan dari template toast lokal ke pemanggilan programatik langsung `toast.success()`, `toast.error()`, `toast.info()`.
 - **Verifikasi**: Vitest (30 test files, 154 unit tests) PASS 100%. GitNexus change detection: 0 affected processes (risk level: low).
 
+---
 
+## Addendum — Migrasi Modal ke Spartan Dialog (HlmDialog)
 
+- **Primitive**: `npx ng g @spartan-ng/cli:ui dialog` → `shared/ui/dialog/` (11 file, 0 hardcoded hex).
+- **Antrian Dashboard**: modal "Tandai Tidak Hadir" `div.fixed.inset-0` → `<hlm-dialog #confirmTidakHadirDialog>` + `viewChild<HlmDialog>().open()/close()`; tombol pakai `hlmBtn variant="destructive"|"outline"`.
+- **Pasien Detail**: modal "Daftarkan ke Antrian" → `<hlm-dialog #daftarAntrianDialog>` pola sama; state signals tetap.
+- **Test**: 2 assertion `fixture.nativeElement.textContent` → `document.body.textContent` (CDK overlay portal render di luar nativeElement).
+- **DESIGN.md**: `ConfirmDialog` → Selesai; `Dialog` ditambah ke baris Primitive.
 
+**File**: `shared/ui/dialog/` (baru), `antrian-dashboard.*`, `pasien-detail.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
 
 

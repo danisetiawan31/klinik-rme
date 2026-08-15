@@ -194,31 +194,24 @@
     }
   </div>
 
-  <!-- Dialog Konfirmasi "Tandai Tidak Hadir" (Modal) -->
-  @if (confirmTidakHadirKunjungan(); as target) {
-    <div
-      class="fixed inset-0 z-50 bg-background/80 backdrop-blur-xs flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-modal-title"
-    >
-      <div class="bg-card border border-border rounded-xl shadow-lg max-w-md w-full p-6 space-y-4">
-        <div class="flex items-center gap-3">
+  <!-- Dialog Konfirmasi "Tandai Tidak Hadir" (Spartan Dialog) -->
+  <hlm-dialog #confirmTidakHadirDialog>
+    <hlm-dialog-content *hlmDialogPortal="let ctx" class="sm:max-w-md" [showCloseButton]="false">
+      <hlm-dialog-header>
+        <div class="flex items-center gap-3 mb-1">
           <div class="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center text-destructive shrink-0">
             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
           <div>
-            <h3 id="confirm-modal-title" class="text-base font-semibold text-foreground">
-              Konfirmasi Tidak Hadir
-            </h3>
-            <p class="text-xs text-muted-foreground mt-0.5">
-              Aksi penutupan kunjungan pasien
-            </p>
+            <h3 hlmDialogTitle>Konfirmasi Tidak Hadir</h3>
+            <p hlmDialogDescription>Aksi penutupan kunjungan pasien</p>
           </div>
         </div>
+      </hlm-dialog-header>
 
+      @if (confirmTidakHadirKunjungan(); as target) {
         <p class="text-sm text-foreground">
           Apakah Anda yakin ingin menandai pasien antrian
           <strong class="font-semibold text-foreground">#{{ target.nomorAntrian }} ({{ target.pasienNama }})</strong>
@@ -228,26 +221,28 @@
         <p class="text-xs text-muted-foreground bg-muted/60 p-2.5 rounded-lg border border-border">
           Perhatian: Status tidak hadir bersifat final untuk hari ini dan tidak dapat dibatalkan.
         </p>
+      }
 
-        <div class="flex items-center justify-end gap-2 pt-2">
-          <button
-            type="button"
-            (click)="cancelConfirmTidakHadir()"
-            [disabled]="isSubmittingAction()"
-            class="px-4 py-2 text-sm font-medium rounded-lg border border-border hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
-          >
-            Batal
-          </button>
-          <button
-            type="button"
-            (click)="executeTidakHadir()"
-            [disabled]="isSubmittingAction()"
-            class="px-4 py-2 text-sm font-semibold rounded-lg bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50 cursor-pointer shadow-sm"
-          >
-            {{ isSubmittingAction() ? 'Memproses...' : 'Tandai Tidak Hadir' }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
+      <hlm-dialog-footer>
+        <button
+          hlmBtn
+          variant="outline"
+          type="button"
+          (click)="cancelConfirmTidakHadir()"
+          [disabled]="isSubmittingAction()"
+        >
+          Batal
+        </button>
+        <button
+          hlmBtn
+          variant="destructive"
+          type="button"
+          (click)="executeTidakHadir()"
+          [disabled]="isSubmittingAction()"
+        >
+          {{ isSubmittingAction() ? 'Memproses...' : 'Tandai Tidak Hadir' }}
+        </button>
+      </hlm-dialog-footer>
+    </hlm-dialog-content>
+  </hlm-dialog>
 </div>

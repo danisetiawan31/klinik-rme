@@ -5,12 +5,16 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { KlinikService } from '../../../../core/klinik/klinik.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
+import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
+import { HlmDialog } from '../../../../shared/ui/dialog/src/lib/hlm-dialog';
+import { HlmDialogImports } from '../../../../shared/ui/dialog/src/index';
 import { AntrianService } from '../../../antrian/antrian.service';
 import { PasienService } from '../../pasien.service';
 import { Pasien } from '../../pasien.types';
@@ -19,7 +23,7 @@ import { Pasien } from '../../pasien.types';
   selector: 'app-pasien-detail',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, SensitiveValueComponent],
+  imports: [RouterLink, SensitiveValueComponent, HlmButton, ...HlmDialogImports],
   templateUrl: './pasien-detail.component.html',
 })
 export class PasienDetailComponent implements OnInit {
@@ -29,6 +33,9 @@ export class PasienDetailComponent implements OnInit {
   private antrianService = inject(AntrianService);
   private klinikService = inject(KlinikService);
   private authService = inject(AuthService);
+
+  // ViewChild reference to Spartan Dialog for programmatic open/close
+  readonly daftarDialog = viewChild<HlmDialog>('daftarAntrianDialog');
 
   readonly pasien = signal<Pasien | null>(null);
   readonly isLoading = signal<boolean>(false);
@@ -105,6 +112,7 @@ export class PasienDetailComponent implements OnInit {
     this.priorityReason.set('');
     this.formError.set(null);
     this.showDaftarModal.set(true);
+    this.daftarDialog()?.open();
   }
 
   /**
@@ -113,6 +121,7 @@ export class PasienDetailComponent implements OnInit {
   closeDaftarModal(): void {
     this.showDaftarModal.set(false);
     this.formError.set(null);
+    this.daftarDialog()?.close();
   }
 
   /**
@@ -141,6 +150,7 @@ export class PasienDetailComponent implements OnInit {
         next: (res) => {
           this.isSubmitting.set(false);
           this.showDaftarModal.set(false);
+          this.daftarDialog()?.close();
           const msg = `Pasien berhasil didaftarkan ke antrian hari ini dengan Nomor Antrian #${res.nomorAntrian}.`;
           this.successMessage.set(msg);
           toast.success(msg);
