@@ -33,6 +33,7 @@ import {
   lucideUsers,
 } from '@ng-icons/lucide';
 import { AuthService } from '../../../core/auth/auth.service';
+import { KlinikService } from '../../../core/klinik/klinik.service';
 import {
   formatJakartaDayDate,
   getJakartaTimeString,
@@ -103,12 +104,23 @@ export interface NavShortcut {
 export class LandingComponent {
   private authService = inject(AuthService);
   private antrianService = inject(AntrianService);
+  private klinikService = inject(KlinikService);
   private destroyRef = inject(DestroyRef);
 
   readonly currentUser = this.authService.currentUser;
   readonly userName = computed(() => this.currentUser()?.nama || 'Pengguna');
   readonly userRoles = computed(() => this.currentUser()?.roles || []);
   readonly isDokter = computed(() => this.userRoles().includes('dokter'));
+
+  readonly klinikInfo = this.klinikService.klinikInfo;
+  readonly isKlinikBuka = computed(() => this.klinikService.isKlinikBuka(this.klinikInfo()));
+  readonly jamOperasionalStr = computed(() => {
+    const info = this.klinikInfo();
+    if (info?.jamBuka && info?.jamTutup) {
+      return `Senin – Sabtu · ${info.jamBuka} – ${info.jamTutup} WIB`;
+    }
+    return 'Senin – Sabtu · 08:00 – 20:00 WIB';
+  });
 
   readonly now = signal<Date>(new Date());
   readonly antrianList = signal<KunjunganListItem[]>([]);
@@ -325,6 +337,7 @@ export class LandingComponent {
 
   constructor() {
     this.fetchAntrianSummary();
+    this.klinikService.fetchKlinikInfo().subscribe();
 
     // Update live clock every 30 seconds
     const timer = setInterval(() => {

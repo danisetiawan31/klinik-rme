@@ -4,6 +4,8 @@ import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UserResponse } from '../../../core/auth/auth.types';
+import { KlinikService } from '../../../core/klinik/klinik.service';
+import { KlinikResponse } from '../../../core/klinik/klinik.types';
 import { AntrianService } from '../../antrian/antrian.service';
 import { KunjunganListItem } from '../../antrian/antrian.types';
 import { LandingComponent } from './landing.component';
@@ -14,6 +16,12 @@ describe('LandingComponent', () => {
   let userSignal: WritableSignal<UserResponse | null>;
   let authServiceSpy: { currentUser: WritableSignal<UserResponse | null> };
   let antrianServiceSpy: { getAntrian: ReturnType<typeof vi.fn> };
+  let klinikSignal: WritableSignal<KlinikResponse | null>;
+  let klinikServiceSpy: {
+    klinikInfo: WritableSignal<KlinikResponse | null>;
+    isKlinikBuka: ReturnType<typeof vi.fn>;
+    fetchKlinikInfo: ReturnType<typeof vi.fn>;
+  };
 
   const mockAntrian: KunjunganListItem[] = [
     {
@@ -47,6 +55,18 @@ describe('LandingComponent', () => {
     userSignal = signal<UserResponse | null>(null);
     authServiceSpy = { currentUser: userSignal };
     antrianServiceSpy = { getAntrian: vi.fn().mockReturnValue(of(mockAntrian)) };
+    klinikSignal = signal<KlinikResponse | null>({
+      id: 1,
+      nama: 'Klinik Pratama Sehat',
+      jamBuka: '08:00',
+      jamTutup: '20:00',
+      isBuka: true,
+    });
+    klinikServiceSpy = {
+      klinikInfo: klinikSignal,
+      isKlinikBuka: vi.fn().mockReturnValue(true),
+      fetchKlinikInfo: vi.fn().mockReturnValue(of(klinikSignal())),
+    };
 
     await TestBed.configureTestingModule({
       imports: [LandingComponent],
@@ -54,6 +74,7 @@ describe('LandingComponent', () => {
         provideRouter([]),
         { provide: AuthService, useValue: authServiceSpy },
         { provide: AntrianService, useValue: antrianServiceSpy },
+        { provide: KlinikService, useValue: klinikServiceSpy },
       ],
     }).compileComponents();
 

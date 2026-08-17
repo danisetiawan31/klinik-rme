@@ -130,6 +130,7 @@ App staff **wajib fully responsive** — petugas/dokter/admin bisa akses dari de
 --radius-sm: 4px    /* input, button */
 --radius-md: 8px    /* card standar */
 --radius-lg: 12px   /* modal, panel besar */
+--radius-xl: 24px   /* card level hero, feature besar */
 --radius-full: 9999px /* badge, pill */
 
 --shadow-1: 0 1px 3px rgba(0,0,0,0.08)   /* elemen minimal */

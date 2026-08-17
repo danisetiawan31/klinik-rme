@@ -111,3 +111,15 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 **File**: `public/images/doctor_banner.jpg` (baru), `date.utils.ts`, `landing.*`, `styles.css`.
 **Verifikasi**: `npm test -- --run` → **31 files, 160 tests PASS** (exit 0).
 
+---
+
+## Addendum — Redesign Visual Hero Banner & Jadwal Operasional (Landing Polish Tahap 1)
+
+- **Hero Banner Glassmorphism**: Desain single-card glassmorphism (`bg-card/70 backdrop-blur-xl border border-border/80 shadow-sm`), ambient glow mesh gradient, dan ilustrasi dokter panoramik widescreen (`hero_doctor_wide1.jpg`).
+- **Jadwal & Status Operasional**: Live indicator status buka/tutup klinik dengan pulsing emerald dot dan jadwal operasional (`KlinikService`) di bawah baris tanggal & jam.
+- **Perbaikan CSS Cascade Layer**: Eliminasi unlayered margin/padding reset pada `styles.css` yang menimpa utility class Tailwind v4; stabilisasi layout menggunakan `flex flex-col gap-*`.
+- **Status & Priority Badge**: Standardisasi badge ke `text-xs px-2.5 py-0.5 rounded-md`.
+
+**File**: `styles.css`, `landing.*`, `priority-badge.*`, `status-badge.*`, `hero_doctor_wide1.jpg`.
+**Verifikasi**: `npm test -- --run` → **31 files, 163 tests PASS** (exit 0).
+

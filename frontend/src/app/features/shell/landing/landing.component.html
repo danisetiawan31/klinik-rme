@@ -1,27 +1,43 @@
-<div class="space-y-6 max-w-6xl mx-auto">
-  <!-- ── 1. Hero Banner Klinis (Modern Doctor / Staff Welcome) ── -->
+<div class="flex flex-col gap-8 sm:gap-10 lg:gap-4 max-w-6xl mx-auto pb-2">
+  <!-- ── 1. Hero Banner Klinis (Modern Doctor / Staff Welcome - Glassmorphism Card) ── -->
   <div
-    class="bg-card border border-border rounded-2xl p-6 sm:p-8 shadow-sm relative overflow-hidden"
+    class="relative overflow-hidden rounded-[var(--radius-xl)] bg-card/70 backdrop-blur-xl border border-border/80 p-6 sm:p-8 lg:p-10 shadow-sm flex flex-col justify-between min-h-[380px]"
   >
-    <!-- Background Doctor Illustration on the Right -->
-    <img
-      src="/images/doctor_banner.jpg"
-      alt="Ilustrasi Dokter Klinik"
-      class="absolute right-0 top-0 bottom-0 h-full w-full sm:w-3/5 lg:w-1/2 object-cover object-center pointer-events-none opacity-90 select-none z-0"
-    />
-    <!-- Smooth Gradient Overlay from Left to Right -->
+    <!-- Ambient Glow / Mesh Gradients for Glassmorphism Depth -->
     <div
-      class="absolute inset-0 bg-gradient-to-r from-card via-card/90 sm:via-card/75 to-transparent pointer-events-none z-0"
+      class="absolute -top-20 -left-20 size-80 rounded-full bg-primary/10 blur-3xl pointer-events-none z-0"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="absolute -bottom-20 right-1/4 size-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none z-0"
+      aria-hidden="true"
+    ></div>
+
+    <!-- Background Doctor Illustration (Full 100% Card Background, hidden on mobile <sm) -->
+    <img
+      src="/images/hero_doctor_wide1.jpg"
+      alt="Ilustrasi Dokter Klinik"
+      class="hidden sm:block absolute inset-0 h-full w-full object-cover object-right pointer-events-none select-none z-0 opacity-95"
+    />
+    <!-- Smooth Glassmorphic Gradient Overlays -->
+    <div
+      class="hidden sm:block absolute inset-0 bg-gradient-to-r from-card/85 via-card/65 sm:via-card/35 to-transparent pointer-events-none z-0 backdrop-blur-[0.5px]"
+      aria-hidden="true"
+    ></div>
+    <div
+      class="hidden sm:block absolute inset-0 bg-gradient-to-t from-card/60 via-transparent to-transparent pointer-events-none z-0"
       aria-hidden="true"
     ></div>
 
     <!-- Banner Content: Text on the Left -->
-    <div class="relative z-10 max-w-xl space-y-4">
+    <div class="relative z-10 max-w-xl space-y-3.5">
       <div>
         <span class="text-xs sm:text-sm font-medium text-muted-foreground">
           Selamat datang kembali,
         </span>
-        <h1 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight mt-0.5">
+        <h1
+          class="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight mt-1"
+        >
           {{ userName() }}!
         </h1>
         <p class="text-xs sm:text-sm text-muted-foreground mt-1.5 leading-relaxed">
@@ -29,73 +45,141 @@
         </p>
       </div>
 
-      <!-- Date & Live Time Pill Badges -->
-      <div class="flex flex-wrap items-center gap-2 pt-1">
-        <div
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/90 text-foreground border border-border/80 shadow-2xs backdrop-blur-xs"
-        >
-          <ng-icon hlm size="xs" name="lucideCalendar" class="text-primary" aria-hidden="true" />
-          <span class="tabular-nums">{{ currentDateStr() }}</span>
+      <!-- Badges Section: Date, Live Time & Operational Schedule -->
+      <div class="flex flex-col gap-3 sm:gap-3.5 pt-1">
+        <!-- Row 1: Date & Live Time Pill Badges -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
+          >
+            <ng-icon hlm size="xs" name="lucideCalendar" class="text-primary" aria-hidden="true" />
+            <span class="tabular-nums font-semibold text-primary">{{ currentDateStr() }}</span>
+          </div>
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
+          >
+            <ng-icon hlm size="xs" name="lucideClock" class="text-primary" aria-hidden="true" />
+            <span class="tabular-nums font-semibold text-primary">{{ currentTimeStr() }}</span>
+          </div>
         </div>
-        <div
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/90 text-foreground border border-border/80 shadow-2xs backdrop-blur-xs"
-        >
-          <ng-icon hlm size="xs" name="lucideClock" class="text-primary" aria-hidden="true" />
-          <span class="tabular-nums font-semibold text-primary">{{ currentTimeStr() }}</span>
+
+        <!-- Row 2: Operational Schedule & Clinic Live Status Pill -->
+        <div class="flex items-center">
+          <div
+            class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
+          >
+            <span class="relative flex size-2 shrink-0">
+              @if (isKlinikBuka()) {
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
+                ></span>
+                <span class="relative inline-flex rounded-full size-2 bg-emerald-500"></span>
+              } @else {
+                <span class="relative inline-flex rounded-full size-2 bg-muted-foreground"></span>
+              }
+            </span>
+            <span
+              class="font-semibold text-xs {{
+                isKlinikBuka() ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
+              }}"
+            >
+              {{ isKlinikBuka() ? 'Klinik Buka' : 'Klinik Tutup' }}
+            </span>
+            <span class="text-muted-foreground/40 select-none">•</span>
+            <span class="tabular-nums text-muted-foreground text-xs font-medium">
+              {{ jamOperasionalStr() }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Mini Metrics Strip (Embedded at Bottom of Hero Banner) -->
-    <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 mt-6 border-t border-border/70 backdrop-blur-xs bg-card/40 rounded-xl p-2 sm:p-3">
+    <!-- Mini Metrics Strip (4 Metric Cards at the Bottom of Hero Card, with Glassmorphism / Backdrop Blur) -->
+    <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3.5 sm:gap-4 mt-8">
       <!-- Metric 1: Pasien Hari Ini -->
-      <div class="flex items-center gap-3 p-3 rounded-xl bg-card/80 border border-border/70 shadow-2xs">
-        <div class="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+      <div
+        class="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md hover:bg-card/95 transition-all duration-150"
+      >
+        <div
+          class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0"
+        >
           <ng-icon hlm size="base" name="lucideUsers" aria-hidden="true" />
         </div>
-        <div class="min-w-0">
-          <div class="text-[11px] font-medium text-muted-foreground truncate">Pasien Hari Ini</div>
-          <div class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight">
-            {{ totalPasien() }} <span class="text-xs font-normal text-muted-foreground">pasien</span>
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] sm:text-xs font-medium text-muted-foreground truncate">
+            Pasien Hari Ini
+          </div>
+          <div
+            class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight mt-0.5"
+          >
+            {{ totalPasien() }}
+            <span class="text-[11px] font-normal text-muted-foreground">pasien</span>
           </div>
         </div>
       </div>
 
       <!-- Metric 2: Antrian Menunggu -->
-      <div class="flex items-center gap-3 p-3 rounded-xl bg-card/80 border border-border/70 shadow-2xs">
-        <div class="h-10 w-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
+      <div
+        class="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md hover:bg-card/95 transition-all duration-150"
+      >
+        <div
+          class="size-10 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0"
+        >
           <ng-icon hlm size="base" name="lucideClock" aria-hidden="true" />
         </div>
-        <div class="min-w-0">
-          <div class="text-[11px] font-medium text-amber-700 truncate">Antrian Menunggu</div>
-          <div class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight">
-            {{ antrianMenunggu() }} <span class="text-xs font-normal text-muted-foreground">pasien</span>
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] sm:text-xs font-medium text-amber-700 truncate">
+            Antrian Menunggu
+          </div>
+          <div
+            class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight mt-0.5"
+          >
+            {{ antrianMenunggu() }}
+            <span class="text-[11px] font-normal text-muted-foreground">pasien</span>
           </div>
         </div>
       </div>
 
       <!-- Metric 3: Selesai Dilayani -->
-      <div class="flex items-center gap-3 p-3 rounded-xl bg-card/80 border border-border/70 shadow-2xs">
-        <div class="h-10 w-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0">
+      <div
+        class="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md hover:bg-card/95 transition-all duration-150"
+      >
+        <div
+          class="size-10 rounded-lg bg-accent/10 text-accent flex items-center justify-center shrink-0"
+        >
           <ng-icon hlm size="base" name="lucideCheckCircle2" aria-hidden="true" />
         </div>
-        <div class="min-w-0">
-          <div class="text-[11px] font-medium text-emerald-700 truncate">Selesai Dilayani</div>
-          <div class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight">
-            {{ selesaiDilayani() }} <span class="text-xs font-normal text-muted-foreground">pasien</span>
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] sm:text-xs font-medium text-emerald-700 truncate">
+            Selesai Dilayani
+          </div>
+          <div
+            class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight mt-0.5"
+          >
+            {{ selesaiDilayani() }}
+            <span class="text-[11px] font-normal text-muted-foreground">pasien</span>
           </div>
         </div>
       </div>
 
       <!-- Metric 4: Pasien Prioritas -->
-      <div class="flex items-center gap-3 p-3 rounded-xl bg-card/80 border border-border/70 shadow-2xs">
-        <div class="h-10 w-10 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0">
+      <div
+        class="flex items-center gap-3 p-3.5 sm:p-4 rounded-xl bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md hover:bg-card/95 transition-all duration-150"
+      >
+        <div
+          class="size-10 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center shrink-0"
+        >
           <ng-icon hlm size="base" name="lucideAlertCircle" aria-hidden="true" />
         </div>
-        <div class="min-w-0">
-          <div class="text-[11px] font-medium text-purple-700 truncate">Pasien Prioritas</div>
-          <div class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight">
-            {{ pasienPrioritas() }} <span class="text-xs font-normal text-muted-foreground">pasien</span>
+        <div class="min-w-0 flex-1">
+          <div class="text-[11px] sm:text-xs font-medium text-purple-700 truncate">
+            Pasien Prioritas
+          </div>
+          <div
+            class="text-lg sm:text-xl font-bold text-foreground tabular-nums leading-tight mt-0.5"
+          >
+            {{ pasienPrioritas() }}
+            <span class="text-[11px] font-normal text-muted-foreground">pasien</span>
           </div>
         </div>
       </div>
@@ -104,22 +188,30 @@
 
   <!-- ── 2. Akses Cepat Modul (Eye-Catching Quick Module Cards) ── -->
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
       @for (shortcut of shortcuts(); track shortcut.route) {
         <a
           [routerLink]="shortcut.route"
-          class="group relative overflow-hidden rounded-2xl border border-border/80 p-5 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 {{ shortcut.cardGradientClass }}"
+          class="group relative overflow-hidden rounded-3xl border border-border/80 p-5 sm:p-6 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 {{
+            shortcut.cardGradientClass
+          }}"
         >
           <!-- Top: Circular Icon on the Left + Title & Description on the Right -->
           <div class="flex items-start gap-3.5 relative z-10">
             <div
-              class="size-13 rounded-full {{ shortcut.iconBgClass }} {{ shortcut.iconColorClass }} border {{ shortcut.iconBorderClass }} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-2xs"
+              class="size-12 rounded-full {{ shortcut.iconBgClass }} {{
+                shortcut.iconColorClass
+              }} border {{
+                shortcut.iconBorderClass
+              }} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-2xs"
             >
-              <ng-icon hlm size="lg" [name]="shortcut.iconName" aria-hidden="true" />
+              <ng-icon hlm size="base" [name]="shortcut.iconName" aria-hidden="true" />
             </div>
 
             <div class="min-w-0 flex-1 pt-0.5">
-              <h3 class="font-heading font-bold text-base text-foreground group-hover:text-primary transition-colors duration-150 leading-tight">
+              <h3
+                class="font-heading font-bold text-base text-foreground group-hover:text-primary transition-colors duration-150 leading-snug"
+              >
                 {{ shortcut.label }}
               </h3>
               <p class="text-xs text-muted-foreground mt-1 leading-normal line-clamp-2">
@@ -129,11 +221,19 @@
           </div>
 
           <!-- Bottom: 'Buka Modul ->' on the Left, Watermark '01' on the Right -->
-          <div class="mt-6 pt-2 flex items-center justify-between relative z-10">
-            <span class="inline-flex items-center gap-1 text-xs font-semibold {{ shortcut.textColorClass }} group-hover:translate-x-1 transition-transform duration-150">
+          <div class="mt-6 pt-3 flex items-center justify-between relative z-10">
+            <span
+              class="inline-flex items-center gap-1.5 text-xs font-bold {{
+                shortcut.textColorClass
+              }} group-hover:translate-x-1 transition-transform duration-150"
+            >
               Buka Modul &rarr;
             </span>
-            <span class="font-mono font-bold text-2xl sm:text-3xl tracking-wider {{ shortcut.watermarkColorClass }} select-none pointer-events-none">
+            <span
+              class="font-mono font-bold text-2xl sm:text-3xl tracking-wider {{
+                shortcut.watermarkColorClass
+              }} select-none pointer-events-none"
+            >
               {{ shortcut.badgeNumber }}
             </span>
           </div>
@@ -143,28 +243,30 @@
   </div>
 
   <!-- ── 3. Dua Kolom Operasional Bawah (Widget Antrian & Ringkasan Performa) ── -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
     <!-- Kolom Kiri (7 Kolom): Daftar Antrian Pasien Hari Ini -->
-    <div class="lg:col-span-7 bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+    <div
+      class="lg:col-span-7 bg-card border border-border rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col justify-between"
+    >
       <div>
         <!-- Widget Header -->
         <div class="flex items-center justify-between pb-4 border-b border-border/80">
-          <div class="flex items-center gap-2.5">
-            <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <ng-icon hlm size="xs" name="lucideCalendarDays" aria-hidden="true" />
+          <div class="flex items-center gap-3">
+            <div
+              class="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center"
+            >
+              <ng-icon hlm size="sm" name="lucideCalendarDays" aria-hidden="true" />
             </div>
             <div>
-              <h3 class="font-heading font-bold text-base text-foreground">
+              <h3 class="font-heading font-bold text-base sm:text-lg text-foreground">
                 Antrian Pasien Hari Ini
               </h3>
-              <p class="text-[11px] text-muted-foreground">
-                Daftar antrian kunjungan klinik teratas
-              </p>
+              <p class="text-xs text-muted-foreground">Daftar antrian kunjungan klinik teratas</p>
             </div>
           </div>
           <a
             routerLink="/antrian"
-            class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded px-1.5 py-0.5"
+            class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10"
           >
             Lihat Semua &rarr;
           </a>
@@ -172,25 +274,33 @@
 
         <!-- Widget Content -->
         @if (isLoadingAntrian() && recentAntrian().length === 0) {
-          <div class="space-y-3 mt-4">
+          <div class="space-y-3.5 mt-5">
             @for (i of [1, 2, 3]; track i) {
-              <div class="p-3 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                  <hlm-skeleton class="size-8 rounded-lg" />
-                  <div class="space-y-1.5">
-                    <hlm-skeleton class="h-4 w-32 rounded" />
-                    <hlm-skeleton class="h-3 w-20 rounded" />
+              <div
+                class="p-4 rounded-2xl bg-muted/30 border border-border/50 flex items-center justify-between"
+              >
+                <div class="flex items-center gap-3.5">
+                  <hlm-skeleton class="size-10 rounded-xl" />
+                  <div class="space-y-2">
+                    <hlm-skeleton class="h-4 w-36 rounded" />
+                    <hlm-skeleton class="h-3 w-24 rounded" />
                   </div>
                 </div>
-                <hlm-skeleton class="h-6 w-20 rounded-full" />
+                <hlm-skeleton class="h-7 w-24 rounded-md" />
               </div>
             }
           </div>
         } @else if (recentAntrian().length === 0) {
-          <hlm-empty class="p-8 my-3">
+          <hlm-empty class="p-10 my-4">
             <hlm-empty-header>
               <hlm-empty-media variant="icon">
-                <ng-icon hlm size="base" name="lucideInbox" class="text-muted-foreground" aria-hidden="true" />
+                <ng-icon
+                  hlm
+                  size="base"
+                  name="lucideInbox"
+                  class="text-muted-foreground"
+                  aria-hidden="true"
+                />
               </hlm-empty-media>
               <div hlmEmptyTitle>Belum ada antrian hari ini</div>
               <div hlmEmptyDescription>
@@ -199,32 +309,34 @@
             </hlm-empty-header>
           </hlm-empty>
         } @else {
-          <div class="space-y-2.5 mt-4">
+          <div class="space-y-3 mt-5">
             @for (item of recentAntrian(); track item.id) {
               <a
                 routerLink="/antrian"
-                class="flex items-center justify-between p-3 rounded-xl bg-muted/30 hover:bg-muted/70 border border-border/60 hover:border-primary/40 transition-all duration-150 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                class="flex items-center justify-between p-4 rounded-2xl bg-muted/30 hover:bg-muted/70 border border-border/60 hover:border-primary/40 transition-all duration-150 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div class="flex items-center gap-3.5 min-w-0">
-                  <div class="font-mono font-bold text-sm text-primary bg-primary/10 border border-primary/20 px-2.5 py-1 rounded-lg tabular-nums shrink-0">
+                  <div
+                    class="size-10 rounded-xl font-mono font-bold text-sm text-primary bg-primary/10 border border-primary/20 flex items-center justify-center tabular-nums shrink-0"
+                  >
                     #{{ item.nomorAntrian }}
                   </div>
                   <div class="min-w-0">
-                    <div class="font-semibold text-sm text-foreground truncate group-hover:text-primary transition-colors">
+                    <div
+                      class="font-semibold text-sm sm:text-base text-foreground truncate group-hover:text-primary transition-colors"
+                    >
                       {{ item.pasienNama }}
                     </div>
-                    <div class="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                    <div class="text-xs text-muted-foreground flex items-center gap-2 mt-1">
                       <span>Pasien Umum</span>
                       @if (item.isPriority) {
-                        <span class="inline-flex items-center text-purple-700 font-medium bg-purple-500/10 border border-purple-500/20 px-1.5 py-0.2 rounded text-[10px]">
-                          Prioritas
-                        </span>
+                        <app-priority-badge [reason]="item.priorityReason" size="sm" />
                       }
                     </div>
                   </div>
                 </div>
 
-                <div class="flex items-center gap-2 shrink-0">
+                <div class="flex items-center gap-2.5 shrink-0">
                   <app-status-badge [status]="item.status" />
                   <ng-icon
                     hlm
@@ -242,97 +354,112 @@
     </div>
 
     <!-- Kolom Kanan (5 Kolom): Ringkasan Operasional & Tren Klinis -->
-    <div class="lg:col-span-5 bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+    <div
+      class="lg:col-span-5 bg-card border border-border rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col justify-between"
+    >
       <div>
         <!-- Widget Header -->
         <div class="flex items-center justify-between pb-4 border-b border-border/80">
-          <div class="flex items-center gap-2.5">
-            <div class="size-8 rounded-lg bg-sky-500/10 text-sky-600 flex items-center justify-center">
-              <ng-icon hlm size="xs" name="lucideActivity" aria-hidden="true" />
+          <div class="flex items-center gap-3">
+            <div
+              class="size-9 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center"
+            >
+              <ng-icon hlm size="sm" name="lucideActivity" aria-hidden="true" />
             </div>
             <div>
-              <h3 class="font-heading font-bold text-base text-foreground">
+              <h3 class="font-heading font-bold text-base sm:text-lg text-foreground">
                 Ringkasan Hari Ini
               </h3>
-              <p class="text-[11px] text-muted-foreground">
-                Status operasional pelayanan klinik
-              </p>
+              <p class="text-xs text-muted-foreground">Status operasional pelayanan klinik</p>
             </div>
           </div>
-          <span class="text-[11px] font-medium bg-muted text-muted-foreground px-2.5 py-1 rounded-lg border border-border">
+          <span
+            class="text-xs font-semibold bg-muted text-muted-foreground px-3 py-1 rounded-xl border border-border"
+          >
             WIB
           </span>
         </div>
 
         <!-- 2x2 Mini Stat Grid -->
-        <div class="grid grid-cols-2 gap-3 mt-4">
+        <div class="grid grid-cols-2 gap-4 mt-5">
           <!-- Total Pasien -->
-          <div class="p-3 rounded-xl bg-muted/40 border border-border/60">
+          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-medium text-muted-foreground">Total Pasien</span>
-              <div class="size-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+              <span class="text-xs font-medium text-muted-foreground">Total Pasien</span>
+              <div
+                class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center"
+              >
                 <ng-icon hlm size="xs" name="lucideUsers" aria-hidden="true" />
               </div>
             </div>
-            <div class="text-2xl font-bold text-foreground mt-2 tabular-nums">
+            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
               {{ totalPasien() }}
             </div>
           </div>
 
           <!-- Pasien Prioritas -->
-          <div class="p-3 rounded-xl bg-muted/40 border border-border/60">
+          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-medium text-purple-700">Prioritas</span>
-              <div class="size-7 rounded-lg bg-purple-500/10 text-purple-600 flex items-center justify-center">
+              <span class="text-xs font-medium text-purple-700">Prioritas</span>
+              <div
+                class="size-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center"
+              >
                 <ng-icon hlm size="xs" name="lucideAlertCircle" aria-hidden="true" />
               </div>
             </div>
-            <div class="text-2xl font-bold text-foreground mt-2 tabular-nums">
+            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
               {{ pasienPrioritas() }}
             </div>
           </div>
 
           <!-- Menunggu -->
-          <div class="p-3 rounded-xl bg-muted/40 border border-border/60">
+          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-medium text-amber-700">Menunggu</span>
-              <div class="size-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <span class="text-xs font-medium text-amber-700">Menunggu</span>
+              <div
+                class="size-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"
+              >
                 <ng-icon hlm size="xs" name="lucideClock" aria-hidden="true" />
               </div>
             </div>
-            <div class="text-2xl font-bold text-foreground mt-2 tabular-nums">
+            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
               {{ antrianMenunggu() }}
             </div>
           </div>
 
           <!-- Selesai -->
-          <div class="p-3 rounded-xl bg-muted/40 border border-border/60">
+          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
             <div class="flex items-center justify-between">
-              <span class="text-[11px] font-medium text-emerald-700">Selesai</span>
-              <div class="size-7 rounded-lg bg-accent/10 text-accent flex items-center justify-center">
+              <span class="text-xs font-medium text-emerald-700">Selesai</span>
+              <div
+                class="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center"
+              >
                 <ng-icon hlm size="xs" name="lucideCheckCircle2" aria-hidden="true" />
               </div>
             </div>
-            <div class="text-2xl font-bold text-foreground mt-2 tabular-nums">
+            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
               {{ selesaiDilayani() }}
             </div>
           </div>
         </div>
 
         <!-- Consultation Progress Breakdown -->
-        <div class="mt-5 pt-4 border-t border-border/80 space-y-2">
+        <div class="mt-6 pt-5 border-t border-border/80 space-y-2.5">
           <div class="flex items-center justify-between text-xs font-semibold">
             <span class="text-foreground">Tingkat Penyelesaian</span>
-            <span class="text-primary tabular-nums">{{ completionPercentage() }}%</span>
+            <span class="text-primary tabular-nums font-bold">{{ completionPercentage() }}%</span>
           </div>
-          <div class="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+          <div
+            class="h-3 w-full bg-muted rounded-full overflow-hidden p-0.5 border border-border/50"
+          >
             <div
               class="h-full bg-primary rounded-full transition-all duration-500 ease-out"
               [style.width.%]="completionPercentage()"
             ></div>
           </div>
-          <p class="text-[11px] text-muted-foreground mt-1">
-            {{ selesaiDilayani() }} dari {{ totalPasien() }} antrian pasien telah selesai dilayani hari ini.
+          <p class="text-xs text-muted-foreground mt-1">
+            {{ selesaiDilayani() }} dari {{ totalPasien() }} antrian pasien telah selesai dilayani
+            hari ini.
           </p>
         </div>
       </div>

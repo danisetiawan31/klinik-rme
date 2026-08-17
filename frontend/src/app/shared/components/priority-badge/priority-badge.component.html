@@ -1,10 +1,26 @@
 <span
   hlmBadge
   variant="outline"
-  class="rounded-full border border-secondary bg-transparent px-2 py-0.5 text-xs font-semibold text-foreground inline-flex items-center gap-1 shrink-0"
+  [class]="'bg-purple-500/10 border border-purple-500/30 text-purple-700 dark:text-purple-300 ' + sizeClass()"
   [title]="reason() ? 'Pasien Prioritas: ' + reason() : 'Pasien Prioritas'"
-  aria-label="Pasien Prioritas"
+  [attr.aria-label]="'Pasien Prioritas' + (reason() ? ': ' + reason() : '')"
 >
-  <ng-icon hlm size="xs" name="lucideFlag" class="text-secondary fill-current" aria-hidden="true" />
-  <span>Prioritas</span>
+  @if (size() === 'xs') {
+    <ng-icon
+      hlm
+      size="xs"
+      [name]="iconName()"
+      class="text-purple-600 dark:text-purple-400"
+      aria-hidden="true"
+    />
+  } @else {
+    <ng-icon
+      hlm
+      [size]="size() === 'sm' ? 'xs' : 'xs'"
+      [name]="iconName()"
+      class="text-purple-600 dark:text-purple-400 shrink-0"
+      aria-hidden="true"
+    />
+    <span>{{ displayLabel() }}</span>
+  }
 </span>

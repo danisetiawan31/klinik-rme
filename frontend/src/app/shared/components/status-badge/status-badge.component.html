@@ -1,9 +1,26 @@
 <span
   hlmBadge
   variant="outline"
-  [class]="'rounded-full px-2.5 py-0.5 text-xs font-semibold inline-flex items-center gap-1.5 ' + badgeConfig().class"
+  [class]="badgeConfig().class + ' ' + sizeClass()"
   [attr.aria-label]="'Status: ' + badgeConfig().label"
+  [title]="badgeConfig().label"
 >
-  <span [class]="'h-1.5 w-1.5 rounded-full ' + badgeConfig().dotClass"></span>
-  {{ badgeConfig().label }}
+  @if (size() === 'xs') {
+    <ng-icon
+      hlm
+      size="xs"
+      [name]="badgeConfig().iconName"
+      [class]="badgeConfig().iconClass"
+      aria-hidden="true"
+    />
+  } @else {
+    <ng-icon
+      hlm
+      [size]="size() === 'sm' ? 'xs' : 'xs'"
+      [name]="badgeConfig().iconName"
+      [class]="badgeConfig().iconClass + ' shrink-0'"
+      aria-hidden="true"
+    />
+    <span>{{ badgeConfig().label }}</span>
+  }
 </span>
