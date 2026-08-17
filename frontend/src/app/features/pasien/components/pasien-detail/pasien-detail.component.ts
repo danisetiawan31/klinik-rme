@@ -16,8 +16,10 @@ import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmDialog } from '../../../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../../../shared/ui/dialog/src/index';
+import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
 import { HlmTableImports } from '../../../../shared/ui/table/src/index';
+import { HlmTextarea } from '../../../../shared/ui/textarea/src/lib/hlm-textarea';
 import { AntrianService } from '../../../antrian/antrian.service';
 import { PasienService } from '../../pasien.service';
 import { Pasien } from '../../pasien.types';
@@ -30,6 +32,8 @@ import { Pasien } from '../../pasien.types';
     RouterLink,
     SensitiveValueComponent,
     HlmButton,
+    HlmLabel,
+    HlmTextarea,
     ...HlmCardImports,
     ...HlmDialogImports,
     ...HlmSkeletonImports,

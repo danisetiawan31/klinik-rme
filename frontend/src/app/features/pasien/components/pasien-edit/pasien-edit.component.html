@@ -77,19 +77,19 @@
         <!-- ── NIK (nullable) ── -->
         <div class="flex flex-col gap-1.5">
           <label
+            hlmLabel
             for="edit-nik"
-            class="font-sans text-sm font-semibold text-foreground"
           >
             NIK
           </label>
           <input
+            hlmInput
             id="edit-nik"
             type="text"
             formControlName="nik"
             inputmode="numeric"
             maxlength="16"
             placeholder="Kosongkan jika tidak ada"
-            class="kl-input"
             [attr.aria-invalid]="nikCtrl.touched && nikCtrl.invalid ? 'true' : null"
           />
           @if (nikCtrl.touched && nikCtrl.errors?.['nikFormat']) {
@@ -105,17 +105,17 @@
         <!-- ── Nama ── -->
         <div class="flex flex-col gap-1.5">
           <label
+            hlmLabel
             for="edit-nama"
-            class="font-sans text-sm font-semibold text-foreground"
           >
             Nama Lengkap <span class="text-destructive">*</span>
           </label>
           <input
+            hlmInput
             id="edit-nama"
             type="text"
             formControlName="nama"
             placeholder="Nama lengkap sesuai identitas"
-            class="kl-input"
             [attr.aria-invalid]="namaCtrl.touched && namaCtrl.invalid ? 'true' : null"
           />
           @if (namaCtrl.touched && namaCtrl.errors?.['required']) {
@@ -131,16 +131,16 @@
         <!-- ── Tanggal Lahir ── -->
         <div class="flex flex-col gap-1.5">
           <label
+            hlmLabel
             for="edit-tgl-lahir"
-            class="font-sans text-sm font-semibold text-foreground"
           >
             Tanggal Lahir <span class="text-destructive">*</span>
           </label>
           <input
+            hlmInput
             id="edit-tgl-lahir"
             type="date"
             formControlName="tanggalLahir"
-            class="kl-input"
             [attr.aria-invalid]="tanggalLahirCtrl.touched && tanggalLahirCtrl.invalid ? 'true' : null"
           />
           @if (tanggalLahirCtrl.touched && tanggalLahirCtrl.errors?.['required']) {
@@ -156,15 +156,15 @@
         <!-- ── Jenis Kelamin ── -->
         <div class="flex flex-col gap-1.5">
           <label
+            hlmLabel
             for="edit-jenis-kelamin"
-            class="font-sans text-sm font-semibold text-foreground"
           >
             Jenis Kelamin <span class="text-destructive">*</span>
           </label>
           <select
             id="edit-jenis-kelamin"
             formControlName="jenisKelamin"
-            class="kl-input cursor-pointer"
+            class="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-foreground"
             [attr.aria-invalid]="jenisKelaminCtrl.touched && jenisKelaminCtrl.invalid ? 'true' : null"
           >
             <option value="" disabled>-- Pilih jenis kelamin --</option>
@@ -184,17 +184,18 @@
         <!-- ── Alamat ── -->
         <div class="flex flex-col gap-1.5">
           <label
+            hlmLabel
             for="edit-alamat"
-            class="font-sans text-sm font-semibold text-foreground"
           >
             Alamat <span class="text-destructive">*</span>
           </label>
           <textarea
+            hlmTextarea
             id="edit-alamat"
             formControlName="alamat"
             rows="3"
             placeholder="Alamat lengkap pasien"
-            class="kl-input resize-y min-h-[72px]"
+            class="resize-y min-h-[72px]"
             [attr.aria-invalid]="alamatCtrl.touched && alamatCtrl.invalid ? 'true' : null"
           ></textarea>
           @if (alamatCtrl.touched && alamatCtrl.errors?.['required']) {
@@ -210,18 +211,18 @@
         <!-- ── No. Telepon ── -->
         <div class="flex flex-col gap-1.5">
           <label
+            hlmLabel
             for="edit-notelp"
-            class="font-sans text-sm font-semibold text-foreground"
           >
             Nomor Telepon <span class="text-destructive">*</span>
           </label>
           <input
+            hlmInput
             id="edit-notelp"
             type="tel"
             formControlName="noTelp"
             inputmode="tel"
             placeholder="Contoh: 08123456789"
-            class="kl-input"
             [attr.aria-invalid]="noTelpCtrl.touched && noTelpCtrl.invalid ? 'true' : null"
           />
           @if (noTelpCtrl.touched && noTelpCtrl.errors?.['required']) {

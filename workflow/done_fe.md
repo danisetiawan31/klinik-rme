@@ -235,5 +235,26 @@
 **File**: `shared/ui/input/` (baru), `shared/ui/label/` (baru), `shared/ui/textarea/` (baru), `sensitive-value.*`, `login.*`, `forgot-password.*`, `set-password.*`, `shell.*`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
+---
+
+## Addendum — Form Controls Tahap 2 & 3: Migrasi Profil, Laporan Harian, Modul Pasien & Pembersihan Total CSS Legacy
+
+- **Profil & Laporan Harian (Tahap 2)**:
+  - `profil`: Field kata sandi lama, baru, dan konfirmasi dimigrasi ke `label[hlmLabel]` + `SensitiveValueComponent` (`hlmInput`).
+  - `laporan-harian`: Filter tanggal dimigrasi menggunakan `label[hlmLabel]` + `input[hlmInput]`.
+- **Modul Pasien (Tahap 3)**:
+  - `pasien-form`: Form registrasi pasien (NIK, Nama, Tanggal Lahir, Jenis Kelamin, Alamat, No. Telp) dimigrasi ke `hlmLabel`, `hlmInput`, `hlmTextarea`, dan semantic `<select>` styling.
+  - `pasien-edit`: Form edit biodata pasien dimigrasi ke `hlmLabel`, `hlmInput`, `hlmTextarea`, dan semantic `<select>` styling.
+  - `pasien-list`: Form pencarian live-search Nama & NIK dimigrasi ke `hlmLabel` + `hlmInput`.
+  - `pasien-detail`: Textarea alasan prioritas pada modal antrian dimigrasi ke `hlmLabel` + `hlmTextarea`.
+- **Pembersihan CSS Legacy**:
+  - Menghapus seluruh blok CSS legacy `.kl-input`, `.kl-pw-wrap`, dan `.kl-pw-toggle` dari `styles.css`.
+  - 0 match sisa kelas `kl-input` di seluruh codebase frontend.
+- **Component Registry**:
+  - `docs/DESIGN.md` diperbarui dengan memasukkan `Input / Label / Textarea` pada baris Spartan Primitive berstatus **Selesai**.
+
+**File**: `profil.*`, `laporan-harian.*`, `pasien-form.*`, `pasien-edit.*`, `pasien-list.*`, `pasien-detail.*`, `styles.css`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
+
 
 

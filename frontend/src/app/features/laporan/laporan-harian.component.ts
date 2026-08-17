@@ -7,6 +7,8 @@ import {
 } from '@angular/core';
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
+import { HlmInput } from '../../shared/ui/input/src/lib/hlm-input';
+import { HlmLabel } from '../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../shared/ui/skeleton/src/index';
 import { formatJakartaDate, getJakartaISODate } from '../../core/utils/date.utils';
 import { LaporanService } from './laporan.service';
@@ -15,7 +17,7 @@ import { LaporanHarian } from './laporan.types';
 @Component({
   selector: 'app-laporan-harian',
   standalone: true,
-  imports: [...HlmCardImports, ...HlmSkeletonImports],
+  imports: [HlmInput, HlmLabel, ...HlmCardImports, ...HlmSkeletonImports],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './laporan-harian.component.html',
 })

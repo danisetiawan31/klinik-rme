@@ -12,16 +12,18 @@
     </div>
 
     <!-- Date Filter Toolbar -->
-    <div class="flex items-center gap-3">
-      <label for="laporan-tanggal-input" class="text-sm font-medium text-foreground whitespace-nowrap">
+    <div class="flex items-center gap-2">
+      <label hlmLabel for="laporan-tanggal-input" class="whitespace-nowrap mb-0">
         Tanggal:
       </label>
       <input
+        hlmInput
         id="laporan-tanggal-input"
         type="date"
+        title="Filter tanggal laporan"
         [value]="tanggalFilter()"
         (change)="onTanggalChange($any($event.target).value)"
-        class="kl-input cursor-pointer text-sm py-1.5 px-3 w-auto"
+        class="cursor-pointer w-auto"
       />
     </div>
   </div>

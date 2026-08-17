@@ -251,15 +251,16 @@
         <!-- Input Alasan Prioritas (Kondisional) -->
         @if (isPriority()) {
           <div class="space-y-1.5">
-            <label for="priority-reason-input" class="text-xs font-semibold text-foreground">
+            <label hlmLabel for="priority-reason-input">
               Alasan Prioritas <span class="text-destructive">*</span>
             </label>
             <textarea
+              hlmTextarea
               id="priority-reason-input"
               [value]="priorityReason()"
               (input)="priorityReason.set($any($event.target).value)"
               placeholder="Contoh: Lansia 78 tahun dengan kursi roda"
-              class="kl-input h-20 resize-none text-sm"
+              class="h-20 resize-none text-sm"
             ></textarea>
           </div>
         }

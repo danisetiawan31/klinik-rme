@@ -39,36 +39,36 @@
       <!-- Nama field (Debounced live-search) -->
       <div class="flex flex-col gap-1.5">
         <label
+          hlmLabel
           for="search-nama"
-          class="font-sans text-sm font-semibold text-foreground"
         >
           Nama Pasien
         </label>
         <input
+          hlmInput
           id="search-nama"
           type="text"
           formControlName="nama"
           placeholder="Cari berdasarkan nama (min. 1 huruf)..."
-          class="kl-input"
         />
       </div>
 
       <!-- NIK field (Auto-trigger exactly at 16 digits) -->
       <div class="flex flex-col gap-1.5">
         <label
+          hlmLabel
           for="search-nik"
-          class="font-sans text-sm font-semibold text-foreground"
         >
           NIK
         </label>
         <input
+          hlmInput
           id="search-nik"
           type="text"
           formControlName="nik"
           inputmode="numeric"
           maxlength="16"
           placeholder="16 digit NIK..."
-          class="kl-input"
         />
       </div>
     </form>

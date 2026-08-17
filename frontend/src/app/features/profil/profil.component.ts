@@ -15,6 +15,7 @@ import {
 import { toast } from '@spartan-ng/brain/sonner';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
+import { HlmLabel } from '../../shared/ui/label/src/lib/hlm-label';
 import { AuthService } from '../../core/auth/auth.service';
 import { ErrorEnvelope } from '../../core/types/api-response.type';
 import { SensitiveValueComponent } from '../../shared/components/sensitive-value/sensitive-value.component';
@@ -34,7 +35,7 @@ const passwordsMatchValidator: ValidatorFn = (
   selector: 'app-profil',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, SensitiveValueComponent, HlmButton, ...HlmCardImports],
+  imports: [ReactiveFormsModule, SensitiveValueComponent, HlmButton, HlmLabel, ...HlmCardImports],
   templateUrl: './profil.component.html',
 })
 export class ProfilComponent {
