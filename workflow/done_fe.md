@@ -295,5 +295,20 @@
 **File**: `shared/ui/empty/` (baru), `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
 
+---
+
+## Addendum — Migrasi Ikon Lucide Tahap 1 (HlmIconDirective & Shared Components)
+
+- **Primitive Spartan Icon**: Membuat `HlmIconDirective` (`ng-icon[hlm], ng-icon[hlmIcon]`) di `shared/ui/icon/` dengan varian ukuran semantik (`xs`, `sm`, `base`, `lg`, `xl`, `custom`).
+- **Migrasi Shared Components**:
+  - `SensitiveValueComponent`: Migrasi 4 status ikon inline SVG ke `lucideEye`, `lucideEyeOff`, `lucideCopy`, `lucideCheck` dengan tree-shakeable `provideIcons`.
+  - `PriorityBadgeComponent`: Migrasi inline SVG bendera prioritas ke `lucideFlag`.
+  - `ForbiddenComponent`: Migrasi inline SVG perisai akses ditolak ke `lucideShieldX`.
+- **Spartan Directives Update**: Menambahkan selector `ng-icon` pada CVA styles `HlmAlert` (`group-has-[>ng-icon]`) dan `HlmEmptyMedia` (`[&_ng-icon]`).
+- **Component Registry**: `docs/DESIGN.md` diperbarui dengan menandai `Icon` pada baris Spartan Primitive berstatus **Selesai**.
+
+**File**: `shared/ui/icon/` (baru), `sensitive-value.*`, `priority-badge.*`, `forbidden.*`, `hlm-alert.ts`, `hlm-empty.ts`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
+
 
 

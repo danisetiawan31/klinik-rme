@@ -6,12 +6,15 @@ import {
   signal,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideEye, lucideEyeOff } from '@ng-icons/lucide';
+import { HlmIconDirective } from '../../ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../ui/input/src/lib/hlm-input';
 
 @Component({
   selector: 'app-sensitive-value',
   standalone: true,
-  imports: [HlmInput],
+  imports: [HlmInput, NgIcon, HlmIconDirective],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
@@ -19,6 +22,7 @@ import { HlmInput } from '../../ui/input/src/lib/hlm-input';
       useExisting: forwardRef(() => SensitiveValueComponent),
       multi: true,
     },
+    provideIcons({ lucideEye, lucideEyeOff }),
   ],
   templateUrl: './sensitive-value.component.html',
 })

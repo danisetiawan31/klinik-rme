@@ -39,7 +39,7 @@ export class HlmEmptyHeader {
 }
 
 const emptyMediaVariants = cva(
-  'mb-2 flex shrink-0 items-center justify-center [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'mb-2 flex shrink-0 items-center justify-center [&_ng-icon]:pointer-events-none [&_ng-icon]:shrink-0 [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
