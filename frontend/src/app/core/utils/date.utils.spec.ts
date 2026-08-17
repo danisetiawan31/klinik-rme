@@ -1,5 +1,6 @@
 import {
   formatJakartaDate,
+  formatJakartaDayDate,
   getJakartaISODate,
   getJakartaTimeString,
 } from './date.utils';
@@ -15,9 +16,16 @@ describe('date.utils', () => {
     expect(dateStr).toContain('Agustus 2026');
   });
 
+  it('should format date with weekday in Indonesian locale', () => {
+    const dayDateStr = formatJakartaDayDate(new Date('2026-08-13T10:30:00Z'));
+    expect(dayDateStr).toContain('Agustus 2026');
+    expect(dayDateStr).toMatch(/^(Senin|Selasa|Rabu|Kamis|Jumat|Sabtu|Minggu)/);
+  });
+
   it('should format ISO YYYY-MM-DD date in Asia/Jakarta timezone', () => {
     // 2026-08-13T23:00:00Z is 2026-08-14T06:00:00+07:00 in Asia/Jakarta
     const isoDateStr = getJakartaISODate(new Date('2026-08-13T23:00:00Z'));
     expect(isoDateStr).toBe('2026-08-14');
   });
 });
+

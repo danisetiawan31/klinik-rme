@@ -34,6 +34,21 @@ export function formatJakartaDate(
 }
 
 /**
+ * Formats full Indonesian date with weekday (e.g. "Rabu, 14 Agustus 2026") in Asia/Jakarta timezone.
+ */
+export function formatJakartaDayDate(
+  date: Date | string | number = new Date()
+): string {
+  return new Intl.DateTimeFormat('id-ID', {
+    timeZone: environment.timezone,
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(new Date(date));
+}
+
+/**
  * Formats date as ISO YYYY-MM-DD in Asia/Jakarta timezone.
  */
 export function getJakartaISODate(
@@ -46,3 +61,4 @@ export function getJakartaISODate(
     day: '2-digit',
   }).format(new Date(date));
 }
+

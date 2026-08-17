@@ -97,3 +97,17 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 | **Icon** (`shared/ui/icon/`) | 100% raw SVG diganti `<ng-icon hlm>` + `@ng-icons/lucide`. Fix `HlmIconDirective` pemetaan token ukuran → CSS valid (`xs`=`0.875rem` … `xl`=`2rem`) pada `--ng-icon__size`. Eliminasi `[innerHTML]="... \| safeHtml"`. Audit `<svg`: **0 match**. | 159 tests PASS |
 
 **`docs/DESIGN.md` Component Registry**: Semua primitive di atas berstatus **Selesai**.
+
+---
+
+## Addendum — Modernisasi Beranda Dokter & Staff (Hero Banner, Eye-Catching Cards & Operational Widgets)
+
+- **Hero Banner Dokter/Staff**: Greeting personal, pill live time & date WIB (`formatJakartaDayDate`, interval 30s), backdrop ilustrasi dokter, dan 4 mini metrics strip terintegrasi data live `AntrianService` (Pasien Hari Ini, Antrian Menunggu, Selesai Dilayani, Pasien Prioritas).
+- **Eye-Catching 4 Module Cards**: Layout kartu dengan badge icon melingkar (`size-13 rounded-full`), gradient latar khusus per modul (Cyan, Blue, Purple, Emerald), link `Buka Modul →`, dan watermark nomor semantik (`01`–`04`).
+- **2 Widget Operasional Bawah**:
+  - Kolom Kiri: Live Antrian Pasien Hari Ini (top 4 antrian dengan `#nomorAntrian`, nama, status/priority badge, CTA `Lihat Semua →`, dan empty state).
+  - Kolom Kanan: Ringkasan Operasional (2x2 grid metrik live + progress bar persentase penyelesaian antrian klinik).
+
+**File**: `public/images/doctor_banner.jpg` (baru), `date.utils.ts`, `landing.*`, `styles.css`.
+**Verifikasi**: `npm test -- --run` → **31 files, 160 tests PASS** (exit 0).
+
