@@ -11,7 +11,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { toast } from '@spartan-ng/brain/sonner';
+import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
@@ -30,6 +30,7 @@ import { nikFormatValidator } from '../../pasien.validators';
     HlmInput,
     HlmLabel,
     HlmTextarea,
+    ...HlmAlertImports,
     ...HlmCardImports,
   ],
   templateUrl: './pasien-edit.component.html',

@@ -14,44 +14,40 @@
   <hlm-card class="shadow-2 p-6 sm:p-8 max-w-[640px]">
     <!-- 409 Optimistic Lock Hybrid UX Banner -->
     @if (isConflict()) {
-      <div
-        role="alert"
-        aria-live="assertive"
-        class="flex items-center justify-between gap-3 p-4 mb-6 bg-muted border border-warning rounded-sm flex-wrap"
-      >
-        <div class="flex items-center gap-3">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20" height="20" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round"
-            class="text-warning shrink-0"
-            aria-hidden="true"
-          >
-            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-            <line x1="12" y1="9" x2="12" y2="13"/>
-            <line x1="12" y1="17" x2="12.01" y2="17"/>
-          </svg>
-          <span class="font-sans text-sm font-semibold text-warning-foreground">
-            Data sudah diubah oleh staff lain.
-          </span>
-        </div>
-
-        <button
-          hlmBtn
-          variant="outline"
-          size="sm"
-          type="button"
-          [disabled]="isRefetching()"
-          (click)="onReloadLatest()"
+      <hlm-alert variant="warning" class="mb-6" aria-live="assertive">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18" height="18" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round"
+          class="text-warning shrink-0 mt-0.5"
+          aria-hidden="true"
         >
-          @if (isRefetching()) {
-            Memuat...
-          } @else {
-            Muat versi terbaru
-          }
-        </button>
-      </div>
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <h4 hlmAlertTitle>Data Sudah Diubah</h4>
+        <p hlmAlertDescription>
+          Data pasien ini telah diubah oleh staf lain. Silakan muat versi terbaru.
+        </p>
+        <div hlmAlertAction>
+          <button
+            hlmBtn
+            variant="outline"
+            size="sm"
+            type="button"
+            [disabled]="isRefetching()"
+            (click)="onReloadLatest()"
+          >
+            @if (isRefetching()) {
+              Memuat...
+            } @else {
+              Muat versi terbaru
+            }
+          </button>
+        </div>
+      </hlm-alert>
     }
 
     @if (isLoadingInitial()) {

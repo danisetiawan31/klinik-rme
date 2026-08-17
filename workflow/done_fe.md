@@ -256,5 +256,19 @@
 **File**: `profil.*`, `laporan-harian.*`, `pasien-form.*`, `pasien-edit.*`, `pasien-list.*`, `pasien-detail.*`, `styles.css`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
+---
+
+## Addendum — Integrasi Spartan Alert (HlmAlert)
+
+- **Primitive Spartan Alert**: Direktif `HlmAlert` (`hlm-alert, [hlmAlert]`), `HlmAlertTitle`, `HlmAlertDescription`, dan `HlmAlertAction` di `shared/ui/alert/` dengan varian CVA semantik (`default`, `destructive`, `warning`).
+- **Modul Pasien**:
+  - `pasien-edit`: Banner konflik 409 Optimistic Locking dimigrasi ke `<hlm-alert variant="warning">` dengan tombol aksi reload terintegrasi di dalam `<div hlmAlertAction>`.
+  - `pasien-form`: Banner peringatan NIK duplikat dimigrasi ke `<hlm-alert variant="warning">` dengan judul dan deskripsi terstruktur.
+  - `pasien-detail`: Error alert validasi modal antrian prioritas dimigrasi ke `<hlm-alert variant="destructive">`.
+- **Component Registry**: `docs/DESIGN.md` diperbarui dengan memasukkan `Alert` pada baris Spartan Primitive berstatus **Selesai**.
+
+**File**: `shared/ui/alert/` (baru), `pasien-edit.*`, `pasien-form.*`, `pasien-detail.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
+
 
 

@@ -267,9 +267,22 @@
 
         <!-- Form Error Alert -->
         @if (formError()) {
-          <p class="text-xs text-destructive font-medium bg-destructive/10 p-2 rounded border border-destructive/20">
-            {{ formError() }}
-          </p>
+          <hlm-alert variant="destructive" class="py-2.5 px-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="text-destructive shrink-0 mt-0.5"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <p hlmAlertDescription class="text-xs">
+              {{ formError() }}
+            </p>
+          </hlm-alert>
         }
       </div>
 

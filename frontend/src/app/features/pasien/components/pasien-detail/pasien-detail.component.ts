@@ -12,6 +12,7 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { KlinikService } from '../../../../core/klinik/klinik.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
+import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmDialog } from '../../../../shared/ui/dialog/src/lib/hlm-dialog';
@@ -34,6 +35,7 @@ import { Pasien } from '../../pasien.types';
     HlmButton,
     HlmLabel,
     HlmTextarea,
+    ...HlmAlertImports,
     ...HlmCardImports,
     ...HlmDialogImports,
     ...HlmSkeletonImports,
