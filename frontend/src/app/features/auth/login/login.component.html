@@ -8,14 +8,7 @@
     <div
       class="flex items-center justify-center mb-4 w-[54px] h-[54px] border-2 border-primary rounded-lg bg-card shadow-1"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26"
-        viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2.5"
-        stroke-linecap="round" stroke-linejoin="round"
-        class="text-primary"
-        aria-hidden="true">
-        <path d="M12 5v14M5 12h14"/>
-      </svg>
+      <ng-icon hlm size="lg" name="lucidePlus" class="text-primary" aria-hidden="true" />
     </div>
 
     <!-- Brand name -->
@@ -89,12 +82,7 @@
         [attr.aria-busy]="isLoading() ? 'true' : null"
       >
         @if (isLoading()) {
-          <svg class="kl-spinner mr-2" xmlns="http://www.w3.org/2000/svg"
-            width="16" height="16" viewBox="0 0 24 24"
-            fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round" aria-hidden="true">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-          </svg>
+          <ng-icon hlm size="sm" name="lucideLoader2" class="animate-spin mr-2" aria-hidden="true" />
         }
         Masuk
       </button>

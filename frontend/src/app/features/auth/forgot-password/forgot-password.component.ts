@@ -11,8 +11,11 @@ import {
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideCheck, lucideLoader2, lucidePlus } from '@ng-icons/lucide';
 import { HlmButton } from '../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../shared/ui/card/src/index';
+import { HlmIconDirective } from '../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../../shared/ui/label/src/lib/hlm-label';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -25,10 +28,13 @@ import { AuthService } from '../../../core/auth/auth.service';
     ReactiveFormsModule,
     RouterLink,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     HlmInput,
     HlmLabel,
     ...HlmCardImports,
   ],
+  providers: [provideIcons({ lucidePlus, lucideLoader2, lucideCheck })],
   templateUrl: './forgot-password.component.html',
 })
 export class ForgotPasswordComponent {

@@ -22,7 +22,10 @@ import { NgTemplateOutlet, isPlatformServer } from '@angular/common';
 import { type BooleanInput } from '@angular/cdk/coercion';
 import { type ClassValue } from 'clsx';
 import { cva } from 'class-variance-authority';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucidePanelLeft } from '@ng-icons/lucide';
 import { HlmButton } from '../button/src/lib/hlm-button';
+import { HlmIconDirective } from '../icon/src/lib/hlm-icon.directive';
 import { HlmSheetImports } from '@spartan-ng/helm/sheet';
 import { classes, hlm } from '@spartan-ng/helm/utils';
 
@@ -449,7 +452,10 @@ export class HlmSidebarInset {
 
 @Component({
   selector: 'button[hlmSidebarTrigger]',
+  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgIcon, HlmIconDirective],
+  providers: [provideIcons({ lucidePanelLeft })],
   hostDirectives: [{ directive: HlmButton, inputs: ['variant', 'size'] }],
   host: {
     'data-slot': 'sidebar-trigger',
@@ -457,10 +463,7 @@ export class HlmSidebarInset {
     '(click)': '_onClick()',
   },
   template: `
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect width="18" height="18" x="3" y="3" rx="2"/>
-      <path d="M9 3v18"/>
-    </svg>
+    <ng-icon hlm size="base" name="lucidePanelLeft" aria-hidden="true" />
     <span class="sr-only">Toggle Sidebar</span>
   `,
 })

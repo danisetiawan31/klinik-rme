@@ -6,7 +6,10 @@ import {
   signal,
 } from '@angular/core';
 import { toast } from '@spartan-ng/brain/sonner';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideCheck, lucideUsers, lucideX } from '@ng-icons/lucide';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
+import { HlmIconDirective } from '../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../shared/ui/skeleton/src/index';
@@ -17,8 +20,9 @@ import { LaporanHarian } from './laporan.types';
 @Component({
   selector: 'app-laporan-harian',
   standalone: true,
-  imports: [HlmInput, HlmLabel, ...HlmCardImports, ...HlmSkeletonImports],
+  imports: [HlmInput, HlmLabel, NgIcon, HlmIconDirective, ...HlmCardImports, ...HlmSkeletonImports],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideIcons({ lucideUsers, lucideCheck, lucideX })],
   templateUrl: './laporan-harian.component.html',
 })
 export class LaporanHarianComponent implements OnInit {

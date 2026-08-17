@@ -13,8 +13,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { toast } from '@spartan-ng/brain/sonner';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideLoader2, lucideLock, lucideUser } from '@ng-icons/lucide';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
+import { HlmIconDirective } from '../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmLabel } from '../../shared/ui/label/src/lib/hlm-label';
 import { AuthService } from '../../core/auth/auth.service';
 import { ErrorEnvelope } from '../../core/types/api-response.type';
@@ -35,7 +38,16 @@ const passwordsMatchValidator: ValidatorFn = (
   selector: 'app-profil',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, SensitiveValueComponent, HlmButton, HlmLabel, ...HlmCardImports],
+  imports: [
+    ReactiveFormsModule,
+    SensitiveValueComponent,
+    HlmButton,
+    NgIcon,
+    HlmIconDirective,
+    HlmLabel,
+    ...HlmCardImports,
+  ],
+  providers: [provideIcons({ lucideUser, lucideLock, lucideLoader2 })],
   templateUrl: './profil.component.html',
 })
 export class ProfilComponent {

@@ -15,8 +15,16 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  lucideAlertCircle,
+  lucideCheck,
+  lucideLoader2,
+  lucidePlus,
+} from '@ng-icons/lucide';
 import { HlmButton } from '../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../shared/ui/card/src/index';
+import { HlmIconDirective } from '../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmLabel } from '../../../shared/ui/label/src/lib/hlm-label';
 import { AuthService } from '../../../core/auth/auth.service';
 import { ErrorEnvelope } from '../../../core/types/api-response.type';
@@ -42,8 +50,18 @@ const passwordsMatchValidator: ValidatorFn = (
     RouterLink,
     SensitiveValueComponent,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     HlmLabel,
     ...HlmCardImports,
+  ],
+  providers: [
+    provideIcons({
+      lucidePlus,
+      lucideAlertCircle,
+      lucideCheck,
+      lucideLoader2,
+    }),
   ],
   templateUrl: './set-password.component.html',
 })

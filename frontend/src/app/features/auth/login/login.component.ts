@@ -10,8 +10,11 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { toast } from '@spartan-ng/brain/sonner';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideLoader2, lucidePlus } from '@ng-icons/lucide';
 import { HlmButton } from '../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../shared/ui/card/src/index';
+import { HlmIconDirective } from '../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../../shared/ui/label/src/lib/hlm-label';
 import { AuthService } from '../../../core/auth/auth.service';
@@ -26,10 +29,13 @@ import { SensitiveValueComponent } from '../../../shared/components/sensitive-va
     RouterLink,
     SensitiveValueComponent,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     HlmInput,
     HlmLabel,
     ...HlmCardImports,
   ],
+  providers: [provideIcons({ lucidePlus, lucideLoader2 })],
   templateUrl: './login.component.html',
 })
 export class LoginComponent {

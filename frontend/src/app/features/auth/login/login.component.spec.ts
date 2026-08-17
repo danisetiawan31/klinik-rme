@@ -85,7 +85,7 @@ describe('LoginComponent', () => {
     const submitBtn = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
     expect(submitBtn.disabled).toBe(true);
 
-    const spinner = fixture.nativeElement.querySelector('svg.kl-spinner');
+    const spinner = fixture.nativeElement.querySelector('ng-icon[name="lucideLoader2"]');
     expect(spinner).toBeTruthy();
   });
 

@@ -6,9 +6,7 @@
       <a routerLink="/" class="flex items-center gap-2.5 p-1 rounded-lg hover:bg-muted/60 transition-colors select-none group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center">
         <!-- Medical Health Cross Icon -->
         <div class="h-8 w-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center shadow-xs shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>
-          </svg>
+          <ng-icon hlm size="sm" name="lucideHeartPulse" aria-hidden="true" />
         </div>
         <div class="grid flex-1 text-left text-sm leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
           <span class="truncate font-semibold text-foreground text-xs">{{ klinikName() }}</span>
@@ -35,7 +33,7 @@
                     [routerLinkActiveOptions]="{ exact: item.route === '/' }"
                     [title]="item.label"
                   >
-                    <span [innerHTML]="item.iconSvg | safeHtml" class="shrink-0 flex items-center"></span>
+                    <ng-icon hlm size="base" [name]="item.iconName" class="shrink-0" aria-hidden="true" />
                     <span class="truncate group-data-[collapsible=icon]:hidden">{{ item.label }}</span>
                   </a>
                 </li>
@@ -64,9 +62,7 @@
               <span class="truncate font-semibold text-foreground">{{ userName() }}</span>
               <span class="truncate text-[10px] text-muted-foreground capitalize">{{ primaryRole() }}</span>
             </div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-auto text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden">
-              <path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>
-            </svg>
+            <ng-icon hlm size="xs" name="lucideChevronsUpDown" class="ml-auto text-muted-foreground shrink-0 group-data-[collapsible=icon]:hidden" aria-hidden="true" />
           </button>
 
           <!-- Dropdown Menu Content -->
@@ -83,10 +79,7 @@
                   hlmDropdownMenuItem
                   class="w-full flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-muted rounded-lg cursor-pointer transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-muted-foreground">
-                    <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                  </svg>
+                  <ng-icon hlm size="xs" name="lucideSettings" class="text-muted-foreground" aria-hidden="true" />
                   <span>Pengaturan Akun</span>
                 </a>
                 <button
@@ -94,11 +87,7 @@
                   (click)="logout()"
                   class="w-full flex items-center gap-2 px-3 py-2 text-xs text-destructive hover:bg-destructive/10 rounded-lg cursor-pointer transition-colors"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" x2="9" y1="12" y2="12"/>
-                  </svg>
+                  <ng-icon hlm size="xs" name="lucideLogOut" class="text-destructive" aria-hidden="true" />
                   <span>Keluar (Logout)</span>
                 </button>
               </div>
@@ -132,9 +121,7 @@
         <div class="flex items-center gap-2">
           <!-- Medical Icon in Topbar -->
           <div class="h-6 w-6 rounded bg-primary text-primary-foreground flex items-center justify-center shadow-2xs shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M11 2a2 2 0 0 0-2 2v5H4a2 2 0 0 0-2 2v2c0 1.1.9 2 2 2h5v5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-5h5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-5V4a2 2 0 0 0-2-2h-2z"/>
-            </svg>
+            <ng-icon hlm size="xs" name="lucideHeartPulse" aria-hidden="true" />
           </div>
           <span class="text-xs font-semibold text-foreground hidden sm:inline-block">
             {{ klinikName() }}
@@ -148,8 +135,8 @@
       </div>
     </header>
 
-    <!-- Main Workspace Outlet -->
-    <div class="flex-1 p-4 sm:p-6 lg:p-8">
+    <!-- Main Dynamic Router Outlet View Container -->
+    <div class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
       <router-outlet />
     </div>
   </main>
