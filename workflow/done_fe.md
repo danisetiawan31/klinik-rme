@@ -281,5 +281,19 @@
 **File**: `shared/components/connection-status-indicator/` (baru), `antrian-dashboard.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
 
+---
+
+## Addendum — Integrasi Spartan Empty State (HlmEmpty)
+
+- **Primitive Spartan Empty**: Direktif `HlmEmpty` (`hlm-empty, [hlmEmpty]`), `HlmEmptyHeader`, `HlmEmptyMedia`, `HlmEmptyTitle`, `HlmEmptyDescription`, dan `HlmEmptyContent` di `shared/ui/empty/` dengan varian semantik (`border-dashed`, `bg-muted` media box).
+- **Modul Antrian**: Mengganti tampilan kosong antrian hari ini di `antrian-dashboard.component.html` dengan `<hlm-empty>`.
+- **Modul Pasien**:
+  - `pasien-list`: Mengganti tampilan hasil pencarian kosong dengan `<hlm-empty>` lengkap dengan tombol aksi ajakan bertindak `Daftar Pasien Baru`.
+  - `pasien-detail`: Mengganti teks riwayat kunjungan kosong dengan `<hlm-empty>`.
+- **Component Registry**: `docs/DESIGN.md` diperbarui dengan menandai `Empty` pada baris Spartan Primitive berstatus **Selesai**.
+
+**File**: `shared/ui/empty/` (baru), `antrian-dashboard.*`, `pasien-list.*`, `pasien-detail.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
+
 
 

@@ -101,25 +101,32 @@
       </div>
     } @else if (items().length === 0) {
       <!-- Empty State -->
-      <div class="p-12 text-center text-muted-foreground font-sans">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="40" height="40" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="1.5"
-          stroke-linecap="round" stroke-linejoin="round"
-          class="mx-auto mb-3 block opacity-60"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8"/>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        <p class="text-base font-semibold text-foreground mb-1">
-          Tidak ada data pasien ditemukan
-        </p>
-        <p class="text-sm max-w-sm mx-auto">
-          Coba ubah kata kunci pencarian NIK atau nama pasien di atas, atau daftarkan pasien baru.
-        </p>
-      </div>
+      <hlm-empty class="p-10 my-2">
+        <hlm-empty-header>
+          <hlm-empty-media variant="icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20" height="20" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"
+              class="text-muted-foreground"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </hlm-empty-media>
+          <div hlmEmptyTitle>Tidak Ada Data Pasien</div>
+          <div hlmEmptyDescription>
+            Coba ubah kata kunci pencarian NIK atau nama pasien di atas, atau daftarkan pasien baru.
+          </div>
+        </hlm-empty-header>
+        <hlm-empty-content>
+          <a hlmBtn routerLink="/pasien/baru" size="sm" class="no-underline">
+            Daftar Pasien Baru
+          </a>
+        </hlm-empty-content>
+      </hlm-empty>
     } @else {
       <!-- Table list -->
       <div hlmTableContainer>

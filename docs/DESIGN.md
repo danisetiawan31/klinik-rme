@@ -305,7 +305,7 @@ Token tambahan, aktif hanya di scope `.papan-antrian`:
 | `DiagnosisTindakanFormArray`                    | Composed  | Repeatable row group add/remove (§9.6)                                                                    | Spartan Input, Select, Button + `FormArray`            | Rekam Medis                         | Direncanakan      |
 | `AuditDiffViewer`                               | Composed  | Diff view before/after JSON (§9.9)                                                                        | — (custom)                                             | Admin > Audit Log                   | Direncanakan      |
 | `ConnectionStatusIndicator`                     | Composed  | Indikator status WS (§9.10)                                                                               | Spartan Badge                                          | Papan Antrian, widget antrian staff | Selesai           |
-| Button / Badge / Avatar / Dropdown-Menu / Sheet / Sidebar / Dialog / Card / Table / Skeleton / Input / Label / Textarea / **Alert** | Primitive | Primitive dasar Spartan (diverifikasi §10)                                                                | —                                                      | Lintas fitur                        | Selesai           |
+| Button / Badge / Avatar / Dropdown-Menu / Sheet / Sidebar / Dialog / Card / Table / Skeleton / Input / Label / Textarea / Alert / **Empty** | Primitive | Primitive dasar Spartan (diverifikasi §10)                                                                | —                                                      | Lintas fitur                        | Selesai           |
 
 ---
 
