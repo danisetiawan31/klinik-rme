@@ -11,35 +11,37 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideActivity,
   lucideAlertCircle,
-  lucideAlertTriangle,
-  lucideArrowRight,
-  lucideBarChart3,
   lucideCalendar,
   lucideCalendarDays,
-  lucideCheck,
   lucideCheckCircle2,
   lucideChevronRight,
   lucideClock,
   lucideFileText,
-  lucideHeartPulse,
   lucideInbox,
   lucideListOrdered,
+  lucideMinus,
   lucideSettings,
   lucideShieldCheck,
-  lucideSparkles,
+  lucideTrendingDown,
   lucideTrendingUp,
   lucideUserCheck,
-  lucideUserPlus,
+  lucideUserX,
   lucideUsers,
 } from '@ng-icons/lucide';
+import { NgApexchartsModule, ApexNonAxisChartSeries } from 'ng-apexcharts';
+import { forkJoin } from 'rxjs';
 import { AuthService } from '../../../core/auth/auth.service';
 import { KlinikService } from '../../../core/klinik/klinik.service';
 import {
   formatJakartaDayDate,
+  getJakartaISODate,
   getJakartaTimeString,
+  getJakartaYesterdayISODate,
 } from '../../../core/utils/date.utils';
 import { AntrianService } from '../../antrian/antrian.service';
 import { KunjunganListItem } from '../../antrian/antrian.types';
+import { LaporanService } from '../../laporan/laporan.service';
+import { LaporanHarian } from '../../laporan/laporan.types';
 import { PriorityBadgeComponent } from '../../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { HlmEmptyImports } from '../../../shared/ui/empty/src/lib/hlm-empty';
@@ -71,6 +73,7 @@ export interface NavShortcut {
     PriorityBadgeComponent,
     HlmSkeletonImports,
     HlmEmptyImports,
+    NgApexchartsModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -81,22 +84,18 @@ export interface NavShortcut {
       lucideUserCheck,
       lucideShieldCheck,
       lucideSettings,
-      lucideBarChart3,
       lucideCalendar,
       lucideCalendarDays,
       lucideClock,
       lucideCheckCircle2,
-      lucideAlertTriangle,
       lucideAlertCircle,
-      lucideCheck,
-      lucideHeartPulse,
-      lucideSparkles,
       lucideTrendingUp,
-      lucideArrowRight,
+      lucideTrendingDown,
+      lucideMinus,
+      lucideUserX,
       lucideChevronRight,
       lucideInbox,
       lucideActivity,
-      lucideUserPlus,
     }),
   ],
   templateUrl: './landing.component.html',
@@ -105,15 +104,14 @@ export class LandingComponent {
   private authService = inject(AuthService);
   private antrianService = inject(AntrianService);
   private klinikService = inject(KlinikService);
+  private laporanService = inject(LaporanService);
   private destroyRef = inject(DestroyRef);
 
   readonly currentUser = this.authService.currentUser;
   readonly userName = computed(() => this.currentUser()?.nama || 'Pengguna');
   readonly userRoles = computed(() => this.currentUser()?.roles || []);
-  readonly isDokter = computed(() => this.userRoles().includes('dokter'));
 
   readonly klinikInfo = this.klinikService.klinikInfo;
-  readonly isKlinikBuka = computed(() => this.klinikService.isKlinikBuka(this.klinikInfo()));
   readonly jamOperasionalStr = computed(() => {
     const info = this.klinikInfo();
     if (info?.jamBuka && info?.jamTutup) {
@@ -126,17 +124,19 @@ export class LandingComponent {
   readonly antrianList = signal<KunjunganListItem[]>([]);
   readonly isLoadingAntrian = signal<boolean>(false);
 
+  // Laporan Harian State
+  readonly laporanHariIni = signal<LaporanHarian | null>(null);
+  readonly laporanKemarin = signal<LaporanHarian | null>(null);
+  readonly isLoadingLaporan = signal<boolean>(false);
+
   // Live formatted clock & date
   readonly currentDateStr = computed(() => formatJakartaDayDate(this.now()));
   readonly currentTimeStr = computed(() => `${getJakartaTimeString(this.now())} WIB`);
 
-  // Computed summary metrics
+  // Computed summary metrics for Hero Banner
   readonly totalPasien = computed(() => this.antrianList().length);
   readonly antrianMenunggu = computed(
     () => this.antrianList().filter((a) => a.status === 'menunggu').length
-  );
-  readonly dipanggilCount = computed(
-    () => this.antrianList().filter((a) => a.status === 'dipanggil').length
   );
   readonly selesaiDilayani = computed(
     () => this.antrianList().filter((a) => a.status === 'selesai').length
@@ -145,11 +145,112 @@ export class LandingComponent {
     () => this.antrianList().filter((a) => a.isPriority).length
   );
 
-  readonly completionPercentage = computed(() => {
-    const total = this.totalPasien();
-    if (!total) return 0;
-    return Math.round((this.selesaiDilayani() / total) * 100);
+  // Computed metrics for Performance Widget (Laporan Harian)
+  readonly totalKunjunganLaporan = computed(() => {
+    return this.laporanHariIni()?.totalKunjungan ?? this.totalPasien();
   });
+  readonly totalSelesaiLaporan = computed(() => {
+    return this.laporanHariIni()?.totalSelesai ?? this.selesaiDilayani();
+  });
+  readonly totalTidakHadirLaporan = computed(() => {
+    return this.laporanHariIni()?.totalTidakHadir ?? 0;
+  });
+
+  readonly performanceRate = computed(() => {
+    const total = this.totalKunjunganLaporan();
+    if (!total) return 0;
+    return Math.round((this.totalSelesaiLaporan() / total) * 100);
+  });
+
+  // Tingkat Kehadiran Pasien (Attendance Rate) dari Laporan Harian
+  readonly attendanceRate = computed(() => {
+    const total = this.totalKunjunganLaporan();
+    if (!total) return 100;
+    const tidakHadir = this.totalTidakHadirLaporan();
+    return Math.max(0, Math.round(((total - tidakHadir) / total) * 100));
+  });
+
+  readonly trendVsKemarin = computed(() => {
+    const hariIni = this.totalKunjunganLaporan();
+    const kemarin = this.laporanKemarin()?.totalKunjungan ?? 0;
+    if (kemarin === 0) {
+      return { text: '– Data Awal', isPositive: null, icon: 'lucideMinus' as const };
+    }
+    const diff = hariIni - kemarin;
+    if (diff === 0) {
+      return { text: '0% vs kemarin', isPositive: null, icon: 'lucideMinus' as const };
+    }
+    const percent = Math.round((diff / kemarin) * 100);
+    if (percent > 0) {
+      return { text: `+${percent}% vs kemarin`, isPositive: true, icon: 'lucideTrendingUp' as const };
+    }
+    return { text: `${percent}% vs kemarin`, isPositive: false, icon: 'lucideTrendingDown' as const };
+  });
+
+  // ApexCharts Radial Gauge configuration
+  readonly chartSeries = computed<ApexNonAxisChartSeries>(() => [this.performanceRate()]);
+  readonly chartOptions = computed(() => ({
+    chart: {
+      type: 'radialBar' as const,
+      height: 200,
+      sparkline: { enabled: true },
+      animations: {
+        enabled: true,
+        speed: 800,
+        dynamicAnimation: { enabled: true, speed: 350 },
+      },
+    },
+    plotOptions: {
+      radialBar: {
+        startAngle: -135,
+        endAngle: 135,
+        hollow: {
+          margin: 0,
+          size: '72%',
+          background: 'transparent',
+        },
+        track: {
+          background: 'color-mix(in srgb, var(--primary) 12%, transparent)',
+          strokeWidth: '97%',
+          margin: 0,
+        },
+        dataLabels: {
+          name: {
+            show: true,
+            fontSize: '11px',
+            fontWeight: 600,
+            color: 'var(--color-muted-foreground)',
+            offsetY: -8,
+          },
+          value: {
+            offsetY: 6,
+            fontSize: '22px',
+            fontWeight: 700,
+            color: 'var(--color-foreground)',
+            formatter: (val: number) => `${val}%`,
+          },
+        },
+      },
+    },
+    fill: {
+      type: 'gradient' as const,
+      gradient: {
+        shade: 'dark' as const,
+        type: 'horizontal' as const,
+        shadeIntensity: 0.5,
+        gradientToColors: ['var(--accent)'],
+        inverseColors: true,
+        opacityFrom: 1,
+        opacityTo: 1,
+        stops: [0, 100],
+      },
+    },
+    stroke: {
+      lineCap: 'round' as const,
+    },
+    colors: ['var(--primary)'],
+    labels: ['Tingkat Layanan'],
+  }));
 
   readonly recentAntrian = computed(() => this.antrianList().slice(0, 4));
 
@@ -337,6 +438,7 @@ export class LandingComponent {
 
   constructor() {
     this.fetchAntrianSummary();
+    this.fetchLaporanSummary();
     this.klinikService.fetchKlinikInfo().subscribe();
 
     // Update live clock every 30 seconds
@@ -358,6 +460,26 @@ export class LandingComponent {
       },
       error: () => {
         this.isLoadingAntrian.set(false);
+      },
+    });
+  }
+
+  private fetchLaporanSummary(): void {
+    this.isLoadingLaporan.set(true);
+    const today = getJakartaISODate(this.now());
+    const yesterday = getJakartaYesterdayISODate(this.now());
+
+    forkJoin({
+      hariIni: this.laporanService.getLaporanHarian(today),
+      kemarin: this.laporanService.getLaporanHarian(yesterday),
+    }).subscribe({
+      next: ({ hariIni, kemarin }) => {
+        this.laporanHariIni.set(hariIni);
+        this.laporanKemarin.set(kemarin);
+        this.isLoadingLaporan.set(false);
+      },
+      error: () => {
+        this.isLoadingLaporan.set(false);
       },
     });
   }

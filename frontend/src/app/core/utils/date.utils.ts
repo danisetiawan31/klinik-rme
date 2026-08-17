@@ -62,3 +62,14 @@ export function getJakartaISODate(
   }).format(new Date(date));
 }
 
+/**
+ * Returns yesterday's date as ISO YYYY-MM-DD in Asia/Jakarta timezone.
+ */
+export function getJakartaYesterdayISODate(
+  date: Date | string | number = new Date()
+): string {
+  const d = new Date(date);
+  d.setDate(d.getDate() - 1);
+  return getJakartaISODate(d);
+}
+

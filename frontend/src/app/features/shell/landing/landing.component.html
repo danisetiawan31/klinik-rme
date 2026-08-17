@@ -45,51 +45,33 @@
         </p>
       </div>
 
-      <!-- Badges Section: Date, Live Time & Operational Schedule -->
-      <div class="flex flex-col gap-3 sm:gap-3.5 pt-1">
-        <!-- Row 1: Date & Live Time Pill Badges -->
-        <div class="flex flex-wrap items-center gap-2.5">
-          <div
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
-          >
-            <ng-icon hlm size="xs" name="lucideCalendar" class="text-primary" aria-hidden="true" />
-            <span class="tabular-nums font-semibold text-primary">{{ currentDateStr() }}</span>
-          </div>
-          <div
-            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
-          >
-            <ng-icon hlm size="xs" name="lucideClock" class="text-primary" aria-hidden="true" />
-            <span class="tabular-nums font-semibold text-primary">{{ currentTimeStr() }}</span>
-          </div>
+      <!-- Badges Section: Date, Live Time & Clinic Operational Hours (Unified Row) -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-2.5 pt-1">
+        <!-- Date Pill -->
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
+        >
+          <ng-icon hlm size="xs" name="lucideCalendar" class="text-primary" aria-hidden="true" />
+          <span class="tabular-nums font-semibold text-foreground">{{ currentDateStr() }}</span>
         </div>
 
-        <!-- Row 2: Operational Schedule & Clinic Live Status Pill -->
-        <div class="flex items-center">
-          <div
-            class="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-md text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
-          >
-            <span class="relative flex size-2 shrink-0">
-              @if (isKlinikBuka()) {
-                <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"
-                ></span>
-                <span class="relative inline-flex rounded-full size-2 bg-emerald-500"></span>
-              } @else {
-                <span class="relative inline-flex rounded-full size-2 bg-muted-foreground"></span>
-              }
-            </span>
-            <span
-              class="font-semibold text-xs {{
-                isKlinikBuka() ? 'text-emerald-600 dark:text-emerald-400' : 'text-muted-foreground'
-              }}"
-            >
-              {{ isKlinikBuka() ? 'Klinik Buka' : 'Klinik Tutup' }}
-            </span>
-            <span class="text-muted-foreground/40 select-none">•</span>
-            <span class="tabular-nums text-muted-foreground text-xs font-medium">
-              {{ jamOperasionalStr() }}
-            </span>
-          </div>
+        <!-- Time Pill -->
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
+        >
+          <ng-icon hlm size="xs" name="lucideClock" class="text-primary" aria-hidden="true" />
+          <span class="tabular-nums font-semibold text-foreground">{{ currentTimeStr() }}</span>
+        </div>
+
+        <!-- Operational Schedule Pill (Pure Hours Context, Status handled globally in Topbar) -->
+        <div
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/80 border border-border/70 shadow-2xs backdrop-blur-md"
+        >
+          <ng-icon hlm size="xs" name="lucideActivity" class="text-primary" aria-hidden="true" />
+          <span class="text-muted-foreground font-normal">Jam Layanan:</span>
+          <span class="tabular-nums text-foreground font-semibold">
+            {{ jamOperasionalStr() }}
+          </span>
         </div>
       </div>
     </div>
@@ -186,51 +168,51 @@
     </div>
   </div>
 
-  <!-- ── 2. Akses Cepat Modul (Eye-Catching Quick Module Cards) ── -->
+  <!-- ── 2. Akses Cepat Modul (Sleek & Compact Quick Action Cards) ── -->
   <div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
       @for (shortcut of shortcuts(); track shortcut.route) {
         <a
           [routerLink]="shortcut.route"
-          class="group relative overflow-hidden rounded-3xl border border-border/80 p-5 sm:p-6 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 {{
+          class="group relative overflow-hidden rounded-2xl border border-border/80 p-4 sm:p-4.5 shadow-2xs hover:shadow-xs transition-all duration-200 flex flex-col justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 {{
             shortcut.cardGradientClass
           }}"
         >
           <!-- Top: Circular Icon on the Left + Title & Description on the Right -->
-          <div class="flex items-start gap-3.5 relative z-10">
+          <div class="flex items-start gap-3 relative z-10">
             <div
-              class="size-12 rounded-full {{ shortcut.iconBgClass }} {{
+              class="size-10 rounded-xl {{ shortcut.iconBgClass }} {{
                 shortcut.iconColorClass
               }} border {{
                 shortcut.iconBorderClass
               }} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-200 shadow-2xs"
             >
-              <ng-icon hlm size="base" [name]="shortcut.iconName" aria-hidden="true" />
+              <ng-icon hlm size="sm" [name]="shortcut.iconName" aria-hidden="true" />
             </div>
 
-            <div class="min-w-0 flex-1 pt-0.5">
+            <div class="min-w-0 flex-1">
               <h3
-                class="font-heading font-bold text-base text-foreground group-hover:text-primary transition-colors duration-150 leading-snug"
+                class="font-heading font-bold text-sm text-foreground group-hover:text-primary transition-colors duration-150 leading-snug"
               >
                 {{ shortcut.label }}
               </h3>
-              <p class="text-xs text-muted-foreground mt-1 leading-normal line-clamp-2">
+              <p class="text-[11px] sm:text-xs text-muted-foreground mt-0.5 leading-snug line-clamp-2">
                 {{ shortcut.description }}
               </p>
             </div>
           </div>
 
           <!-- Bottom: 'Buka Modul ->' on the Left, Watermark '01' on the Right -->
-          <div class="mt-6 pt-3 flex items-center justify-between relative z-10">
+          <div class="mt-3.5 pt-1.5 flex items-center justify-between relative z-10">
             <span
-              class="inline-flex items-center gap-1.5 text-xs font-bold {{
+              class="inline-flex items-center gap-1 text-[11px] sm:text-xs font-semibold {{
                 shortcut.textColorClass
               }} group-hover:translate-x-1 transition-transform duration-150"
             >
               Buka Modul &rarr;
             </span>
             <span
-              class="font-mono font-bold text-2xl sm:text-3xl tracking-wider {{
+              class="font-mono font-bold text-lg sm:text-xl tracking-wider {{
                 shortcut.watermarkColorClass
               }} select-none pointer-events-none"
             >
@@ -243,30 +225,30 @@
   </div>
 
   <!-- ── 3. Dua Kolom Operasional Bawah (Widget Antrian & Ringkasan Performa) ── -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
     <!-- Kolom Kiri (7 Kolom): Daftar Antrian Pasien Hari Ini -->
     <div
-      class="lg:col-span-7 bg-card border border-border rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col justify-between"
+      class="lg:col-span-7 bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between"
     >
       <div>
         <!-- Widget Header -->
-        <div class="flex items-center justify-between pb-4 border-b border-border/80">
-          <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
+          <div class="flex items-center gap-2.5">
             <div
-              class="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center"
+              class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
             >
-              <ng-icon hlm size="sm" name="lucideCalendarDays" aria-hidden="true" />
+              <ng-icon hlm size="xs" name="lucideCalendarDays" aria-hidden="true" />
             </div>
             <div>
-              <h3 class="font-heading font-bold text-base sm:text-lg text-foreground">
+              <h3 class="font-heading font-bold text-sm sm:text-base text-foreground">
                 Antrian Pasien Hari Ini
               </h3>
-              <p class="text-xs text-muted-foreground">Daftar antrian kunjungan klinik teratas</p>
+              <p class="text-[11px] text-muted-foreground">Daftar kunjungan klinik terkini</p>
             </div>
           </div>
           <a
             routerLink="/antrian"
-            class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg px-2.5 py-1.5 bg-primary/5 hover:bg-primary/10"
+            class="text-[11px] sm:text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-lg px-2.5 py-1 bg-primary/5 hover:bg-primary/10"
           >
             Lihat Semua &rarr;
           </a>
@@ -274,24 +256,24 @@
 
         <!-- Widget Content -->
         @if (isLoadingAntrian() && recentAntrian().length === 0) {
-          <div class="space-y-3.5 mt-5">
+          <div class="space-y-2 mt-3.5">
             @for (i of [1, 2, 3]; track i) {
               <div
-                class="p-4 rounded-2xl bg-muted/30 border border-border/50 flex items-center justify-between"
+                class="py-2.5 px-3 rounded-xl bg-muted/30 border border-border/50 flex items-center justify-between"
               >
-                <div class="flex items-center gap-3.5">
-                  <hlm-skeleton class="size-10 rounded-xl" />
-                  <div class="space-y-2">
-                    <hlm-skeleton class="h-4 w-36 rounded" />
-                    <hlm-skeleton class="h-3 w-24 rounded" />
+                <div class="flex items-center gap-2.5">
+                  <hlm-skeleton class="size-8 rounded-lg" />
+                  <div class="space-y-1.5">
+                    <hlm-skeleton class="h-3.5 w-32 rounded" />
+                    <hlm-skeleton class="h-2.5 w-20 rounded" />
                   </div>
                 </div>
-                <hlm-skeleton class="h-7 w-24 rounded-md" />
+                <hlm-skeleton class="h-6 w-20 rounded-md" />
               </div>
             }
           </div>
         } @else if (recentAntrian().length === 0) {
-          <hlm-empty class="p-10 my-4">
+          <hlm-empty class="p-8 my-3">
             <hlm-empty-header>
               <hlm-empty-media variant="icon">
                 <ng-icon
@@ -302,32 +284,32 @@
                   aria-hidden="true"
                 />
               </hlm-empty-media>
-              <div hlmEmptyTitle>Belum ada antrian hari ini</div>
-              <div hlmEmptyDescription>
+              <div hlmEmptyTitle class="text-sm">Belum ada antrian hari ini</div>
+              <div hlmEmptyDescription class="text-xs">
                 Pasien yang didaftarkan ke antrian akan muncul di sini secara otomatis.
               </div>
             </hlm-empty-header>
           </hlm-empty>
         } @else {
-          <div class="space-y-3 mt-5">
+          <div class="space-y-2 mt-3.5">
             @for (item of recentAntrian(); track item.id) {
               <a
                 routerLink="/antrian"
-                class="flex items-center justify-between p-4 rounded-2xl bg-muted/30 hover:bg-muted/70 border border-border/60 hover:border-primary/40 transition-all duration-150 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                class="flex items-center justify-between py-2.5 px-3 sm:px-3.5 rounded-xl bg-muted/30 hover:bg-muted/70 border border-border/50 hover:border-primary/40 transition-all duration-150 group cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                <div class="flex items-center gap-3.5 min-w-0">
+                <div class="flex items-center gap-2.5 min-w-0">
                   <div
-                    class="size-10 rounded-xl font-mono font-bold text-sm text-primary bg-primary/10 border border-primary/20 flex items-center justify-center tabular-nums shrink-0"
+                    class="size-8 rounded-lg font-mono font-bold text-xs text-primary bg-primary/10 border border-primary/20 flex items-center justify-center tabular-nums shrink-0"
                   >
                     #{{ item.nomorAntrian }}
                   </div>
                   <div class="min-w-0">
                     <div
-                      class="font-semibold text-sm sm:text-base text-foreground truncate group-hover:text-primary transition-colors"
+                      class="font-semibold text-xs sm:text-sm text-foreground truncate group-hover:text-primary transition-colors leading-tight"
                     >
                       {{ item.pasienNama }}
                     </div>
-                    <div class="text-xs text-muted-foreground flex items-center gap-2 mt-1">
+                    <div class="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
                       <span>Pasien Umum</span>
                       @if (item.isPriority) {
                         <app-priority-badge [reason]="item.priorityReason" size="sm" />
@@ -336,7 +318,7 @@
                   </div>
                 </div>
 
-                <div class="flex items-center gap-2.5 shrink-0">
+                <div class="flex items-center gap-2 shrink-0">
                   <app-status-badge [status]="item.status" />
                   <ng-icon
                     hlm
@@ -353,113 +335,121 @@
       </div>
     </div>
 
-    <!-- Kolom Kanan (5 Kolom): Ringkasan Operasional & Tren Klinis -->
+    <!-- Kolom Kanan (5 Kolom): Efisiensi & Analitik Pelayanan -->
     <div
-      class="lg:col-span-5 bg-card border border-border rounded-3xl p-6 sm:p-7 shadow-xs flex flex-col justify-between"
+      class="lg:col-span-5 bg-card border border-border rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between"
     >
       <div>
         <!-- Widget Header -->
-        <div class="flex items-center justify-between pb-4 border-b border-border/80">
-          <div class="flex items-center gap-3">
+        <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
+          <div class="flex items-center gap-2.5">
             <div
-              class="size-9 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center"
+              class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
             >
-              <ng-icon hlm size="sm" name="lucideActivity" aria-hidden="true" />
+              <ng-icon hlm size="xs" name="lucideActivity" aria-hidden="true" />
             </div>
             <div>
-              <h3 class="font-heading font-bold text-base sm:text-lg text-foreground">
-                Ringkasan Hari Ini
+              <h3 class="font-heading font-bold text-sm sm:text-base text-foreground">
+                Efisiensi Pelayanan
               </h3>
-              <p class="text-xs text-muted-foreground">Status operasional pelayanan klinik</p>
+              <p class="text-[11px] text-muted-foreground">Tingkat kehadiran &amp; rekap konsultasi</p>
             </div>
           </div>
           <span
-            class="text-xs font-semibold bg-muted text-muted-foreground px-3 py-1 rounded-xl border border-border"
+            class="text-[11px] font-semibold bg-muted text-muted-foreground px-2.5 py-1 rounded-lg border border-border"
           >
             WIB
           </span>
         </div>
 
-        <!-- 2x2 Mini Stat Grid -->
-        <div class="grid grid-cols-2 gap-4 mt-5">
-          <!-- Total Pasien -->
-          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
+        <!-- ApexCharts Radial Gauge Section -->
+        <div class="flex flex-col items-center justify-center pt-2 pb-1">
+          <div class="w-full max-w-[220px] flex justify-center -mb-6">
+            <apx-chart
+              [series]="chartSeries()"
+              [chart]="chartOptions().chart"
+              [plotOptions]="chartOptions().plotOptions"
+              [fill]="chartOptions().fill"
+              [stroke]="chartOptions().stroke"
+              [colors]="chartOptions().colors"
+              [labels]="chartOptions().labels"
+            />
+          </div>
+          <div class="flex items-center gap-2 mt-1">
+            <span
+              class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-2xs {{
+                trendVsKemarin().isPositive === true
+                  ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                  : trendVsKemarin().isPositive === false
+                    ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
+                    : 'bg-muted text-muted-foreground border-border'
+              }}"
+            >
+              <ng-icon hlm size="xs" [name]="trendVsKemarin().icon" aria-hidden="true" />
+              <span>{{ trendVsKemarin().text }}</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- 2 Unique Analytical Cards (Zero Duplicate Metrics with Hero Banner) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mt-5">
+          <!-- Card 1: Tingkat Kehadiran Pasien (Attendance Rate) -->
+          <div class="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border/60 flex flex-col justify-between">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-muted-foreground">Total Pasien</span>
+              <span class="text-[11px] sm:text-xs font-medium text-muted-foreground">Tingkat Kehadiran</span>
               <div
-                class="size-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center"
+                class="size-7 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center"
               >
-                <ng-icon hlm size="xs" name="lucideUsers" aria-hidden="true" />
+                <ng-icon hlm size="xs" name="lucideUserCheck" aria-hidden="true" />
               </div>
             </div>
-            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
-              {{ totalPasien() }}
+            <div class="mt-2">
+              <div class="text-xl sm:text-2xl font-bold text-foreground tabular-nums">
+                {{ attendanceRate() }}%
+              </div>
+              <div class="text-[11px] text-muted-foreground mt-0.5">
+                @if (totalTidakHadirLaporan() === 0) {
+                  <span class="text-emerald-600 dark:text-emerald-400 font-medium">100% pasien hadir</span>
+                } @else {
+                  <span class="text-amber-600 dark:text-amber-400 font-medium">{{ totalTidakHadirLaporan() }} pasien tidak hadir</span>
+                }
+              </div>
             </div>
           </div>
 
-          <!-- Pasien Prioritas -->
-          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
+          <!-- Card 2: Pasien Tidak Hadir / Batal (No-Show) -->
+          <div class="p-3.5 sm:p-4 rounded-2xl bg-muted/40 border border-border/60 flex flex-col justify-between">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-purple-700">Prioritas</span>
+              <span class="text-[11px] sm:text-xs font-medium text-muted-foreground">Pasien Tidak Hadir</span>
               <div
-                class="size-8 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center"
+                class="size-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center"
               >
-                <ng-icon hlm size="xs" name="lucideAlertCircle" aria-hidden="true" />
+                <ng-icon hlm size="xs" name="lucideUserX" aria-hidden="true" />
               </div>
             </div>
-            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
-              {{ pasienPrioritas() }}
-            </div>
-          </div>
-
-          <!-- Menunggu -->
-          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-amber-700">Menunggu</span>
-              <div
-                class="size-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center"
-              >
-                <ng-icon hlm size="xs" name="lucideClock" aria-hidden="true" />
+            <div class="mt-2">
+              <div class="text-xl sm:text-2xl font-bold text-foreground tabular-nums">
+                {{ totalTidakHadirLaporan() }}
               </div>
-            </div>
-            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
-              {{ antrianMenunggu() }}
-            </div>
-          </div>
-
-          <!-- Selesai -->
-          <div class="p-4 rounded-2xl bg-muted/40 border border-border/60">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-emerald-700">Selesai</span>
-              <div
-                class="size-8 rounded-xl bg-accent/10 text-accent flex items-center justify-center"
-              >
-                <ng-icon hlm size="xs" name="lucideCheckCircle2" aria-hidden="true" />
+              <div class="text-[11px] text-muted-foreground mt-0.5">
+                @if (totalTidakHadirLaporan() === 0) {
+                  <span class="text-emerald-600 dark:text-emerald-400 font-medium">Tidak ada pasien batal</span>
+                } @else {
+                  <span class="text-amber-600 dark:text-amber-400 font-medium">Pasien batal / dilewati</span>
+                }
               </div>
-            </div>
-            <div class="text-2xl sm:text-3xl font-bold text-foreground mt-2 tabular-nums">
-              {{ selesaiDilayani() }}
             </div>
           </div>
         </div>
 
-        <!-- Consultation Progress Breakdown -->
-        <div class="mt-6 pt-5 border-t border-border/80 space-y-2.5">
-          <div class="flex items-center justify-between text-xs font-semibold">
-            <span class="text-foreground">Tingkat Penyelesaian</span>
-            <span class="text-primary tabular-nums font-bold">{{ completionPercentage() }}%</span>
-          </div>
-          <div
-            class="h-3 w-full bg-muted rounded-full overflow-hidden p-0.5 border border-border/50"
-          >
-            <div
-              class="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-              [style.width.%]="completionPercentage()"
-            ></div>
-          </div>
-          <p class="text-xs text-muted-foreground mt-1">
-            {{ selesaiDilayani() }} dari {{ totalPasien() }} antrian pasien telah selesai dilayani
-            hari ini.
+        <!-- Analytical Summary Footnote -->
+        <div class="mt-5 pt-4 border-t border-border/80">
+          <p class="text-xs text-muted-foreground text-center">
+            @if (totalKunjunganLaporan() === 0) {
+              Belum ada aktivitas kunjungan pasien pada sesi hari ini.
+            } @else {
+              Klinik beroperasi optimal dengan efisiensi penyelesaian <span class="font-semibold text-foreground">{{ performanceRate() }}%</span>.
+            }
           </p>
         </div>
       </div>

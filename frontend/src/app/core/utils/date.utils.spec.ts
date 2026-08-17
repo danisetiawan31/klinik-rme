@@ -3,6 +3,7 @@ import {
   formatJakartaDayDate,
   getJakartaISODate,
   getJakartaTimeString,
+  getJakartaYesterdayISODate,
 } from './date.utils';
 
 describe('date.utils', () => {
@@ -26,6 +27,11 @@ describe('date.utils', () => {
     // 2026-08-13T23:00:00Z is 2026-08-14T06:00:00+07:00 in Asia/Jakarta
     const isoDateStr = getJakartaISODate(new Date('2026-08-13T23:00:00Z'));
     expect(isoDateStr).toBe('2026-08-14');
+  });
+
+  it('should format yesterday ISO YYYY-MM-DD date in Asia/Jakarta timezone', () => {
+    const yesterdayIso = getJakartaYesterdayISODate(new Date('2026-08-14T06:00:00+07:00'));
+    expect(yesterdayIso).toBe('2026-08-13');
   });
 });
 

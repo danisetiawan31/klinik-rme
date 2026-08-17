@@ -123,3 +123,21 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 **File**: `styles.css`, `landing.*`, `priority-badge.*`, `status-badge.*`, `hero_doctor_wide1.jpg`.
 **Verifikasi**: `npm test -- --run` → **31 files, 163 tests PASS** (exit 0).
 
+---
+
+## Addendum — Efisiensi Pelayanan & ApexCharts Radial Gauge (Landing Polish Tahap 2)
+
+- **ApexCharts RadialBar Gauge**: Visualisasi *completion rate* pelayanan dengan gauge melingkar modern (`ng-apexcharts` + `apexcharts`), gradient stroke (`teal` ke `emerald`), track latar transparan semantik, dan label persentase dinamis.
+- **Analitik 100% Non-Redundan & Berbasis Data Riil**:
+  1. *Tingkat Kehadiran (Attendance Rate)*: Rasio kehadiran pasien terlayani vs pasien no-show/batal (`attendanceRate%` dari `(totalKunjungan - totalTidakHadir) / totalKunjungan`).
+  2. *Pasien Tidak Hadir (No-Show)*: Metrik resmi pasien batal/dilewati dari `LaporanHarian.totalTidakHadir`.
+  3. *Badge Tren Komparasi*: Komparasi volume kunjungan terhadap hari kemarin (`+X%` / `-X%` / `– Data Awal`).
+- **Date Utility**: Helper `getJakartaYesterdayISODate()` untuk tanggal kemarin dalam timezone `Asia/Jakarta`.
+- **Refinement Densitas UI/UX (High Density & Ergonomics)**:
+  1. *Akses Cepat Modul*: Diperkecil menjadi `p-4.5 rounded-2xl` dengan icon `size-10` dan watermark `text-xl` untuk menghemat ruang vertikal.
+  2. *Antrian Pasien Hari Ini*: Item baris dirampingkan ke `py-2.5 px-3.5 rounded-xl` dengan nomor antrian badge `size-8 text-xs`, nama pasien `text-sm font-semibold`, dan container `p-5 sm:p-6 rounded-2xl` yang simetris dengan kolom kanan.
+  3. *Deduplikasi Status Buka/Tutup*: Menghilangkan duplikasi status klinik buka/tutup di Hero Banner dan menggabungkan meta pills tanggal, waktu live, dan jam layanan (`Jam Layanan: Senin – Sabtu · 08:00 – 21:00 WIB`) dalam satu baris bersih tanpa dead code.
+
+**File**: `landing.*`, `date.utils.*`, `package.json`.
+**Verifikasi**: `npm test -- --run` → **31 files, 166 tests PASS** (exit 0) & GitNexus `impact`/`detect_changes` (risk: LOW).
+

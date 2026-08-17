@@ -6,8 +6,11 @@ import { AuthService } from '../../../core/auth/auth.service';
 import { UserResponse } from '../../../core/auth/auth.types';
 import { KlinikService } from '../../../core/klinik/klinik.service';
 import { KlinikResponse } from '../../../core/klinik/klinik.types';
+import { getJakartaYesterdayISODate } from '../../../core/utils/date.utils';
 import { AntrianService } from '../../antrian/antrian.service';
 import { KunjunganListItem } from '../../antrian/antrian.types';
+import { LaporanService } from '../../laporan/laporan.service';
+import { LaporanHarian } from '../../laporan/laporan.types';
 import { LandingComponent } from './landing.component';
 
 describe('LandingComponent', () => {
@@ -22,6 +25,7 @@ describe('LandingComponent', () => {
     isKlinikBuka: ReturnType<typeof vi.fn>;
     fetchKlinikInfo: ReturnType<typeof vi.fn>;
   };
+  let laporanServiceSpy: { getLaporanHarian: ReturnType<typeof vi.fn> };
 
   const mockAntrian: KunjunganListItem[] = [
     {
@@ -51,6 +55,20 @@ describe('LandingComponent', () => {
     },
   ];
 
+  const mockLaporanHariIni: LaporanHarian = {
+    tanggal: '2026-08-14',
+    totalKunjungan: 10,
+    totalSelesai: 8,
+    totalTidakHadir: 1,
+  };
+
+  const mockLaporanKemarin: LaporanHarian = {
+    tanggal: '2026-08-13',
+    totalKunjungan: 8,
+    totalSelesai: 7,
+    totalTidakHadir: 0,
+  };
+
   beforeEach(async () => {
     userSignal = signal<UserResponse | null>(null);
     authServiceSpy = { currentUser: userSignal };
@@ -67,6 +85,15 @@ describe('LandingComponent', () => {
       isKlinikBuka: vi.fn().mockReturnValue(true),
       fetchKlinikInfo: vi.fn().mockReturnValue(of(klinikSignal())),
     };
+    laporanServiceSpy = {
+      getLaporanHarian: vi.fn().mockImplementation((tanggal?: string) => {
+        const yesterday = getJakartaYesterdayISODate();
+        if (tanggal === yesterday) {
+          return of(mockLaporanKemarin);
+        }
+        return of(mockLaporanHariIni);
+      }),
+    };
 
     await TestBed.configureTestingModule({
       imports: [LandingComponent],
@@ -75,6 +102,7 @@ describe('LandingComponent', () => {
         { provide: AuthService, useValue: authServiceSpy },
         { provide: AntrianService, useValue: antrianServiceSpy },
         { provide: KlinikService, useValue: klinikServiceSpy },
+        { provide: LaporanService, useValue: laporanServiceSpy },
       ],
     }).compileComponents();
 
@@ -130,5 +158,36 @@ describe('LandingComponent', () => {
     expect(labels).toContain('Manajemen Staff');
     expect(labels).toContain('Audit Log System');
     expect(labels).toContain('Pengaturan Klinik');
+  });
+
+  it('should compute performance metrics and positive trend correctly from LaporanService', () => {
+    userSignal.set({ id: 2, nama: 'dr. Budi Santoso', roles: ['dokter'] });
+    fixture.detectChanges();
+
+    expect(component.totalKunjunganLaporan()).toBe(10);
+    expect(component.totalSelesaiLaporan()).toBe(8);
+    expect(component.totalTidakHadirLaporan()).toBe(1);
+    expect(component.performanceRate()).toBe(80); // 8/10 * 100
+    expect(component.attendanceRate()).toBe(90); // (10-1)/10 * 100 = 90%
+    expect(component.trendVsKemarin().text).toBe('+25% vs kemarin'); // (10-8)/8 * 100 = 25%
+    expect(component.trendVsKemarin().isPositive).toBe(true);
+  });
+
+  it('should handle zero baseline yesterday data cleanly in trend computation', () => {
+    component.laporanHariIni.set({
+      tanggal: '2026-08-14',
+      totalKunjungan: 5,
+      totalSelesai: 4,
+      totalTidakHadir: 0,
+    });
+    component.laporanKemarin.set({
+      tanggal: '2026-08-13',
+      totalKunjungan: 0,
+      totalSelesai: 0,
+      totalTidakHadir: 0,
+    });
+
+    expect(component.trendVsKemarin().text).toBe('– Data Awal');
+    expect(component.trendVsKemarin().isPositive).toBeNull();
   });
 });
