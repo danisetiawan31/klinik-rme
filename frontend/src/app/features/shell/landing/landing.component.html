@@ -9,7 +9,7 @@
           Selamat datang, {{ userName() }}!
         </h1>
         <p class="text-sm sm:text-base text-muted-foreground mt-1">
-          Sistem Informasi Rekam Medis Elektronik & Antrian Klinik
+          Sistem Informasi Rekam Medis Elektronik &amp; Antrian Klinik
         </p>
       </div>
       <div class="flex items-center gap-2">
@@ -33,16 +33,16 @@
       @for (shortcut of shortcuts(); track shortcut.route) {
         <a
           [routerLink]="shortcut.route"
-          class="group bg-card border border-border hover:border-primary rounded-md p-5 shadow-1 hover:shadow-2 transition-all flex flex-col justify-between cursor-pointer"
+          class="group bg-card border border-border hover:border-primary/60 rounded-md p-5 shadow-1 hover:shadow-2 transition-all duration-150 flex flex-col justify-between cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <div class="space-y-3">
             <div
-              class="h-10 w-10 rounded-lg bg-background text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+              class="h-10 w-10 rounded-lg bg-muted text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-150"
             >
               <ng-icon hlm size="base" [name]="shortcut.iconName" aria-hidden="true" />
             </div>
             <div>
-              <h3 class="font-heading font-semibold text-foreground group-hover:text-primary transition-colors">
+              <h3 class="font-heading font-semibold text-foreground group-hover:text-primary transition-colors duration-150">
                 {{ shortcut.label }}
               </h3>
               <p class="text-xs text-muted-foreground mt-1 leading-relaxed">
@@ -50,7 +50,7 @@
               </p>
             </div>
           </div>
-          <div class="mt-4 flex items-center text-xs font-medium text-primary group-hover:translate-x-1 transition-transform">
+          <div class="mt-4 flex items-center text-xs font-medium text-primary group-hover:translate-x-1 transition-transform duration-150">
             Buka Modul &rarr;
           </div>
         </a>

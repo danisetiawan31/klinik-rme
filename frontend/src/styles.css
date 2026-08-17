@@ -315,8 +315,17 @@ h6 {
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--foreground) 15%, transparent) transparent;
+  }
+  ::selection {
+    background-color: color-mix(in srgb, var(--primary) 25%, transparent);
+    color: var(--foreground);
   }
   body {
     @apply bg-background text-foreground;
+  }
+  table, .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }

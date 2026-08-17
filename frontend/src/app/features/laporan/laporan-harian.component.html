@@ -61,7 +61,7 @@
               <ng-icon hlm size="base" name="lucideUsers" aria-hidden="true" />
             </div>
           </div>
-          <div class="text-3xl font-bold text-foreground mt-3">
+          <div class="text-3xl font-bold text-foreground mt-3 tabular-nums">
             {{ data.totalKunjungan }}
           </div>
           <p class="text-xs text-muted-foreground mt-1">
@@ -79,7 +79,7 @@
               <ng-icon hlm size="base" name="lucideCheck" class="text-accent" aria-hidden="true" />
             </div>
           </div>
-          <div class="text-3xl font-bold text-accent mt-3">
+          <div class="text-3xl font-bold text-accent mt-3 tabular-nums">
             {{ data.totalSelesai }}
           </div>
           <p class="text-xs text-muted-foreground mt-1">
@@ -97,7 +97,7 @@
               <ng-icon hlm size="base" name="lucideX" class="text-muted-foreground" aria-hidden="true" />
             </div>
           </div>
-          <div class="text-3xl font-bold text-muted-foreground mt-3">
+          <div class="text-3xl font-bold text-muted-foreground mt-3 tabular-nums">
             {{ data.totalTidakHadir }}
           </div>
           <p class="text-xs text-muted-foreground mt-1">
@@ -111,7 +111,7 @@
         <span>
           Menampilkan data rekapitulasi tanggal: <strong class="text-foreground font-medium">{{ formatDate(data.tanggal) }}</strong>
         </span>
-        <span class="font-mono text-[11px] bg-muted px-2 py-0.5 rounded border border-border">
+        <span class="font-mono text-[11px] bg-muted px-2 py-0.5 rounded border border-border tabular-nums">
           {{ data.tanggal }}
         </span>
       </hlm-card>

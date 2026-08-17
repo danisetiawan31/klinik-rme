@@ -39,25 +39,25 @@
     <hlm-card size="sm">
       <div hlmCardContent class="p-0">
         <div class="text-xs font-medium text-muted-foreground">Total Antrian</div>
-        <div class="text-2xl font-bold text-foreground mt-1">{{ totalCount() }}</div>
+        <div class="text-2xl font-bold text-foreground mt-1 tabular-nums">{{ totalCount() }}</div>
       </div>
     </hlm-card>
     <hlm-card size="sm">
       <div hlmCardContent class="p-0">
         <div class="text-xs font-medium text-warning-foreground">Menunggu</div>
-        <div class="text-2xl font-bold text-warning-foreground mt-1">{{ menungguCount() }}</div>
+        <div class="text-2xl font-bold text-warning-foreground mt-1 tabular-nums">{{ menungguCount() }}</div>
       </div>
     </hlm-card>
     <hlm-card size="sm">
       <div hlmCardContent class="p-0">
         <div class="text-xs font-medium text-primary">Sedang Dipanggil</div>
-        <div class="text-2xl font-bold text-primary mt-1">{{ dipanggilCount() }}</div>
+        <div class="text-2xl font-bold text-primary mt-1 tabular-nums">{{ dipanggilCount() }}</div>
       </div>
     </hlm-card>
     <hlm-card size="sm">
       <div hlmCardContent class="p-0">
         <div class="text-xs font-medium text-accent">Selesai</div>
-        <div class="text-2xl font-bold text-accent mt-1">{{ selesaiCount() }}</div>
+        <div class="text-2xl font-bold text-accent mt-1 tabular-nums">{{ selesaiCount() }}</div>
       </div>
     </hlm-card>
   </div>
@@ -138,7 +138,7 @@
           <tbody hlmTableBody>
             @for (item of sortedAntrian(); track item.id) {
               <tr hlmTableRow>
-                <td hlmTableCell class="font-mono font-bold text-base text-foreground">
+                <td hlmTableCell class="font-mono font-bold text-base text-foreground tabular-nums">
                   #{{ item.nomorAntrian }}
                 </td>
                 <td hlmTableCell>
@@ -154,7 +154,7 @@
                 </td>
                 <td hlmTableCell class="text-center">
                   @if (item.skipCount && item.skipCount > 0) {
-                    <span class="text-xs font-medium text-warning-foreground bg-muted border border-border px-2 py-0.5 rounded">
+                    <span class="text-xs font-medium text-warning-foreground bg-muted border border-border px-2 py-0.5 rounded tabular-nums">
                       {{ item.skipCount }}x
                     </span>
                   } @else {
