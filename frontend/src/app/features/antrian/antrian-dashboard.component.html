@@ -31,32 +31,8 @@
 
       <app-clinic-status-indicator />
 
-      <!-- Realtime Connection Status Badge -->
-      @if (connectionStatus() === 'connected') {
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-muted border border-border text-foreground"
-          title="Koneksi real-time aktif"
-        >
-          <span class="h-2 w-2 rounded-full bg-accent"></span>
-          Live
-        </span>
-      } @else if (connectionStatus() === 'reconnecting') {
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-muted border border-warning text-warning-foreground animate-pulse"
-          title="Mencoba menghubungkan kembali..."
-        >
-          <span class="h-2 w-2 rounded-full bg-warning"></span>
-          Menghubungkan...
-        </span>
-      } @else {
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-muted border border-border text-muted-foreground"
-          title="Koneksi real-time terputus"
-        >
-          <span class="h-2 w-2 rounded-full bg-muted-foreground"></span>
-          Offline
-        </span>
-      }
+      <!-- Realtime Connection Status Indicator -->
+      <app-connection-status-indicator />
     </div>
   </div>
 

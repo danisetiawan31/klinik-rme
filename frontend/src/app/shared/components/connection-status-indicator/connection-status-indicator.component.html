@@ -1,0 +1,43 @@
+@if (currentStatus() === 'connected') {
+  <span
+    hlmBadge
+    variant="outline"
+    role="status"
+    aria-live="polite"
+    class="bg-muted/80 border-border/70 text-foreground font-medium px-2.5 py-1 flex items-center gap-1.5 transition-colors select-none"
+    title="Koneksi real-time aktif"
+    aria-label="Status koneksi: Real-time aktif"
+  >
+    <span class="relative flex size-2 shrink-0 items-center justify-center">
+      <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent/50 opacity-75"></span>
+      <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
+    </span>
+    <span class="text-xs">Live</span>
+  </span>
+} @else if (currentStatus() === 'reconnecting' || currentStatus() === 'connecting') {
+  <span
+    hlmBadge
+    variant="outline"
+    role="status"
+    aria-live="polite"
+    class="bg-muted/80 border-warning/60 text-warning-foreground font-medium px-2.5 py-1 flex items-center gap-1.5 animate-pulse select-none"
+    title="Sedang mencoba menghubungkan kembali..."
+    aria-label="Status koneksi: Sedang menghubungkan kembali"
+  >
+    <span class="size-2 rounded-full bg-warning shrink-0"></span>
+    <span class="text-xs">Menyambung ulang…</span>
+  </span>
+} @else {
+  <span
+    hlmBadge
+    variant="outline"
+    role="status"
+    aria-live="polite"
+    class="bg-muted/80 border-border/70 text-muted-foreground font-medium px-2.5 py-1 flex items-center gap-1.5 select-none"
+    title="Koneksi real-time terputus"
+    aria-label="Status koneksi: Terputus (Offline)"
+  >
+    <span class="size-2 rounded-full bg-muted-foreground/60 shrink-0"></span>
+    <span class="text-xs">Offline</span>
+  </span>
+}

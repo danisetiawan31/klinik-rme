@@ -14,6 +14,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { KlinikService } from '../../core/klinik/klinik.service';
 import { RealtimeService } from '../../core/realtime/realtime.service';
 import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-status-indicator/clinic-status-indicator.component';
+import { ConnectionStatusIndicatorComponent } from '../../shared/components/connection-status-indicator/connection-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
@@ -32,6 +33,7 @@ import { KunjunganListItem } from './antrian.types';
     StatusBadgeComponent,
     PriorityBadgeComponent,
     ClinicStatusIndicatorComponent,
+    ConnectionStatusIndicatorComponent,
     HlmButton,
     ...HlmCardImports,
     ...HlmDialogImports,

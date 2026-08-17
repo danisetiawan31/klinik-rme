@@ -270,5 +270,16 @@
 **File**: `shared/ui/alert/` (baru), `pasien-edit.*`, `pasien-form.*`, `pasien-detail.*`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **30 files, 154 tests PASS** (exit 0).
 
+---
+
+## Addendum — Pembuatan & Integrasi ConnectionStatusIndicator
+
+- **Reusable Component**: `ConnectionStatusIndicatorComponent` (`app-connection-status-indicator`) di `shared/components/connection-status-indicator/` dengan varian `connected` (live indicator + subtle ping glow), `reconnecting` (pulse warning), dan `disconnected` (muted offline) serta aksesibilitas `role="status"` + `aria-live="polite"`.
+- **Modul Antrian**: Mengganti markup inline status realtime di `antrian-dashboard.component.html` dengan `<app-connection-status-indicator />`.
+- **Component Registry**: `docs/DESIGN.md` diperbarui dengan menandai `ConnectionStatusIndicator` berstatus **Selesai**.
+
+**File**: `shared/components/connection-status-indicator/` (baru), `antrian-dashboard.*`, `docs/DESIGN.md`.
+**Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
+
 
 
