@@ -12,8 +12,11 @@ import { Router, RouterLink } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucidePlus, lucideSearch } from '@ng-icons/lucide';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmEmptyImports } from '../../../../shared/ui/empty/src/index';
+import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
@@ -31,12 +34,15 @@ import { PasienSearchItem } from '../../pasien.types';
     PaginationComponent,
     SensitiveValueComponent,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     HlmInput,
     HlmLabel,
     ...HlmEmptyImports,
     ...HlmSkeletonImports,
     ...HlmTableImports,
   ],
+  providers: [provideIcons({ lucidePlus, lucideSearch })],
   templateUrl: './pasien-list.component.html',
 })
 export class PasienListComponent implements OnInit {

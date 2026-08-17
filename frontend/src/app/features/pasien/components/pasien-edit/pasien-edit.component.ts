@@ -11,9 +11,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideAlertTriangle, lucideLoader2 } from '@ng-icons/lucide';
 import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
+import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmTextarea } from '../../../../shared/ui/textarea/src/lib/hlm-textarea';
@@ -27,12 +30,15 @@ import { nikFormatValidator } from '../../pasien.validators';
   imports: [
     ReactiveFormsModule,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     HlmInput,
     HlmLabel,
     HlmTextarea,
     ...HlmAlertImports,
     ...HlmCardImports,
   ],
+  providers: [provideIcons({ lucideAlertTriangle, lucideLoader2 })],
   templateUrl: './pasien-edit.component.html',
 })
 export class PasienEditComponent implements OnInit {

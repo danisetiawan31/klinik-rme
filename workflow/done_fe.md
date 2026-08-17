@@ -310,5 +310,19 @@
 **File**: `shared/ui/icon/` (baru), `sensitive-value.*`, `priority-badge.*`, `forbidden.*`, `hlm-alert.ts`, `hlm-empty.ts`, `docs/DESIGN.md`.
 **Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
 
+---
+
+## Addendum — Migrasi Ikon Lucide Tahap 2 (Modul Pasien & Antrian)
+
+- **Modul Antrian (`antrian-dashboard`)**: Seluruh inline SVG dimigrasi ke `lucideMegaphone` (tombol panggil), `lucideInbox` (empty queue state), dan `lucideAlertTriangle` (dialog konfirmasi tidak hadir).
+- **Modul Pasien**:
+  - `pasien-list`: Migrasi tombol registrasi pasien (`lucidePlus`) dan empty search state (`lucideSearch`).
+  - `pasien-form`: Migrasi banner peringatan NIK duplikat (`lucideAlertTriangle`) dan spinner submit (`lucideLoader2 animate-spin`).
+  - `pasien-edit`: Migrasi banner konflik 409 Optimistic Lock (`lucideAlertTriangle`), spinner initial loading, dan spinner submit (`lucideLoader2 animate-spin`).
+  - `pasien-detail`: Migrasi tombol antrian (`lucidePlus`), tombol edit (`lucidePencil`), status consent (`lucideCheck`), empty riwayat kunjungan (`lucideClipboardList`), dan modal form error alert (`lucideAlertCircle`).
+
+**File**: `antrian-dashboard.*`, `pasien-list.*`, `pasien-form.*`, `pasien-edit.*`, `pasien-detail.*`.
+**Verifikasi**: `npm test -- --run` → **31 files, 159 tests PASS** (exit 0).
+
 
 

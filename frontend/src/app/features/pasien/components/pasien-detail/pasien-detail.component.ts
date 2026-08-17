@@ -12,12 +12,21 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { KlinikService } from '../../../../core/klinik/klinik.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import {
+  lucideAlertCircle,
+  lucideCheck,
+  lucideClipboardList,
+  lucidePencil,
+  lucidePlus,
+} from '@ng-icons/lucide';
 import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmDialog } from '../../../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../../../shared/ui/dialog/src/index';
 import { HlmEmptyImports } from '../../../../shared/ui/empty/src/index';
+import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
 import { HlmTableImports } from '../../../../shared/ui/table/src/index';
@@ -34,6 +43,8 @@ import { Pasien } from '../../pasien.types';
     RouterLink,
     SensitiveValueComponent,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     HlmLabel,
     HlmTextarea,
     ...HlmAlertImports,
@@ -42,6 +53,15 @@ import { Pasien } from '../../pasien.types';
     ...HlmEmptyImports,
     ...HlmSkeletonImports,
     ...HlmTableImports,
+  ],
+  providers: [
+    provideIcons({
+      lucidePlus,
+      lucidePencil,
+      lucideCheck,
+      lucideClipboardList,
+      lucideAlertCircle,
+    }),
   ],
   templateUrl: './pasien-detail.component.html',
 })
@@ -209,11 +229,16 @@ export class PasienDetailComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     switch (status) {
-      case 'menunggu': return 'Menunggu';
-      case 'dipanggil': return 'Dipanggil';
-      case 'selesai': return 'Selesai';
-      case 'tidak_hadir': return 'Tidak Hadir';
-      default: return status;
+      case 'menunggu':
+        return 'Menunggu';
+      case 'dipanggil':
+        return 'Dipanggil';
+      case 'selesai':
+        return 'Selesai';
+      case 'tidak_hadir':
+        return 'Tidak Hadir';
+      default:
+        return status;
     }
   }
 

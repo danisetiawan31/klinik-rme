@@ -17,11 +17,14 @@ import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-s
 import { ConnectionStatusIndicatorComponent } from '../../shared/components/connection-status-indicator/connection-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideAlertTriangle, lucideInbox, lucideMegaphone } from '@ng-icons/lucide';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { HlmDialog } from '../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../shared/ui/dialog/src/index';
 import { HlmEmptyImports } from '../../shared/ui/empty/src/index';
+import { HlmIconDirective } from '../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmSkeletonImports } from '../../shared/ui/skeleton/src/index';
 import { HlmTableImports } from '../../shared/ui/table/src/index';
 import { AntrianService } from './antrian.service';
@@ -36,6 +39,8 @@ import { KunjunganListItem } from './antrian.types';
     ClinicStatusIndicatorComponent,
     ConnectionStatusIndicatorComponent,
     HlmButton,
+    NgIcon,
+    HlmIconDirective,
     ...HlmCardImports,
     ...HlmDialogImports,
     ...HlmEmptyImports,
@@ -43,6 +48,7 @@ import { KunjunganListItem } from './antrian.types';
     ...HlmTableImports,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideIcons({ lucideMegaphone, lucideInbox, lucideAlertTriangle })],
   templateUrl: './antrian-dashboard.component.html',
 })
 export class AntrianDashboardComponent implements OnInit {
