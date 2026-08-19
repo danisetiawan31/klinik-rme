@@ -167,7 +167,10 @@
                 <tr hlmTableRow>
                   <th hlmTableHead>ID Kunjungan</th>
                   <th hlmTableHead>Tanggal</th>
-                  <th hlmTableHead class="text-right">Status</th>
+                  <th hlmTableHead [class.text-right]="!isDokter()">Status</th>
+                  @if (isDokter()) {
+                    <th hlmTableHead class="text-right">Aksi</th>
+                  }
                 </tr>
               </thead>
               <tbody hlmTableBody>
@@ -179,11 +182,29 @@
                     <td hlmTableCell class="text-muted-foreground">
                       {{ formatDate(kunjungan.tanggal) }}
                     </td>
-                    <td hlmTableCell class="text-right">
+                    <td hlmTableCell [class.text-right]="!isDokter()">
                       <span [class]="getStatusBadgeClass(kunjungan.status)">
                         {{ getStatusLabel(kunjungan.status) }}
                       </span>
                     </td>
+                    @if (isDokter()) {
+                      <td hlmTableCell class="text-right">
+                        @if (kunjungan.status === 'selesai') {
+                          <a
+                            hlmBtn
+                            variant="outline"
+                            size="sm"
+                            [routerLink]="['/rekam-medis/kunjungan', kunjungan.kunjunganId]"
+                            class="text-xs h-7 px-2"
+                            title="Lihat rekam medis klinis kunjungan ini"
+                          >
+                            Lihat RME
+                          </a>
+                        } @else {
+                          <span class="text-xs text-muted-foreground">-</span>
+                        }
+                      </td>
+                    }
                   </tr>
                 }
               </tbody>

@@ -17,8 +17,14 @@ import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-s
 import { ConnectionStatusIndicatorComponent } from '../../shared/components/connection-status-indicator/connection-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
+import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideAlertTriangle, lucideInbox, lucideMegaphone } from '@ng-icons/lucide';
+import {
+  lucideAlertTriangle,
+  lucideInbox,
+  lucideMegaphone,
+  lucideStethoscope,
+} from '@ng-icons/lucide';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { HlmDialog } from '../../shared/ui/dialog/src/lib/hlm-dialog';
@@ -34,6 +40,7 @@ import { KunjunganListItem } from './antrian.types';
   selector: 'app-antrian-dashboard',
   standalone: true,
   imports: [
+    RouterLink,
     StatusBadgeComponent,
     PriorityBadgeComponent,
     ClinicStatusIndicatorComponent,
@@ -48,7 +55,14 @@ import { KunjunganListItem } from './antrian.types';
     ...HlmTableImports,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideIcons({ lucideMegaphone, lucideInbox, lucideAlertTriangle })],
+  providers: [
+    provideIcons({
+      lucideMegaphone,
+      lucideInbox,
+      lucideAlertTriangle,
+      lucideStethoscope,
+    }),
+  ],
   templateUrl: './antrian-dashboard.component.html',
 })
 export class AntrianDashboardComponent implements OnInit {

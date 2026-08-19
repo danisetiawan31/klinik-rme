@@ -164,8 +164,19 @@
                 @if (hasAnyAction()) {
                   <td hlmTableCell class="text-right">
                     <div class="flex items-center justify-end gap-2">
-                      <!-- Dokter action: Lewati (hanya status 'dipanggil') -->
+                      <!-- Dokter action: Periksa & Lewati (status 'dipanggil') -->
                       @if (isDokter() && item.status === 'dipanggil') {
+                        <a
+                          hlmBtn
+                          variant="default"
+                          size="sm"
+                          [routerLink]="['/rekam-medis/pemeriksaan', item.id]"
+                          class="flex items-center gap-1.5"
+                          title="Periksa pasien dan catat rekam medis"
+                        >
+                          <ng-icon hlm size="xs" name="lucideStethoscope" aria-hidden="true" />
+                          <span>Periksa</span>
+                        </a>
                         <button
                           hlmBtn
                           variant="secondary"
@@ -177,6 +188,20 @@
                         >
                           Lewati
                         </button>
+                      }
+
+                      <!-- Dokter action: Lihat RME (status 'selesai') -->
+                      @if (isDokter() && item.status === 'selesai') {
+                        <a
+                          hlmBtn
+                          variant="outline"
+                          size="sm"
+                          [routerLink]="['/rekam-medis/kunjungan', item.id]"
+                          class="text-xs"
+                          title="Lihat rekam medis kunjungan ini"
+                        >
+                          Lihat RME
+                        </a>
                       }
 
                       <!-- Dokter/Admin action: Tandai Tidak Hadir (hanya status 'menunggu') -->

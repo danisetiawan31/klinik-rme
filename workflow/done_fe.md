@@ -167,3 +167,15 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - Modal Addendum Spartan Dialog (`HlmDialog`): Form koreksi medis dengan validasi wajib `alasanAddendum`, pre-fill data lama, modifikasi dinamis diagnosis & tindakan FormArray, penanganan submit POST `/rekam-medis/:id/addendum`, dan penanganan error 409 `ADDENDUM_CONFLICT` (auto-reload leaf data).
 - **Verifikasi**: `npm test -- --run` → **34 files, 184 tests PASS** (exit 0).
 
+---
+
+## Rekam Medis — Tahap 4 (Routing & Integrasi End-to-End)
+
+- `rekam-medis.routes.ts`: Rute form pemeriksaan (`/pemeriksaan/:kunjunganId`) dan detail leaf query (`/kunjungan/:kunjunganId`).
+- `app.routes.ts`: Pendaftaran rute child `/rekam-medis` di bawah shell layout dengan proteksi `canActivate: [roleGuard('dokter')]`.
+- `AntrianDashboardComponent`: Penambahan aksi "Periksa" (`/rekam-medis/pemeriksaan/:id`) untuk status `dipanggil` dan "Lihat RME" untuk status `selesai` (khusus role dokter).
+- `PasienDetailComponent`: Integrasi tombol "Lihat RME" pada tabel riwayat kunjungan selesai untuk role dokter.
+- `docs/DESIGN.md`: Update Component Registry (`DiagnosisTindakanFormArray`, `RekamMedisForm`, `RekamMedisDetail`).
+- `workflow/backlog.md`: Update item 17 ke status `[x]` (Selesai Penuh).
+- **Verifikasi**: `npm test -- --run` → **35 files, 185 tests PASS** (exit 0).
+

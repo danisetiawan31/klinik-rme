@@ -87,6 +87,7 @@ export class PasienDetailComponent implements OnInit {
     return roles.includes('petugas') || roles.includes('admin');
   });
   readonly canEdit = this.isStaff;
+  readonly isDokter = computed(() => this.authService.currentUser()?.roles.includes('dokter') ?? false);
 
   // Clinic operating hours state
   readonly klinikInfo = this.klinikService.klinikInfo;

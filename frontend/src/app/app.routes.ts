@@ -71,6 +71,14 @@ export const routes: Routes = [
           import('./features/pasien/pasien.routes').then((m) => m.pasienRoutes),
       },
       {
+        path: 'rekam-medis',
+        canActivate: [roleGuard('dokter')],
+        loadChildren: () =>
+          import('./features/rekam-medis/rekam-medis.routes').then(
+            (m) => m.rekamMedisRoutes
+          ),
+      },
+      {
         path: 'laporan-harian',
         canActivate: [roleGuard('petugas', 'dokter', 'admin')],
         loadComponent: () =>
