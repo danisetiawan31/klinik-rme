@@ -1,0 +1,84 @@
+<div
+  class="relative overflow-hidden rounded-2xl bg-card/85 backdrop-blur-xl border border-border/80 p-6 sm:p-8 lg:p-9 shadow-sm flex flex-col justify-between min-h-[340px]"
+>
+  <!-- Background Glow -->
+  <div
+    class="absolute -top-24 -left-24 size-88 rounded-full bg-primary/10 blur-3xl pointer-events-none z-0"
+    aria-hidden="true"
+  ></div>
+  <div
+    class="absolute -bottom-24 right-1/3 size-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none z-0"
+    aria-hidden="true"
+  ></div>
+
+  <img
+    src="/images/hero_doctor_wide1.jpg"
+    alt="Klinik Sehat Jaya"
+    class="hidden sm:block absolute inset-0 h-full w-full object-cover object-right pointer-events-none select-none z-0 opacity-90"
+  />
+  <div
+    class="hidden sm:block absolute inset-0 bg-gradient-to-r from-card via-card/80 sm:via-card/50 to-transparent pointer-events-none z-0 backdrop-blur-[0.5px]"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Banner Header -->
+  <div class="relative z-10 max-w-xl space-y-3">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 shadow-2xs backdrop-blur-md">
+      <ng-icon hlm size="xs" [name]="badgeIcon()" aria-hidden="true" />
+      <span>{{ badgeText() }}</span>
+    </div>
+
+    <div>
+      <span class="text-xs sm:text-sm font-medium text-muted-foreground">
+        Selamat datang kembali,
+      </span>
+      <h1
+        class="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground tracking-tight mt-0.5"
+      >
+        {{ userName() }}!
+      </h1>
+      <p class="text-xs sm:text-sm text-muted-foreground mt-1 leading-relaxed">
+        {{ subtitle() }}
+      </p>
+    </div>
+
+    <!-- Real-time Live Status Row -->
+    <div class="flex flex-wrap items-center gap-2 pt-1">
+      <div
+        class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/90 border border-border/80 shadow-2xs backdrop-blur-md"
+      >
+        @if (statusVariant() === 'open') {
+          <span class="relative flex size-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full size-2 bg-emerald-500"></span>
+          </span>
+          <span class="font-semibold text-emerald-700 dark:text-emerald-400">{{ statusText() }}</span>
+        } @else {
+          <span class="inline-flex rounded-full size-2 bg-rose-500"></span>
+          <span class="font-semibold text-rose-700 dark:text-rose-400">{{ statusText() }}</span>
+        }
+        <span class="text-border">|</span>
+        <span class="text-muted-foreground">{{ jamOperasional() }}</span>
+      </div>
+
+      <div
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/90 border border-border/80 shadow-2xs backdrop-blur-md"
+      >
+        <ng-icon hlm size="xs" name="lucideCalendar" class="text-primary" aria-hidden="true" />
+        <span class="tabular-nums font-semibold text-foreground">{{ dateStr() }}</span>
+      </div>
+
+      <div
+        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-card/90 border border-border/80 shadow-2xs backdrop-blur-md"
+      >
+        <ng-icon hlm size="xs" name="lucideClock" class="text-primary" aria-hidden="true" />
+        <span class="tabular-nums font-bold text-foreground">{{ timeStr() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slotted KPI Ribbon Grid -->
+  <div class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-7">
+    <ng-content />
+  </div>
+</div>

@@ -11,6 +11,7 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideActivity,
   lucideAlertCircle,
+  lucideArrowRight,
   lucideCalendar,
   lucideCalendarDays,
   lucideCheckCircle2,
@@ -18,18 +19,26 @@ import {
   lucideClock,
   lucideFileText,
   lucideInbox,
+  lucideKey,
   lucideListOrdered,
   lucideMinus,
+  lucideRadio,
+  lucideSearch,
   lucideSettings,
+  lucideShield,
   lucideShieldCheck,
+  lucideSparkles,
+  lucideStethoscope,
   lucideTrendingDown,
   lucideTrendingUp,
   lucideUserCheck,
+  lucideUserPlus,
   lucideUserX,
   lucideUsers,
 } from '@ng-icons/lucide';
 import { NgApexchartsModule, ApexNonAxisChartSeries } from 'ng-apexcharts';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../../core/auth/auth.service';
 import { KlinikService } from '../../../core/klinik/klinik.service';
 import {
@@ -42,11 +51,17 @@ import { AntrianService } from '../../antrian/antrian.service';
 import { KunjunganListItem } from '../../antrian/antrian.types';
 import { LaporanService } from '../../laporan/laporan.service';
 import { LaporanHarian } from '../../laporan/laporan.types';
+import { PasienService } from '../../pasien/pasien.service';
+import { PasienSearchItem } from '../../pasien/pasien.types';
 import { PriorityBadgeComponent } from '../../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../../shared/components/status-badge/status-badge.component';
 import { HlmEmptyImports } from '../../../shared/ui/empty/src/lib/hlm-empty';
 import { HlmIconDirective } from '../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmSkeletonImports } from '../../../shared/ui/skeleton/src/lib/hlm-skeleton';
+
+import { AdminDashboardViewComponent } from './components/admin-dashboard-view/admin-dashboard-view.component';
+import { DoctorDashboardComponent } from './components/doctor-dashboard/doctor-dashboard.component';
+import { PetugasDashboardComponent } from './components/petugas-dashboard/petugas-dashboard.component';
 
 export interface NavShortcut {
   label: string;
@@ -66,14 +81,9 @@ export interface NavShortcut {
   selector: 'app-landing',
   standalone: true,
   imports: [
-    RouterLink,
-    NgIcon,
-    HlmIconDirective,
-    StatusBadgeComponent,
-    PriorityBadgeComponent,
-    HlmSkeletonImports,
-    HlmEmptyImports,
-    NgApexchartsModule,
+    DoctorDashboardComponent,
+    PetugasDashboardComponent,
+    AdminDashboardViewComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
@@ -96,6 +106,14 @@ export interface NavShortcut {
       lucideChevronRight,
       lucideInbox,
       lucideActivity,
+      lucideSparkles,
+      lucideStethoscope,
+      lucideUserPlus,
+      lucideArrowRight,
+      lucideRadio,
+      lucideShield,
+      lucideKey,
+      lucideSearch,
     }),
   ],
   templateUrl: './landing.component.html',
@@ -105,13 +123,20 @@ export class LandingComponent {
   private antrianService = inject(AntrianService);
   private klinikService = inject(KlinikService);
   private laporanService = inject(LaporanService);
+  private pasienService = inject(PasienService);
   private destroyRef = inject(DestroyRef);
 
   readonly currentUser = this.authService.currentUser;
   readonly userName = computed(() => this.currentUser()?.nama || 'Pengguna');
   readonly userRoles = computed(() => this.currentUser()?.roles || []);
 
+  readonly isDokter = computed(() => this.userRoles().includes('dokter'));
+  readonly isPetugas = computed(() => this.userRoles().includes('petugas'));
+  readonly isAdmin = computed(() => this.userRoles().includes('admin'));
+
   readonly klinikInfo = this.klinikService.klinikInfo;
+  readonly isKlinikBuka = computed(() => this.klinikService.isKlinikBuka(this.klinikInfo()));
+
   readonly jamOperasionalStr = computed(() => {
     const info = this.klinikInfo();
     if (info?.jamBuka && info?.jamTutup) {
@@ -123,6 +148,26 @@ export class LandingComponent {
   readonly now = signal<Date>(new Date());
   readonly antrianList = signal<KunjunganListItem[]>([]);
   readonly isLoadingAntrian = signal<boolean>(false);
+
+  // Active called patient spotlight (for doctor immediate consultation)
+  readonly activeCalledPatient = computed(() => {
+    return this.antrianList().find((a) => a.status === 'dipanggil') || null;
+  });
+
+  // Tab filter for Doctor & Petugas Views
+  readonly doctorAntrianTab = signal<'menunggu' | 'selesai'>('menunggu');
+  readonly antrianMenungguList = computed(() => {
+    return this.antrianList().filter((a) => a.status === 'menunggu');
+  });
+  readonly antrianSelesaiList = computed(() => {
+    return this.antrianList().filter((a) => a.status === 'selesai');
+  });
+
+  // Doctor quick search state for patient EMR lookup
+  readonly doctorSearchQuery = signal<string>('');
+  readonly doctorSearchResults = signal<PasienSearchItem[]>([]);
+  readonly isSearchingDoctor = signal<boolean>(false);
+  private searchSubject = new Subject<string>();
 
   // Laporan Harian State
   readonly laporanHariIni = signal<LaporanHarian | null>(null);
@@ -441,6 +486,36 @@ export class LandingComponent {
     this.fetchLaporanSummary();
     this.klinikService.fetchKlinikInfo().subscribe();
 
+    // Doctor quick search reactive pipeline
+    const searchSub = this.searchSubject
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          const trimmed = query.trim();
+          if (!trimmed) {
+            this.isSearchingDoctor.set(false);
+            this.doctorSearchResults.set([]);
+            return of({ items: [], totalCount: 0 });
+          }
+          this.isSearchingDoctor.set(true);
+          const isNum = /^\d+$/.test(trimmed);
+          const params = isNum
+            ? { nik: trimmed, page: 1, limit: 4 }
+            : { nama: trimmed, page: 1, limit: 4 };
+          return this.pasienService.search(params);
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.doctorSearchResults.set(res.items || []);
+          this.isSearchingDoctor.set(false);
+        },
+        error: () => {
+          this.isSearchingDoctor.set(false);
+        },
+      });
+
     // Update live clock every 30 seconds
     const timer = setInterval(() => {
       this.now.set(new Date());
@@ -448,7 +523,17 @@ export class LandingComponent {
 
     this.destroyRef.onDestroy(() => {
       clearInterval(timer);
+      searchSub.unsubscribe();
     });
+  }
+
+  onDoctorSearchInput(val: string): void {
+    this.doctorSearchQuery.set(val);
+    this.searchSubject.next(val);
+  }
+
+  setDoctorTab(tab: 'menunggu' | 'selesai'): void {
+    this.doctorAntrianTab.set(tab);
   }
 
   private fetchAntrianSummary(): void {

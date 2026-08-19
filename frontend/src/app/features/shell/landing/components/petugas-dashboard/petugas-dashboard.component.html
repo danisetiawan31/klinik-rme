@@ -1,0 +1,169 @@
+<div class="flex flex-col gap-6 sm:gap-8">
+  <!-- Reusable Hero Ribbon for Petugas -->
+  <app-landing-hero
+    badgeIcon="lucideUserPlus"
+    badgeText="Loket Pendaftaran &amp; Triage Pasien"
+    [userName]="userName()"
+    subtitle="Pusat Penerimaan Pasien, Registrasi Rekam Medis, &amp; Penataan Antrian Loket"
+    [statusText]="isKlinikBuka() ? 'Loket Buka · Siap Melayani' : 'Loket Tutup · Di Luar Jam Pelayanan'"
+    [statusVariant]="isKlinikBuka() ? 'open' : 'closed'"
+    [jamOperasional]="jamOperasionalStr()"
+    [dateStr]="currentDateStr()"
+    [timeStr]="currentTimeStr()"
+  >
+    <app-landing-kpi-card
+      label="Total Tiket Terbit"
+      [value]="totalPasien()"
+      unit="tiket"
+      iconName="lucideListOrdered"
+      colorVariant="primary"
+    />
+    <app-landing-kpi-card
+      label="Menunggu di Ruang Tunggu"
+      [value]="antrianMenunggu()"
+      unit="pasien"
+      iconName="lucideClock"
+      colorVariant="amber"
+    />
+    <app-landing-kpi-card
+      label="Selesai Diperiksa"
+      [value]="selesaiDilayani()"
+      unit="pasien"
+      iconName="lucideCheckCircle2"
+      colorVariant="emerald"
+    />
+    <app-landing-kpi-card
+      label="Pasien Prioritas"
+      [value]="pasienPrioritas()"
+      unit="pasien"
+      iconName="lucideAlertCircle"
+      colorVariant="purple"
+    />
+  </app-landing-hero>
+
+  <!-- Petugas Fast Action Triage Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <a
+      routerLink="/pasien/baru"
+      class="group p-5 rounded-2xl bg-card hover:bg-primary/5 border border-border/80 hover:border-primary/40 shadow-xs transition-all flex items-center justify-between"
+    >
+      <div class="flex items-center gap-4">
+        <div class="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
+          <ng-icon hlm size="base" name="lucideUserPlus" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-base text-foreground group-hover:text-primary transition-colors">
+            Registrasi Pasien Baru
+          </h3>
+          <p class="text-xs text-muted-foreground mt-0.5">Input data NIK, penerbitan NRM, dan persetujuan rekam medis</p>
+        </div>
+      </div>
+    </a>
+
+    <a
+      routerLink="/pasien"
+      class="group p-5 rounded-2xl bg-card hover:bg-sky-500/5 border border-border/80 hover:border-sky-500/40 shadow-xs transition-all flex items-center justify-between"
+    >
+      <div class="flex items-center gap-4">
+        <div class="size-12 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
+          <ng-icon hlm size="base" name="lucideListOrdered" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-base text-foreground group-hover:text-sky-600 transition-colors">
+            Daftarkan Pasien ke Antrian
+          </h3>
+          <p class="text-xs text-muted-foreground mt-0.5">Cari pasien yang sudah terdaftar &amp; terbitkan tiket poli</p>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Petugas Live Queue Feed & Triage Guidelines -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+    <div class="lg:col-span-8 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs">
+      <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
+        <div class="flex items-center gap-2.5">
+          <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+            <ng-icon hlm size="xs" name="lucideListOrdered" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-foreground">Live Antrian Ruang Tunggu</h3>
+            <p class="text-[11px] text-muted-foreground">Urutan panggilan pasien di loket &amp; poli klinik</p>
+          </div>
+        </div>
+        <a routerLink="/papan-antrian" target="_blank" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1">
+          Buka TV Papan Antrian
+        </a>
+      </div>
+
+      @if (antrianList().length === 0) {
+        <hlm-empty class="p-8 my-3">
+          <hlm-empty-header>
+            <hlm-empty-media variant="icon">
+              <ng-icon hlm size="base" name="lucideInbox" class="text-muted-foreground" aria-hidden="true" />
+            </hlm-empty-media>
+            <div hlmEmptyTitle class="text-sm">Belum ada antrian terdaftar hari ini</div>
+            <div hlmEmptyDescription class="text-xs">Klik tombol pendaftaran di atas untuk mendaftarkan pasien.</div>
+          </hlm-empty-header>
+        </hlm-empty>
+      } @else {
+        <div class="space-y-2 mt-3.5">
+          @for (item of antrianList().slice(0, 6); track item.id) {
+            <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-muted/30 border border-border/60 hover:border-primary/40 transition-all">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="size-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 border {{
+                  item.status === 'dipanggil' ? 'bg-primary text-primary-foreground border-primary shadow-2xs' : 'bg-primary/10 text-primary border-primary/20'
+                }}">
+                  #{{ item.nomorAntrian }}
+                </div>
+                <div class="min-w-0">
+                  <div class="font-semibold text-xs sm:text-sm text-foreground truncate">{{ item.pasienNama }}</div>
+                  <div class="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                    <span>Pasien Umum</span>
+                    @if (item.isPriority) {
+                      <app-priority-badge [reason]="item.priorityReason" size="sm" />
+                    }
+                  </div>
+                </div>
+              </div>
+              <app-status-badge [status]="item.status" />
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="lg:col-span-4 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+      <div class="flex items-center gap-2 pb-2.5 border-b border-border/80">
+        <ng-icon hlm size="xs" name="lucideAlertCircle" class="text-purple-600" aria-hidden="true" />
+        <h3 class="font-heading font-bold text-sm text-foreground">Panduan Triage Prioritas</h3>
+      </div>
+      <p class="text-xs text-muted-foreground leading-relaxed">
+        Pemberian label prioritas diberikan pada saat registrasi loket bagi pasien yang membutuhkan penanganan khusus:
+      </p>
+      <ul class="text-xs space-y-2 text-foreground">
+        <li class="flex items-center gap-2">
+          <span class="size-1.5 rounded-full bg-purple-600"></span>
+          <span>Lansia (&gt; 60 tahun)</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="size-1.5 rounded-full bg-purple-600"></span>
+          <span>Ibu Hamil &amp; Balita</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="size-1.5 rounded-full bg-purple-600"></span>
+          <span>Penyandang Disabilitas</span>
+        </li>
+        <li class="flex items-center gap-2">
+          <span class="size-1.5 rounded-full bg-purple-600"></span>
+          <span>Kondisi Darurat / Nyeri Akut</span>
+        </li>
+      </ul>
+      <div class="pt-3 border-t border-border/60">
+        <a routerLink="/antrian" class="block w-full py-2 text-center text-xs font-semibold rounded-xl bg-muted hover:bg-muted/80 text-foreground transition-colors">
+          Buka Manajemen Antrian Lengkap
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

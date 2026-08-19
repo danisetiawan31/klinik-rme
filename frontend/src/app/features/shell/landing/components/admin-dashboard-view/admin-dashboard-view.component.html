@@ -1,0 +1,199 @@
+<div class="flex flex-col gap-6 sm:gap-8">
+  <!-- Reusable Hero Ribbon for Admin -->
+  <app-landing-hero
+    badgeIcon="lucideShieldCheck"
+    badgeText="Pusat Kendali Administrasi &amp; Tata Kelola"
+    [userName]="userName()"
+    subtitle="Monitoring Kesehatan Sistem, Audit Trail SHA-256, &amp; Konfigurasi Operasional Klinik"
+    [statusText]="isKlinikBuka() ? 'Operasional Buka' : 'Operasional Tutup'"
+    [statusVariant]="isKlinikBuka() ? 'open' : 'closed'"
+    [jamOperasional]="jamOperasionalStr()"
+    [dateStr]="currentDateStr()"
+    [timeStr]="currentTimeStr()"
+  >
+    <app-landing-kpi-card
+      label="Total Pasien Hari Ini"
+      [value]="totalPasien()"
+      unit="org"
+      iconName="lucideUsers"
+      colorVariant="primary"
+    />
+    <app-landing-kpi-card
+      label="Tingkat Kehadiran"
+      [value]="attendanceRate() + '%'"
+      iconName="lucideUserCheck"
+      colorVariant="emerald"
+    />
+    <app-landing-kpi-card
+      label="Efisiensi Konsultasi"
+      [value]="performanceRate() + '%'"
+      iconName="lucideActivity"
+      colorVariant="sky"
+    />
+    <app-landing-kpi-card
+      label="Pasien Batal / No-Show"
+      [value]="totalTidakHadirLaporan()"
+      iconName="lucideUserX"
+      colorVariant="amber"
+    />
+  </app-landing-hero>
+
+  <!-- Admin System Governance & Control Hub Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <a
+      routerLink="/admin/audit-log"
+      class="group p-5 rounded-2xl bg-card hover:bg-amber-500/5 border border-border/80 hover:border-amber-500/40 shadow-xs transition-all flex flex-col justify-between"
+    >
+      <div class="flex items-start gap-3.5">
+        <div class="size-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center shadow-2xs shrink-0">
+          <ng-icon hlm size="sm" name="lucideShieldCheck" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-sm text-foreground group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors">
+            Jejak Audit Keamanan
+          </h3>
+          <p class="text-xs text-muted-foreground mt-0.5">SHA-256 tamper-evident chain log untuk investigasi data medis</p>
+        </div>
+      </div>
+      <div class="mt-4 pt-2 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-amber-700 dark:text-amber-400">
+        <span>Buka Audit Log</span>
+      </div>
+    </a>
+
+    <a
+      routerLink="/admin/pengaturan"
+      class="group p-5 rounded-2xl bg-card hover:bg-slate-500/5 border border-border/80 hover:border-slate-500/40 shadow-xs transition-all flex flex-col justify-between"
+    >
+      <div class="flex items-start gap-3.5">
+        <div class="size-10 rounded-xl bg-slate-500/10 text-slate-600 flex items-center justify-center shadow-2xs shrink-0">
+          <ng-icon hlm size="sm" name="lucideKey" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-sm text-foreground group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+            Display Token Antrian TV
+          </h3>
+          <p class="text-xs text-muted-foreground mt-0.5">Kelola token akses display TV dan jam operasional klinik</p>
+        </div>
+      </div>
+      <div class="mt-4 pt-2 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-slate-700 dark:text-slate-300">
+        <span>Buka Pengaturan</span>
+      </div>
+    </a>
+
+    <a
+      routerLink="/admin/users"
+      class="group p-5 rounded-2xl bg-card hover:bg-purple-500/5 border border-border/80 hover:border-purple-500/40 shadow-xs transition-all flex flex-col justify-between"
+    >
+      <div class="flex items-start gap-3.5">
+        <div class="size-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center shadow-2xs shrink-0">
+          <ng-icon hlm size="sm" name="lucideUserCheck" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 class="font-heading font-bold text-sm text-foreground group-hover:text-purple-700 dark:group-hover:text-purple-400 transition-colors">
+            Manajemen Akun Staf
+          </h3>
+          <p class="text-xs text-muted-foreground mt-0.5">Kelola akun dokter, petugas loket, dan hak akses RBAC</p>
+        </div>
+      </div>
+      <div class="mt-4 pt-2 border-t border-border/60 flex items-center justify-between text-xs font-semibold text-purple-700 dark:text-purple-400">
+        <span>Kelola Pengguna</span>
+      </div>
+    </a>
+  </div>
+
+  <!-- Admin Analytics Bottom Split -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+    <div class="lg:col-span-7 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs">
+      <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
+        <div class="flex items-center gap-2.5">
+          <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+            <ng-icon hlm size="xs" name="lucideCalendarDays" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-foreground">Aktivitas Antrian Pasien</h3>
+            <p class="text-[11px] text-muted-foreground">Monitoring seluruh kunjungan klinik hari ini</p>
+          </div>
+        </div>
+        <a routerLink="/antrian" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1">
+          Lihat Antrian
+        </a>
+      </div>
+
+      @if (antrianList().length === 0) {
+        <hlm-empty class="p-8 my-3">
+          <hlm-empty-header>
+            <hlm-empty-media variant="icon">
+              <ng-icon hlm size="base" name="lucideInbox" class="text-muted-foreground" aria-hidden="true" />
+            </hlm-empty-media>
+            <div hlmEmptyTitle class="text-sm">Belum ada antrian terdaftar hari ini</div>
+            <div hlmEmptyDescription class="text-xs">Data kunjungan akan otomatis muncul setelah loket mendaftarkan pasien.</div>
+          </hlm-empty-header>
+        </hlm-empty>
+      } @else {
+        <div class="space-y-2 mt-3.5">
+          @for (item of antrianList().slice(0, 5); track item.id) {
+            <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-muted/30 border border-border/60">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="size-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center tabular-nums shrink-0 border {{
+                  item.status === 'dipanggil' ? 'bg-primary text-primary-foreground border-primary' : 'bg-primary/10 text-primary border-primary/20'
+                }}">
+                  #{{ item.nomorAntrian }}
+                </div>
+                <div class="min-w-0">
+                  <div class="font-semibold text-xs sm:text-sm text-foreground truncate">{{ item.pasienNama }}</div>
+                  <div class="text-[11px] text-muted-foreground">Kunjungan Pasien</div>
+                </div>
+              </div>
+              <app-status-badge [status]="item.status" />
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="lg:col-span-5 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
+          <div class="flex items-center gap-2.5">
+            <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+              <ng-icon hlm size="xs" name="lucideActivity" aria-hidden="true" />
+            </div>
+            <div>
+              <h3 class="font-heading font-bold text-sm sm:text-base text-foreground">Efisiensi Operasional</h3>
+              <p class="text-[11px] text-muted-foreground">Rasio penyelesaian pemeriksaan pasien</p>
+            </div>
+          </div>
+          <a routerLink="/laporan-harian" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+            Laporan Detail
+          </a>
+        </div>
+
+        <div class="flex flex-col items-center justify-center pt-2 pb-1">
+          <div class="w-full max-w-[220px] flex justify-center -mb-6">
+            <apx-chart
+              [series]="chartSeries()"
+              [chart]="chartOptions().chart"
+              [plotOptions]="chartOptions().plotOptions"
+              [fill]="chartOptions().fill"
+              [stroke]="chartOptions().stroke"
+              [colors]="chartOptions().colors"
+              [labels]="chartOptions().labels"
+            />
+          </div>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold border shadow-2xs {{
+              trendVsKemarin().isPositive === true
+                ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20'
+                : trendVsKemarin().isPositive === false
+                  ? 'bg-rose-500/10 text-rose-700 dark:text-rose-400 border-rose-500/20'
+                  : 'bg-muted text-muted-foreground border-border'
+            }}">
+              <ng-icon hlm size="xs" [name]="trendVsKemarin().icon" aria-hidden="true" />
+              <span>{{ trendVsKemarin().text }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

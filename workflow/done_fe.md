@@ -293,6 +293,48 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
   - `node e2e-test.mjs` → **17/17 automated flows PASS** (exit 0).
 
+## Addendum — Pemisahan Beranda Berbasis Peran (*Role-Specific Tailored Workspaces*)
+
+- `LandingComponent` (`features/shell/landing/`):
+  - **🩺 Beranda Khusus Dokter (*Clinical Workbench*)**:
+    - Hero Ribbon Dokter: Badge *Poli Rawat Jalan · Ruang Konsultasi Dokter*, status *Poli Siap Konsultasi*, jam praktek, serta 4 KPI Ribbon klinis (*Selesai Diperiksa, Sisa Antrian Periksa, Pasien Prioritas, Total Pasien*).
+    - *Active Called Patient Spotlight*: Kartu pasien dipanggil dengan tombol 1-klik **"Mulai Pengisian SOAP"** atau prompt kesiapan poli.
+    - *Antrian Periksa Tabbed*: Tab *Menunggu* vs *Selesai* dengan tombol cepat *Panggil* dan *Lihat SOAP*.
+    - *Quick EMR Lookup*: Pencarian instan riwayat medis pasien via NIK/Nama tanpa perlu berpindah modul.
+  - **📋 Beranda Khusus Petugas Loket (*Triage & Pendaftaran*)**:
+    - Hero Ribbon Loket: Badge *Loket Pendaftaran & Triage Pasien*, status *Loket Aktif Melayani*, serta 4 KPI Ribbon loket (*Total Tiket Terbit, Menunggu di Ruang Tunggu, Selesai Diperiksa, Pasien Prioritas*).
+    - *Fast Triage Cards*: Tombol langsung **"Registrasi Pasien Baru"** dan **"Daftarkan Pasien ke Antrian"**.
+    - *Live Queue Feed & Panduan Triage*: Urutan antrian live ruang tunggu, link TV Papan Antrian, dan kriteria identifikasi pasien prioritas (lansia, ibu hamil/balita, disabilitas, darurat).
+  - **🛡️ Beranda Khusus Administrator (*System Governance & Control Tower*)**:
+    - Hero Ribbon Admin: Badge *Pusat Kendali Administrasi & Tata Kelola*, status buka/tutup klinik, serta 4 KPI Ribbon operasional (*Total Pasien, Tingkat Kehadiran, Efisiensi Konsultasi, Pasien Batal/No-Show*).
+    - *Governance Triad*: Kartu status & navigasi cepat ke *Jejak Audit Keamanan (SHA-256 Chain)*, *Display Token Antrian TV*, dan *Manajemen Akun Staf (RBAC)*.
+    - *Analytics & Queue Monitoring*: Feed seluruh antrian klinik dan ApexCharts radial gauge chart efisiensi pelayanan.
+- **Verifikasi**:
+  - `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
+  - `node e2e-test.mjs` → **19/19 automated flows PASS** (exit 0).
+
+## Addendum — Modularisasi Sub-Komponen Reusable Beranda (`LandingComponent`)
+
+- Mengurai *monolithic landing template* (~980 baris) menjadi 5 sub-komponen terpisah, terisolasi, dan *reusable*:
+  - `<app-landing-hero>` (`components/landing-hero/`): Reusable glassmorphic hero banner dengan live Jakarta time, status operasional, dan projected KPI grid.
+  - `<app-landing-kpi-card>` (`components/landing-kpi-card/`): Reusable KPI metric card dengan 5 varian warna semantik token (`primary`, `emerald`, `amber`, `purple`, `sky`).
+  - `<app-doctor-dashboard>` (`components/doctor-dashboard/`): Workspace klinis dokter terdedikasi (hero banner, active patient spotlight, antrian periksa tabbed, quick EMR search).
+  - `<app-petugas-dashboard>` (`components/petugas-dashboard/`): Triage loket pendaftaran terdedikasi (hero banner, fast triage cards, live queue feed, panduan triage).
+  - `<app-admin-dashboard-view>` (`components/admin-dashboard-view/`): Pusat kendali admin terdedikasi (hero banner, governance triad cards, live antrian, ApexCharts radial gauge).
+- Template `landing.component.html` dirampingkan dari ~980 baris menjadi ~49 baris bersih yang deklaratif.
+- Memperbarui Component Registry pada `docs/DESIGN.md`.
+- **Verifikasi**:
+  - `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
+  - `node e2e-test.mjs` → **19/19 automated E2E & visual tests PASS** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match** (100% token semantik).
+- **Perbaikan Reaktivitas Status Operasional & Pembersihan Panah Dekoratif (AI Slop)**:
+  - Hero banner Dokter & Petugas kini terikat dinamis ke `isKlinikBuka` riil (`KlinikService`) — saat klinik tutup, status otomatis menampilkan `Poli Tutup · Di Luar Jam Praktek` / `Loket Tutup · Di Luar Jam Pelayanan` dengan status dot merah `closed`.
+  - Menghapus seluruh simbol panah dekoratif (`&rarr;` / `→`) pada tombol aksi, link, dan kartu tata kelola di seluruh sub-komponen dashboard.
+  - Audit panah `rarr` / `→` di direktori landing: **0 match**.
+
+
+
+
 
 
 

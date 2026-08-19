@@ -148,6 +148,16 @@ async function runE2ETests() {
     assert(page.url().includes('/antrian'), `Dokter login sukses → mendarat di /antrian`);
     await page.screenshot({ path: path.join(screenshotsDir, '12_dokter_antrian_view.png'), fullPage: true });
 
+    // Visit Beranda as Doctor (Role-Specific Clinical Workbench)
+    console.log('  👉 Menguji Beranda Dokter (Clinical Workspace)...');
+    await page.goto('http://localhost:4200/', { waitUntil: 'networkidle' });
+    const dokterBerandaText = await page.textContent('body');
+    assert(
+      dokterBerandaText.includes('Ruang Konsultasi Dokter') && dokterBerandaText.includes('Cari Riwayat Medis Pasien'),
+      'Beranda Dokter menampilkan Clinical Workbench khusus dokter (Ruang Konsultasi, Antrian Periksa, & Quick EMR Lookup)'
+    );
+    await page.screenshot({ path: path.join(screenshotsDir, '12b_dokter_beranda_clinical_workbench.png'), fullPage: true });
+
     // Click "Rekam Medis" in the sidebar (/rekam-medis)
     console.log('  👉 Menguji klik menu sidebar: Rekam Medis (/rekam-medis)...');
     await page.goto('http://localhost:4200/rekam-medis', { waitUntil: 'networkidle' });
@@ -177,6 +187,16 @@ async function runE2ETests() {
     await page.waitForURL('**/antrian', { timeout: 10000 });
 
     assert(page.url().includes('/antrian'), `Petugas login sukses → mendarat di /antrian`);
+
+    // Visit Beranda as Petugas (Role-Specific Triage & Registration)
+    console.log('  👉 Menguji Beranda Petugas Loket (Triage & Pendaftaran)...');
+    await page.goto('http://localhost:4200/', { waitUntil: 'networkidle' });
+    const petugasBerandaText = await page.textContent('body');
+    assert(
+      petugasBerandaText.includes('Loket Pendaftaran & Triage') && petugasBerandaText.includes('Registrasi Pasien Baru'),
+      'Beranda Petugas menampilkan Triage Workspace khusus loket (Pendaftaran Pasien, Tiket Cepat, & Panduan Prioritas)'
+    );
+    await page.screenshot({ path: path.join(screenshotsDir, '15_petugas_beranda_triage.png'), fullPage: true });
 
     // Petugas tries to access /rekam-medis (clinical records restricted to dokter only)
     await page.goto('http://localhost:4200/rekam-medis', { waitUntil: 'networkidle' });

@@ -1,0 +1,297 @@
+<div class="flex flex-col gap-6 sm:gap-8">
+  <!-- Reusable Hero Ribbon for Doctor -->
+  <app-landing-hero
+    badgeIcon="lucideStethoscope"
+    badgeText="Poli Rawat Jalan · Ruang Konsultasi Dokter"
+    [userName]="userName()"
+    subtitle="Workspace Klinis — Pemeriksaan Pasien, Diagnosis ICD-10, &amp; Rekam Medis SOAP"
+    [statusText]="isKlinikBuka() ? 'Poli Buka · Siap Konsultasi' : 'Poli Tutup · Di Luar Jam Praktek'"
+    [statusVariant]="isKlinikBuka() ? 'open' : 'closed'"
+    [jamOperasional]="jamOperasionalStr()"
+    [dateStr]="currentDateStr()"
+    [timeStr]="currentTimeStr()"
+  >
+    <app-landing-kpi-card
+      label="Selesai Diperiksa"
+      [value]="selesaiDilayani()"
+      unit="pasien"
+      iconName="lucideCheckCircle2"
+      colorVariant="emerald"
+    />
+    <app-landing-kpi-card
+      label="Sisa Antrian Periksa"
+      [value]="antrianMenunggu()"
+      unit="pasien"
+      iconName="lucideClock"
+      colorVariant="amber"
+    />
+    <app-landing-kpi-card
+      label="Pasien Prioritas"
+      [value]="pasienPrioritas()"
+      unit="pasien"
+      iconName="lucideAlertCircle"
+      colorVariant="purple"
+    />
+    <app-landing-kpi-card
+      label="Total Pasien Hari Ini"
+      [value]="totalPasien()"
+      unit="org"
+      iconName="lucideUsers"
+      colorVariant="primary"
+    />
+  </app-landing-hero>
+
+  <!-- Active Called Patient Spotlight -->
+  @if (activeCalledPatient(); as active) {
+    <div
+      class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-primary/15 via-primary/5 to-card border-2 border-primary/40 p-5 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+    >
+      <div class="flex items-start gap-4">
+        <div
+          class="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center font-mono font-bold text-base shadow-xs shrink-0"
+        >
+          #{{ active.nomorAntrian }}
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-primary text-primary-foreground">
+              <span class="size-1.5 rounded-full bg-white animate-pulse"></span>
+              SEDANG DIPANGGIL DI POLI
+            </span>
+            @if (active.isPriority) {
+              <app-priority-badge [reason]="active.priorityReason" size="sm" />
+            }
+          </div>
+          <h2 class="text-base sm:text-lg font-heading font-bold text-foreground mt-1">
+            {{ active.pasienNama }}
+          </h2>
+          <p class="text-xs text-muted-foreground">
+            Pasien berada di ruang konsultasi. Silakan mulai input SOAP untuk rekam medis hari ini.
+          </p>
+        </div>
+      </div>
+
+      <a
+        [routerLink]="['/rekam-medis/pemeriksaan', active.id]"
+        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs sm:text-sm shadow-xs transition-all duration-150 shrink-0 cursor-pointer"
+      >
+        <ng-icon hlm size="sm" name="lucideStethoscope" aria-hidden="true" />
+        <span>Mulai Pengisian SOAP</span>
+      </a>
+    </div>
+  } @else {
+    <div
+      class="rounded-2xl bg-card border border-border/80 p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+    >
+      <div class="flex items-center gap-3">
+        <div class="size-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <ng-icon hlm size="sm" name="lucideCheckCircle2" aria-hidden="true" />
+        </div>
+        <div>
+          <h3 class="text-sm font-heading font-bold text-foreground">Ruang Konsultasi Siap</h3>
+          <p class="text-xs text-muted-foreground">Belum ada pasien yang sedang dipanggil di poli saat ini.</p>
+        </div>
+      </div>
+      <a
+        routerLink="/antrian"
+        class="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary/10 hover:bg-primary/20 text-primary font-semibold text-xs transition-colors shrink-0"
+      >
+        <ng-icon hlm size="xs" name="lucideListOrdered" aria-hidden="true" />
+        <span>Panggil Pasien dari Antrian</span>
+      </a>
+    </div>
+  }
+
+  <!-- Doctor Split Section: Antrian (60%) & Quick EMR Search (40%) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
+    <!-- Left (7 Kolom): Antrian Periksa Hari Ini -->
+    <div class="lg:col-span-7 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+      <div>
+        <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
+          <div class="flex items-center gap-1.5 bg-muted/60 p-1 rounded-xl border border-border/60">
+            <button
+              type="button"
+              (click)="setTab('menunggu')"
+              class="px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer {{
+                activeTab() === 'menunggu'
+                  ? 'bg-card text-foreground shadow-2xs border border-border/70'
+                  : 'text-muted-foreground hover:text-foreground'
+              }}"
+            >
+              Menunggu ({{ antrianMenunggu() }})
+            </button>
+            <button
+              type="button"
+              (click)="setTab('selesai')"
+              class="px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer {{
+                activeTab() === 'selesai'
+                  ? 'bg-card text-foreground shadow-2xs border border-border/70'
+                  : 'text-muted-foreground hover:text-foreground'
+              }}"
+            >
+              Selesai ({{ selesaiDilayani() }})
+            </button>
+          </div>
+          <a
+            routerLink="/antrian"
+            class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1"
+          >
+            Semua Antrian
+          </a>
+        </div>
+
+        <!-- List Patients -->
+        @if (activeTab() === 'menunggu') {
+          @if (antrianMenungguList().length === 0) {
+            <hlm-empty class="p-8 my-3">
+              <hlm-empty-header>
+                <hlm-empty-media variant="icon">
+                  <ng-icon hlm size="base" name="lucideCheckCircle2" class="text-emerald-500" aria-hidden="true" />
+                </hlm-empty-media>
+                <div hlmEmptyTitle class="text-sm">Tidak ada antrian menunggu</div>
+                <div hlmEmptyDescription class="text-xs">Seluruh pasien yang hadir telah selesai diperiksa.</div>
+              </hlm-empty-header>
+            </hlm-empty>
+          } @else {
+            <div class="space-y-2 mt-3.5">
+              @for (item of antrianMenungguList().slice(0, 5); track item.id) {
+                <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-muted/30 border border-border/60 hover:border-primary/40 transition-all">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="size-8 rounded-lg font-mono font-bold text-xs bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0">
+                      #{{ item.nomorAntrian }}
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-semibold text-xs sm:text-sm text-foreground truncate">{{ item.pasienNama }}</div>
+                      <div class="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
+                        @if (item.isPriority) {
+                          <app-priority-badge [reason]="item.priorityReason" size="sm" />
+                        } @else {
+                          <span>Pasien Umum</span>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                  <a
+                    routerLink="/antrian"
+                    class="px-3 py-1 rounded-lg text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0"
+                  >
+                    Panggil
+                  </a>
+                </div>
+              }
+            </div>
+          }
+        } @else {
+          @if (antrianSelesaiList().length === 0) {
+            <hlm-empty class="p-8 my-3">
+              <hlm-empty-header>
+                <hlm-empty-media variant="icon">
+                  <ng-icon hlm size="base" name="lucideInbox" class="text-muted-foreground" aria-hidden="true" />
+                </hlm-empty-media>
+                <div hlmEmptyTitle class="text-sm">Belum ada pasien selesai hari ini</div>
+                <div hlmEmptyDescription class="text-xs">Pasien yang telah selesai SOAP akan tercatat di sini.</div>
+              </hlm-empty-header>
+            </hlm-empty>
+          } @else {
+            <div class="space-y-2 mt-3.5">
+              @for (item of antrianSelesaiList().slice(0, 5); track item.id) {
+                <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-muted/30 border border-border/60 hover:border-emerald-500/40 transition-all">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="size-8 rounded-lg font-mono font-bold text-xs bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                      #{{ item.nomorAntrian }}
+                    </div>
+                    <div class="min-w-0">
+                      <div class="font-semibold text-xs sm:text-sm text-foreground truncate">{{ item.pasienNama }}</div>
+                      <div class="text-[11px] text-muted-foreground">Pemeriksaan Selesai</div>
+                    </div>
+                  </div>
+                  <a
+                    [routerLink]="['/rekam-medis', item.id]"
+                    class="px-3 py-1 rounded-lg text-xs font-semibold bg-muted hover:bg-muted/80 text-foreground border border-border/80 transition-colors shrink-0"
+                  >
+                    Lihat SOAP
+                  </a>
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Right (5 Kolom): Quick EMR Lookup -->
+    <div class="lg:col-span-5 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+      <div class="space-y-4">
+        <div class="flex items-center gap-2.5 pb-3 border-b border-border/80">
+          <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+            <ng-icon hlm size="xs" name="lucideSearch" aria-hidden="true" />
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-foreground">Cari Riwayat Medis Pasien</h3>
+            <p class="text-[11px] text-muted-foreground">Akses cepat histori diagnosis terdahulu</p>
+          </div>
+        </div>
+
+        <div class="relative">
+          <input
+            type="text"
+            [value]="doctorSearchQuery()"
+            (input)="onSearch($any($event.target).value)"
+            placeholder="Cari nama atau 16-digit NIK pasien..."
+            class="w-full h-10 px-3.5 text-xs rounded-xl bg-muted/40 border border-border/80 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-muted-foreground"
+          />
+          @if (isSearchingDoctor()) {
+            <div class="absolute right-3 top-2.5">
+              <span class="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin block"></span>
+            </div>
+          }
+        </div>
+
+        @if (doctorSearchResults().length > 0) {
+          <div class="space-y-2">
+            <span class="text-[11px] font-semibold text-muted-foreground">Hasil Pencarian:</span>
+            @for (pasien of doctorSearchResults(); track pasien.id) {
+              <a
+                [routerLink]="['/pasien', pasien.id, 'riwayat']"
+                class="flex items-center justify-between p-2.5 rounded-xl bg-muted/30 hover:bg-primary/5 border border-border/60 hover:border-primary/40 transition-all group"
+              >
+                <div class="min-w-0">
+                  <div class="font-semibold text-xs text-foreground group-hover:text-primary transition-colors truncate">
+                    {{ pasien.nama }}
+                  </div>
+                  <div class="text-[11px] text-muted-foreground font-mono">
+                    NIK: {{ pasien.nik }}
+                  </div>
+                </div>
+                <span class="text-xs font-semibold text-primary shrink-0">Buka EMR</span>
+              </a>
+            }
+          </div>
+        } @else if (doctorSearchQuery().trim().length > 0 && !isSearchingDoctor()) {
+          <div class="p-3 text-center text-xs text-muted-foreground bg-muted/20 rounded-xl">
+            Pasien tidak ditemukan dengan kata kunci "{{ doctorSearchQuery() }}"
+          </div>
+        }
+
+        <div class="pt-2 border-t border-border/60 grid grid-cols-2 gap-2.5">
+          <a
+            routerLink="/rekam-medis"
+            class="p-3 rounded-xl bg-muted/30 hover:bg-muted/70 border border-border/60 text-center transition-all group"
+          >
+            <ng-icon hlm size="sm" name="lucideFileText" class="text-primary mx-auto mb-1" aria-hidden="true" />
+            <div class="text-xs font-bold text-foreground group-hover:text-primary transition-colors">Workspace EMR</div>
+            <div class="text-[10px] text-muted-foreground">Seluruh rekam medis</div>
+          </a>
+          <a
+            routerLink="/laporan-harian"
+            class="p-3 rounded-xl bg-muted/30 hover:bg-muted/70 border border-border/60 text-center transition-all group"
+          >
+            <ng-icon hlm size="sm" name="lucideTrendingUp" class="text-emerald-600 mx-auto mb-1" aria-hidden="true" />
+            <div class="text-xs font-bold text-foreground group-hover:text-emerald-600 transition-colors">Rekap Harian</div>
+            <div class="text-[10px] text-muted-foreground">Aktivitas konsultasi</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
