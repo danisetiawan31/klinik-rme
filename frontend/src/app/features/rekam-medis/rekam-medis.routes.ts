@@ -4,7 +4,10 @@ export const rekamMedisRoutes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: '/antrian',
+    loadComponent: () =>
+      import('./components/rekam-medis-list/rekam-medis-list.component').then(
+        (m) => m.RekamMedisListComponent
+      ),
   },
   {
     path: 'pemeriksaan/:kunjunganId',

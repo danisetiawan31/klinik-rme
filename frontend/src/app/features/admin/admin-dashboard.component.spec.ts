@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { KlinikService } from '../../core/klinik/klinik.service';
@@ -39,6 +40,10 @@ describe('AdminDashboardComponent', () => {
     await TestBed.configureTestingModule({
       imports: [AdminDashboardComponent],
       providers: [
+        provideRouter([
+          { path: 'admin', component: AdminDashboardComponent },
+          { path: 'admin/:subtab', component: AdminDashboardComponent },
+        ]),
         { provide: AuthService, useValue: mockAuthService },
         { provide: AdminService, useValue: mockAdminService },
         { provide: KlinikService, useValue: mockKlinikService },

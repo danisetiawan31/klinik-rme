@@ -138,17 +138,12 @@ export class PapanAntrianComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // 1. Fetch clinic info for header branding
-    if (!this.klinikInfo()) {
-      this.klinikService.fetchKlinikInfo().subscribe();
-    }
-
-    // 2. Initialize live clock
+    // 1. Initialize live clock
     this.updateClock();
     const clockTimer = setInterval(() => this.updateClock(), 1000);
     this.destroyRef.onDestroy(() => clearInterval(clockTimer));
 
-    // 3. Resolve display token from URL query params or localStorage
+    // 2. Resolve display token from URL query params or localStorage
     const queryToken =
       this.route.snapshot.queryParamMap.get('token') ||
       this.route.snapshot.queryParamMap.get('displayToken');
@@ -164,14 +159,14 @@ export class PapanAntrianComponent implements OnInit {
       }
     }
 
-    // 4. Initial fetch and realtime connect if token exists
+    // 3. Initial fetch and realtime connect if token exists
     if (this.displayToken()) {
       this.initDisplayBoard();
     } else {
       this.isLoading.set(false);
     }
 
-    // 5. Fallback polling every 30 seconds
+    // 4. Fallback polling every 30 seconds
     const fallbackPollTimer = setInterval(() => {
       if (this.displayToken()) {
         this.fetchAntrian();
@@ -188,6 +183,8 @@ export class PapanAntrianComponent implements OnInit {
     const token = this.displayToken();
     if (!token) return;
 
+    // Fetch clinic info & antrian using displayToken
+    this.klinikService.fetchKlinikInfo(environment.defaultKlinikId, token).subscribe();
     this.fetchAntrian();
     this.realtimeService.connect({
       klinikId: environment.defaultKlinikId,

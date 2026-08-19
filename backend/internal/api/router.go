@@ -88,13 +88,13 @@ func SetupRouter(pool *pgxpool.Pool, hub *realtime.Hub, emailSender mailer.Email
 		// Klinik & Antrian routes
 		klinikAntrianH := handler.NewKlinikAntrianHandler(pool, hub)
 
-		// GET /klinik/:id/antrian mendukung Dual-Auth (cookie staff OR X-Display-Token / ?displayToken=)
+		// GET /klinik/:id/antrian & GET /klinik/:id mendukung Dual-Auth (cookie staff OR X-Display-Token / ?displayToken=)
 		apiV1.GET("/klinik/:id/antrian", middleware.DualAuth(q), middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetAntrianKlinik)
+		apiV1.GET("/klinik/:id", middleware.DualAuth(q), middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetKlinikByID)
 
 		klinikGroup := apiV1.Group("/klinik")
 		klinikGroup.Use(middleware.Authenticate(q))
 		{
-			klinikGroup.GET("/:id", middleware.RequireRole("petugas", "dokter", "admin"), klinikAntrianH.GetKlinikByID)
 			klinikGroup.POST("/:id/panggil-berikutnya", middleware.RequireRole("dokter"), klinikAntrianH.PanggilBerikutnya)
 		}
 

@@ -12,6 +12,11 @@ export const pasienRoutes: Routes = [
       ),
   },
   {
+    path: 'riwayat',
+    redirectTo: '',
+    pathMatch: 'full',
+  },
+  {
     path: 'baru',
     canActivate: [roleGuard('petugas', 'admin')],
     loadComponent: () =>

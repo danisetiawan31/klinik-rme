@@ -39,3 +39,7 @@ Thumbs.db
 # Unused media assets
 frontend/public/unused_images/
 
+# Test snapshots & test output dumps
+screenshots/
+
+

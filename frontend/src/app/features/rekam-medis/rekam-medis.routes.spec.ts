@@ -21,7 +21,7 @@ describe('rekamMedisRoutes', () => {
     const detailRoute = config.find((r) => r.path === 'kunjungan/:kunjunganId');
 
     expect(rootRoute).toBeTruthy();
-    expect(rootRoute?.redirectTo).toBe('/antrian');
+    expect(rootRoute?.loadComponent).toBeTruthy();
 
     expect(formRoute).toBeTruthy();
     expect(formRoute?.loadComponent).toBeTruthy();

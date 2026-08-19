@@ -1,0 +1,272 @@
+<div class="space-y-6 max-w-7xl mx-auto pb-12">
+  <!-- Page Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/80 pb-5">
+    <div>
+      <div class="flex items-center gap-2.5">
+        <div class="size-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-xs">
+          <ng-icon hlm size="sm" name="lucideStethoscope" aria-hidden="true" />
+        </div>
+        <div>
+          <h1 class="text-2xl font-heading font-black tracking-tight text-foreground">
+            Rekam Medis & Pemeriksaan Klinis
+          </h1>
+          <p class="text-xs text-muted-foreground mt-0.5">
+            Pemeriksaan anamnesis SOAP, kodifikasi ICD-10, resep tindakan, dan addendum riwayat pasien.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-xs font-semibold">
+        <ng-icon hlm size="xs" name="lucideCheckCircle2" aria-hidden="true" />
+        <span>{{ totalSelesai() }} Selesai Hari Ini</span>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-700 text-xs font-semibold">
+        <ng-icon hlm size="xs" name="lucideClock" aria-hidden="true" />
+        <span>{{ totalMenunggu() }} Menunggu</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Active Calling Patient Card (Hero Action for Doctor) -->
+  @if (activeCallingPatient()) {
+    <div class="relative overflow-hidden rounded-2xl border-2 border-primary/40 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent p-5 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1.5">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary text-primary-foreground animate-pulse">
+              <ng-icon hlm size="xs" name="lucideActivity" aria-hidden="true" />
+              SEDANG DIPANGGIL
+            </span>
+            @if (activeCallingPatient()!.isPriority) {
+              <app-priority-badge [reason]="activeCallingPatient()!.priorityReason" />
+            }
+          </div>
+          <div class="flex items-baseline gap-3">
+            <span class="text-3xl font-mono font-black text-foreground">
+              {{ formatQueueNumber(activeCallingPatient()!.nomorAntrian) }}
+            </span>
+            <span class="text-lg font-bold text-foreground truncate">
+              {{ activeCallingPatient()!.pasienNama }}
+            </span>
+          </div>
+          <p class="text-xs text-muted-foreground">
+            Pasien siap diperiksa. Silakan buka formulir rekam medis untuk mencatat hasil pemeriksaan klinis.
+          </p>
+        </div>
+
+        <a
+          hlmBtn
+          variant="default"
+          size="lg"
+          [routerLink]="['/rekam-medis/pemeriksaan', activeCallingPatient()!.id]"
+          class="shrink-0 gap-2 font-bold shadow-md cursor-pointer"
+        >
+          <ng-icon hlm size="sm" name="lucideFileEdit" aria-hidden="true" />
+          <span>Mulai Pengisian SOAP</span>
+          <ng-icon hlm size="xs" name="lucideArrowRight" aria-hidden="true" />
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- Patient Search for Medical History Lookup -->
+  <div class="rounded-xl border border-border bg-card p-4 shadow-2xs space-y-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <ng-icon hlm size="xs" name="lucideSearch" class="text-primary" aria-hidden="true" />
+        <h2 class="text-sm font-bold text-foreground">Cari Riwayat Medis Pasien</h2>
+      </div>
+      <span class="text-[11px] text-muted-foreground">Ketik Nama atau NIK untuk melihat histori pemeriksaan lampau</span>
+    </div>
+
+    <div class="relative">
+      <input
+        hlmInput
+        type="text"
+        placeholder="Cari pasien berdasarkan Nama atau 16 digit NIK..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchInput($event)"
+        class="w-full text-xs"
+      />
+    </div>
+
+    <!-- Search Results Dropdown -->
+    @if (isSearching()) {
+      <div class="p-3 text-center text-xs text-muted-foreground">
+        Mencari data pasien...
+      </div>
+    } @else if (searchResults().length > 0) {
+      <div class="divide-y divide-border border border-border/80 rounded-lg overflow-hidden bg-background">
+        @for (pasien of searchResults(); track pasien.id) {
+          <div class="flex items-center justify-between p-3 hover:bg-muted/40 transition-colors">
+            <div>
+              <p class="text-xs font-bold text-foreground">{{ pasien.nama }}</p>
+              <p class="text-[11px] text-muted-foreground">
+                NIK: {{ pasien.nik || 'Tidak ada NIK' }} · Lahir: {{ pasien.tanggalLahir }}
+              </p>
+            </div>
+            <a
+              hlmBtn
+              variant="outline"
+              size="sm"
+              [routerLink]="['/pasien', pasien.id]"
+              class="gap-1.5 text-xs cursor-pointer"
+            >
+              <ng-icon hlm size="xs" name="lucideFileText" aria-hidden="true" />
+              <span>Buka Riwayat Pasien</span>
+            </a>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Main Tabs: Antrian Hari Ini -->
+  <div class="space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-2">
+      <!-- Tabs -->
+      <div class="flex items-center gap-1">
+        <button
+          type="button"
+          (click)="activeTab.set('dipanggil')"
+          [class]="
+            activeTab() === 'dipanggil'
+              ? 'bg-primary text-primary-foreground font-bold'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+          "
+          class="px-3.5 py-1.5 rounded-lg text-xs transition-colors font-medium flex items-center gap-1.5 cursor-pointer"
+        >
+          <ng-icon hlm size="xs" name="lucideActivity" aria-hidden="true" />
+          <span>Sedang Dipanggil ({{ totalDipanggil() }})</span>
+        </button>
+
+        <button
+          type="button"
+          (click)="activeTab.set('selesai')"
+          [class]="
+            activeTab() === 'selesai'
+              ? 'bg-primary text-primary-foreground font-bold'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+          "
+          class="px-3.5 py-1.5 rounded-lg text-xs transition-colors font-medium flex items-center gap-1.5 cursor-pointer"
+        >
+          <ng-icon hlm size="xs" name="lucideCheckCircle2" aria-hidden="true" />
+          <span>Selesai Diperiksa ({{ totalSelesai() }})</span>
+        </button>
+
+        <button
+          type="button"
+          (click)="activeTab.set('semua')"
+          [class]="
+            activeTab() === 'semua'
+              ? 'bg-primary text-primary-foreground font-bold'
+              : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+          "
+          class="px-3.5 py-1.5 rounded-lg text-xs transition-colors font-medium flex items-center gap-1.5 cursor-pointer"
+        >
+          <ng-icon hlm size="xs" name="lucideListOrdered" aria-hidden="true" />
+          <span>Semua Kunjungan ({{ antrianList().length }})</span>
+        </button>
+      </div>
+
+      <a
+        hlmBtn
+        variant="ghost"
+        size="sm"
+        routerLink="/antrian"
+        class="gap-1.5 text-xs text-muted-foreground hover:text-foreground self-start sm:self-auto cursor-pointer"
+      >
+        <ng-icon hlm size="xs" name="lucideListOrdered" aria-hidden="true" />
+        <span>Buka Panel Antrian Penuh</span>
+      </a>
+    </div>
+
+    <!-- Table of Visits -->
+    @if (isLoadingAntrian()) {
+      <div class="space-y-2">
+        <hlm-skeleton class="h-12 w-full rounded-lg" />
+        <hlm-skeleton class="h-12 w-full rounded-lg" />
+        <hlm-skeleton class="h-12 w-full rounded-lg" />
+      </div>
+    } @else if (filteredList().length === 0) {
+      <div class="p-8 text-center border border-border/60 rounded-xl bg-card">
+        <ng-icon hlm size="lg" name="lucideFileText" class="text-muted-foreground/60 mx-auto mb-2" aria-hidden="true" />
+        <p class="text-sm font-semibold text-foreground">Tidak ada kunjungan di tab ini</p>
+        <p class="text-xs text-muted-foreground mt-1">
+          @if (activeTab() === 'dipanggil') {
+            Belum ada pasien yang sedang dipanggil. Buka panel antrian untuk memanggil pasien berikutnya.
+          } @else if (activeTab() === 'selesai') {
+            Belum ada rekam medis yang selesai dicatat hari ini.
+          } @else {
+            Belum ada antrian terdaftar untuk hari ini.
+          }
+        </p>
+      </div>
+    } @else {
+      <div class="overflow-x-auto rounded-xl border border-border bg-card">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-border/80 bg-muted/40 font-semibold text-muted-foreground">
+              <th class="p-3 w-20">No. Antrian</th>
+              <th class="p-3">Nama Pasien</th>
+              <th class="p-3 w-32">Kategori</th>
+              <th class="p-3 w-32">Status</th>
+              <th class="p-3 text-right w-48">Aksi</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-border/60">
+            @for (item of filteredList(); track item.id) {
+              <tr class="hover:bg-muted/30 transition-colors">
+                <td class="p-3 font-mono font-bold text-foreground">
+                  {{ formatQueueNumber(item.nomorAntrian) }}
+                </td>
+                <td class="p-3 font-semibold text-foreground">
+                  {{ item.pasienNama }}
+                </td>
+                <td class="p-3">
+                  @if (item.isPriority) {
+                    <app-priority-badge [reason]="item.priorityReason" />
+                  } @else {
+                    <span class="text-muted-foreground text-[11px]">Reguler</span>
+                  }
+                </td>
+                <td class="p-3">
+                  <app-status-badge [status]="item.status" />
+                </td>
+                <td class="p-3 text-right">
+                  @if (item.status === 'dipanggil') {
+                    <a
+                      hlmBtn
+                      size="sm"
+                      [routerLink]="['/rekam-medis/pemeriksaan', item.id]"
+                      class="gap-1 font-bold cursor-pointer"
+                    >
+                      <ng-icon hlm size="xs" name="lucideFileEdit" aria-hidden="true" />
+                      <span>Isi SOAP</span>
+                    </a>
+                  } @else if (item.status === 'selesai') {
+                    <a
+                      hlmBtn
+                      variant="outline"
+                      size="sm"
+                      [routerLink]="['/rekam-medis/kunjungan', item.id]"
+                      class="gap-1 cursor-pointer"
+                    >
+                      <ng-icon hlm size="xs" name="lucideFileText" aria-hidden="true" />
+                      <span>Lihat RME / Addendum</span>
+                    </a>
+                  } @else {
+                    <span class="text-muted-foreground text-[11px]">Menunggu panggilan</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

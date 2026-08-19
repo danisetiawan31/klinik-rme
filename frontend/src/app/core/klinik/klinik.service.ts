@@ -39,9 +39,13 @@ export class KlinikService {
     }
   }
 
-  fetchKlinikInfo(klinikId: number = environment.defaultKlinikId): Observable<KlinikResponse | null> {
+  fetchKlinikInfo(klinikId: number = environment.defaultKlinikId, displayToken?: string): Observable<KlinikResponse | null> {
     this.isLoading.set(true);
-    return this.http.get<KlinikResponse>(`${environment.apiUrl}/klinik/${klinikId}`).pipe(
+    let headers: Record<string, string> = {};
+    if (displayToken) {
+      headers['X-Display-Token'] = displayToken;
+    }
+    return this.http.get<KlinikResponse>(`${environment.apiUrl}/klinik/${klinikId}`, { headers }).pipe(
       tap((info) => {
         this.klinikInfo.set(info);
         this.isLoading.set(false);

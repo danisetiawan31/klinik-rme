@@ -261,13 +261,21 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 
 ---
 
-## Admin Dashboard — Tahap 5 (Routing Shell, Verifikasi Menyeluruh & Penutupan Fitur)
+---
 
-- `app.routes.ts`: Memverifikasi rute `/admin` terlindungi dengan `canActivate: [roleGuard('admin')]` di bawah Shell layout staf.
-- `app.spec.ts`: Unit test konfigurasi proteksi role admin pada rute `/admin`.
-- `docs/DESIGN.md`: Update Component Registry (`AdminDashboard`).
-- `workflow/backlog.md`: Update Item 18 ke status `[x]` (Selesai Penuh).
-- **Verifikasi**: `npm test -- --run` → **43 files, 225 tests PASS** (exit 0).
+## Addendum — Rekam Medis Workspace & Perbaikan Navigasi Subtab Admin
+
+- `RekamMedisListComponent` (`features/rekam-medis/components/rekam-medis-list/`):
+  - Dashboard klinis dokter di rute `/rekam-medis` yang berdiri sendiri (menggantikan redirect sebelumnya ke `/antrian`).
+  - Hero card pasien yang sedang dipanggil (`status: dipanggil`) dengan tombol langsung **"Mulai Pengisian SOAP"** (`/rekam-medis/pemeriksaan/:id`).
+  - Input pencarian cepat riwayat rekam medis pasien (berdasarkan nama atau NIK 16-digit).
+  - Tabel filter multi-tab kunjungan hari ini (`Sedang Dipanggil`, `Selesai Diperiksa`, `Semua Kunjungan`) dengan tombol aksi pemeriksaan SOAP dan addendum koreksi.
+- `AdminDashboardComponent` (`features/admin/admin-dashboard.component.ts`):
+  - Menambahkan *reactive parameter subscription* ke `paramMap` dan `NavigationEnd` agar pergantian antar-subtab (`/admin/users`, `/admin/audit-log`, `/admin/pengaturan`) dari sidebar langsung memperbarui tampilan tab tanpa macet karena *Angular component reuse*.
+- `docs/DESIGN.md`: Menambahkan `RekamMedisList` ke Component Registry.
+- `e2e-test.mjs`: Pengujian otomatis Playwright Headless Chromium (1440x900) mencakup seluruh 17 alur (Admin, Dokter, Petugas, Papan Antrian TV) dengan 100% PASS.
+- **Verifikasi**: `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
+
 
 
 

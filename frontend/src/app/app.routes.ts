@@ -67,6 +67,14 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'admin/:subtab',
+        canActivate: [roleGuard('admin')],
+        loadComponent: () =>
+          import('./features/admin/admin-dashboard.component').then(
+            (m) => m.AdminDashboardComponent
+          ),
+      },
+      {
         path: 'profil',
         loadComponent: () =>
           import('./features/profil/profil.component').then((m) => m.ProfilComponent),

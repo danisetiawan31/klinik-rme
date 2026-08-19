@@ -319,7 +319,7 @@ export class LandingComponent {
         },
         {
           label: 'Rekam Medis',
-          route: '/antrian',
+          route: '/rekam-medis',
           description: 'Pemeriksaan & pengisian rekam medis pasien',
           iconName: 'lucideFileText',
           badgeNumber: '02',
