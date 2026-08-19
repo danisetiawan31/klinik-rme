@@ -187,4 +187,16 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `RealtimeService`: Memverifikasi integrasi koneksi WebSocket via query param `GET /ws?klinikId=:id&displayToken=:token` (karena browser WebSocket API tidak mendukung custom HTTP header).
 - **Verifikasi**: `npm test -- --run` → **35 files, 186 tests PASS** (exit 0).
 
+---
+
+## Papan Antrian (Publik) — Tahap 2 (Komponen Papan Antrian & Layout Jarak Jauh TV)
+
+- `PapanAntrianComponent`: Komponen antarmuka publik ruang tunggu klinik (`/papan-antrian`), didesain khusus untuk jarak pandang jauh TV/monitor landscape sesuai `docs/DESIGN.md §11`.
+- Section dominan "Sedang Dipanggil": Nomor antrian 3-digit zero-padded (`007`), status animasi panggilan aktif, badge prioritas, dan header jam realtime (WIB).
+- Section "Daftar Menunggu": Grid nomor antrian menunggu dengan badge prioritas dan counter antrian.
+- Token resolution & storage: Otomatis membaca token dari query parameter (`?token=...`) atau `localStorage`, dengan modal konfigurasi token jika token tidak ditemukan atau tidak valid (401).
+- Dual-trigger reaktivitas: Subscribe WebSocket `queue_updated` + refetch on reconnect + fallback interval timer 30 detik.
+- **Verifikasi**: `npm test -- --run` → **36 files, 192 tests PASS** (exit 0).
+
+
 
