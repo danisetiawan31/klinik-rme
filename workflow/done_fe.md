@@ -246,6 +246,20 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `docs/DESIGN.md`: Update Component Registry (`AuditDiffViewer`).
 - **Verifikasi**: `npm test -- --run` → **42 files, 220 tests PASS** (exit 0).
 
+---
+
+## Admin Dashboard — Tahap 4 (Pengaturan Klinik & Display Token Antrian)
+
+- `AdminKlinikComponent` (`features/admin/components/admin-klinik/`): Modul manajemen operasional klinik dan kunci otentikasi layar ruang tunggu:
+  - Profil operasional klinik: jam buka/tutup (WIB), status operasional (`ClinicStatusIndicatorComponent`), dan aturan penguncian antrian.
+  - Kartu manajemen display token antrian publik dengan informasi enkripsi hash SHA-256.
+  - Dialog konfirmasi bahaya dengan penjelasan dampak nyata (*"Token lama akan langsung tidak berlaku seketika, dan papan antrian ruang tunggu akan terputus sampai token baru dipasang"* per `docs/DESIGN.md §9.7`).
+  - Integrasi modal `RevealOnceSecretComponent` untuk menampilkan display token mentah baru setelah regenerate berhasil.
+  - Kartu panduan pemasangan Smart TV / mini PC ruang tunggu.
+- `AdminDashboardComponent`: Integrasi rendering `AdminKlinikComponent` pada tab `klinik`.
+- **Verifikasi**: `npm test -- --run` → **43 files, 224 tests PASS** (exit 0).
+
+
 
 
 

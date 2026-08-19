@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { KlinikService } from '../../core/klinik/klinik.service';
 import { AdminDashboardComponent } from './admin-dashboard.component';
 import { AdminService } from './admin.service';
 
@@ -29,11 +30,18 @@ describe('AdminDashboardComponent', () => {
       getAuditLogs: vi.fn().mockReturnValue(of({ logs: [], totalCount: 0 })),
     };
 
+    const mockKlinikService = {
+      fetchKlinikInfo: vi.fn().mockReturnValue(of(null)),
+      klinikInfo: vi.fn().mockReturnValue(null),
+      isKlinikBuka: vi.fn().mockReturnValue(true),
+    };
+
     await TestBed.configureTestingModule({
       imports: [AdminDashboardComponent],
       providers: [
         { provide: AuthService, useValue: mockAuthService },
         { provide: AdminService, useValue: mockAdminService },
+        { provide: KlinikService, useValue: mockKlinikService },
       ],
     }).compileComponents();
 
