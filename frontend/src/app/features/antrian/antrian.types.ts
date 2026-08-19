@@ -30,3 +30,13 @@ export interface PanggilBerikutnyaResponse {
   dokterId: number;
   dipanggilAt: string;
 }
+
+export interface KunjunganDetail {
+  id: number;
+  pasienId: number;
+  nomorAntrian: number;
+  status: KunjunganStatus;
+  isPriority: boolean;
+  dokterId?: number | null;
+  dipanggilAt?: string | null;
+}

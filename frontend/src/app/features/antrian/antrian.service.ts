@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import {
   CreateKunjunganRequest,
   CreateKunjunganResponse,
+  KunjunganDetail,
   KunjunganListItem,
   PanggilBerikutnyaResponse,
 } from './antrian.types';
@@ -21,6 +22,13 @@ export class AntrianService {
       `${environment.apiUrl}/kunjungan`,
       payload
     );
+  }
+
+  /**
+   * Fetch detail kunjungan spesifik berdasarkan ID (GET /api/v1/kunjungan/:id)
+   */
+  getKunjungan(id: number): Observable<KunjunganDetail> {
+    return this.http.get<KunjunganDetail>(`${environment.apiUrl}/kunjungan/${id}`);
   }
 
   /**

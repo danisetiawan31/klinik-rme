@@ -149,3 +149,13 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `RekamMedisService`: Client HTTP Angular untuk `getRekamMedisByKunjungan`, `createRekamMedis`, `createAddendum`, dan `getRiwayatByPasien`.
 - **Verifikasi**: `npm test -- --run` → **32 files, 171 tests PASS** (exit 0).
 
+---
+
+## Rekam Medis — Tahap 2 (Form Pemeriksaan Pasien)
+
+- `RekamMedisFormComponent`: Formulir klinis RME terstruktur berbasis Reactive Forms dengan `FormArray` untuk diagnosis (min. 1 baris, uppercase ICD-10) dan tindakan/resep (`jenis: 'tindakan' | 'resep'`).
+- Panel identitas konteks pasien dengan masking NIK (`app-sensitive-value`), gender, tanggal lahir, dan collapsible riwayat medis terdahulu (`GET /pasien/:id/riwayat`).
+- Penanganan submit POST `/kunjungan/:id/rekam-medis`, feedback via Sonner toast, dan penanganan error conflict 409 `REKAM_MEDIS_ALREADY_EXISTS`.
+- `AntrianService.getKunjungan(id)`: Helper fetch `KunjunganDetail` (`GET /kunjungan/:id`).
+- **Verifikasi**: `npm test -- --run` → **33 files, 178 tests PASS** (exit 0).
+
