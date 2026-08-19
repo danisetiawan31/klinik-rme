@@ -183,9 +183,7 @@
                       {{ formatDate(kunjungan.tanggal) }}
                     </td>
                     <td hlmTableCell [class.text-right]="!isDokter()">
-                      <span [class]="getStatusBadgeClass(kunjungan.status)">
-                        {{ getStatusLabel(kunjungan.status) }}
-                      </span>
+                      <app-status-badge [status]="kunjungan.status" size="sm" />
                     </td>
                     @if (isDokter()) {
                       <td hlmTableCell class="text-right">

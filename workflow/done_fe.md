@@ -362,3 +362,18 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - Visual snapshot `screenshots/07_antrian_dashboard.png` terverifikasi rapi, proporsional, dan seimbang.
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
   - **Pembersihan Indikator Header**: Menghapus `<app-clinic-status-indicator />` dari header `/antrian` untuk tampilan yang lebih bersih dan fokus.
+
+---
+
+## Addendum — Penyelesaian Masalah P1 Frontend (Dead Code Cleanup & StatusBadge Deduplication)
+
+- **Dead Code Cleanup (`LandingComponent`)**:
+  - Menghapus interface `NavShortcut` dan computed signal `readonly shortcuts` (~180 baris) dari `landing.component.ts` yang sudah tidak digunakan di template setelah modularisasi sub-dashboard.
+  - Menghapus unused property `recentAntrian`, signal `doctorAntrianTab`, method `setDoctorTab`, serta puluhan import ikon Lucide & library yang tidak terpakai langsung di parent `LandingComponent`.
+  - Memperbarui unit test di `landing.component.spec.ts` untuk menguji rendering sub-dashboard per peran (`DoctorDashboard`, `PetugasDashboard`, `AdminDashboardView`) dan kalkulasi metrik ringkasan.
+- **StatusBadge Deduplication (`PasienDetailComponent`)**:
+  - Menggantikan render status manual (`[class]="getStatusBadgeClass(kunjungan.status)"` & `getStatusLabel()`) di riwayat kunjungan `pasien-detail.component.html` dengan shared primitive `<app-status-badge [status]="kunjungan.status" size="sm" />`.
+  - Menghapus method duplikat `getStatusLabel` dan `getStatusBadgeClass` dari `pasien-detail.component.ts`.
+- **Verifikasi**:
+  - `npm test -- --run` → **44 test files, 229 tests PASS** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.

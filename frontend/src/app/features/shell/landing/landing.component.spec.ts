@@ -110,54 +110,53 @@ describe('LandingComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should render shortcuts and summary metrics correctly for role dokter', () => {
+  it('should render doctor dashboard and summary metrics correctly for role dokter', () => {
     userSignal.set({ id: 2, nama: 'dr. Budi Santoso', roles: ['dokter'] });
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Selamat datang kembali');
     expect(compiled.textContent).toContain('dr. Budi Santoso!');
+    expect(compiled.querySelector('app-doctor-dashboard')).toBeTruthy();
+    expect(compiled.querySelector('app-petugas-dashboard')).toBeFalsy();
+    expect(compiled.querySelector('app-admin-dashboard-view')).toBeFalsy();
 
     // Check summary metrics computed correctly from mockAntrian
     expect(component.totalPasien()).toBe(3);
     expect(component.antrianMenunggu()).toBe(1);
     expect(component.selesaiDilayani()).toBe(1);
     expect(component.pasienPrioritas()).toBe(1);
-
-    const labels = component.shortcuts().map((s) => s.label);
-    expect(labels).toContain('Antrian Pasien');
-    expect(labels).toContain('Rekam Medis');
-    expect(labels).toContain('Riwayat Pasien');
-    expect(labels).toContain('Laporan Harian');
-
-    // Negative assertions
-    expect(labels).not.toContain('Manajemen Staff');
-    expect(labels).not.toContain('Audit Log System');
+    expect(component.isDokter()).toBe(true);
+    expect(component.isPetugas()).toBe(false);
+    expect(component.isAdmin()).toBe(false);
   });
 
-  it('should render shortcuts correctly for role petugas', () => {
+  it('should render petugas dashboard correctly for role petugas', () => {
     userSignal.set({ id: 1, nama: 'Siti Rahmawati', roles: ['petugas'] });
     fixture.detectChanges();
 
-    const labels = component.shortcuts().map((s) => s.label);
-    expect(labels).toContain('Pendaftaran Pasien');
-    expect(labels).toContain('Kelola Antrian');
-    expect(labels).toContain('Laporan Harian');
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-petugas-dashboard')).toBeTruthy();
+    expect(compiled.querySelector('app-doctor-dashboard')).toBeFalsy();
+    expect(compiled.querySelector('app-admin-dashboard-view')).toBeFalsy();
 
-    expect(labels).not.toContain('Rekam Medis');
-    expect(labels).not.toContain('Manajemen Staff');
+    expect(component.isPetugas()).toBe(true);
+    expect(component.isDokter()).toBe(false);
+    expect(component.isAdmin()).toBe(false);
   });
 
-  it('should render shortcuts correctly for role admin', () => {
+  it('should render admin dashboard view correctly for role admin', () => {
     userSignal.set({ id: 3, nama: 'Super Admin', roles: ['admin'] });
     fixture.detectChanges();
 
-    const labels = component.shortcuts().map((s) => s.label);
-    expect(labels).toContain('Data Pasien');
-    expect(labels).toContain('Daftar Antrian');
-    expect(labels).toContain('Manajemen Staff');
-    expect(labels).toContain('Audit Log System');
-    expect(labels).toContain('Pengaturan Klinik');
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-admin-dashboard-view')).toBeTruthy();
+    expect(compiled.querySelector('app-doctor-dashboard')).toBeFalsy();
+    expect(compiled.querySelector('app-petugas-dashboard')).toBeFalsy();
+
+    expect(component.isAdmin()).toBe(true);
+    expect(component.isDokter()).toBe(false);
+    expect(component.isPetugas()).toBe(false);
   });
 
   it('should compute performance metrics and positive trend correctly from LaporanService', () => {

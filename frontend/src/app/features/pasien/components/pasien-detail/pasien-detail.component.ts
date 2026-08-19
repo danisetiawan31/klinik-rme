@@ -12,6 +12,7 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { KlinikService } from '../../../../core/klinik/klinik.service';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
+import { StatusBadgeComponent } from '../../../../shared/components/status-badge/status-badge.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideAlertCircle,
@@ -42,6 +43,7 @@ import { Pasien } from '../../pasien.types';
   imports: [
     RouterLink,
     SensitiveValueComponent,
+    StatusBadgeComponent,
     HlmButton,
     NgIcon,
     HlmIconDirective,
@@ -225,37 +227,6 @@ export class PasienDetailComponent implements OnInit {
       });
     } catch {
       return isoDateStr;
-    }
-  }
-
-  getStatusLabel(status: string): string {
-    switch (status) {
-      case 'menunggu':
-        return 'Menunggu';
-      case 'dipanggil':
-        return 'Dipanggil';
-      case 'selesai':
-        return 'Selesai';
-      case 'tidak_hadir':
-        return 'Tidak Hadir';
-      default:
-        return status;
-    }
-  }
-
-  getStatusBadgeClass(status: string): string {
-    const base = 'text-xs font-semibold px-2 py-0.5 rounded-full';
-    switch (status) {
-      case 'menunggu':
-        return `${base} bg-muted text-warning-foreground border border-warning`;
-      case 'dipanggil':
-        return `${base} bg-primary text-primary-foreground`;
-      case 'selesai':
-        return `${base} bg-accent text-accent-foreground`;
-      case 'tidak_hadir':
-        return `${base} bg-muted text-muted-foreground border border-border`;
-      default:
-        return `${base} bg-muted text-muted-foreground`;
     }
   }
 }
