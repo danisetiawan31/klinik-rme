@@ -1,24 +1,95 @@
-<div class="min-h-screen bg-background p-8">
-  <div class="max-w-4xl mx-auto bg-card rounded-md shadow-2 border border-border p-6 flex items-center justify-between">
+<div class="space-y-6 max-w-7xl mx-auto pb-12">
+  <!-- Page Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/80 pb-5">
     <div>
-      <h1 class="text-xl font-bold text-foreground mb-1">
-        Selamat datang, {{ authService.currentUser()?.nama || 'Admin' }}!
-      </h1>
-      <p class="text-sm text-muted-foreground">
-        Peranan aktif: <span class="font-semibold text-primary">{{ authService.currentUser()?.roles?.join(', ') }}</span>
+      <div class="flex items-center gap-2">
+        <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+          <ng-icon hlm size="sm" name="lucideShield" aria-hidden="true" />
+        </div>
+        <h1 class="text-2xl font-heading font-black tracking-tight text-foreground">
+          Panel Administrasi & Pengaturan
+        </h1>
+      </div>
+      <p class="text-xs text-muted-foreground mt-1">
+        Pusat kendali akun pengguna, transparansi jejak audit, dan display token klinik.
       </p>
-      <span class="inline-block mt-3 px-3 py-1 bg-muted text-muted-foreground text-xs rounded-full font-medium">
-        Placeholder Dashboard Admin (Backlog Item 18)
-      </span>
     </div>
+
+    <!-- Active User & Clinic info badge -->
+    <div class="flex items-center gap-2 text-xs bg-muted/40 px-3 py-1.5 rounded-full border border-border self-start md:self-auto">
+      <span class="size-2 rounded-full bg-primary animate-pulse"></span>
+      <span class="text-muted-foreground">Admin:</span>
+      <span class="font-semibold text-foreground">{{ authService.currentUser()?.nama }}</span>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs Bar -->
+  <div class="flex items-center gap-2 border-b border-border overflow-x-auto pb-px">
     <button
-      hlmBtn
-      variant="secondary"
-      size="sm"
       type="button"
-      (click)="authService.logout().subscribe()"
+      (click)="setTab('users')"
+      [class]="
+        activeTab() === 'users'
+          ? 'border-b-2 border-primary text-primary font-bold bg-primary/5'
+          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+      "
+      class="flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-xs transition-colors whitespace-nowrap"
     >
-      Keluar
+      <ng-icon hlm size="xs" name="lucideUsers" aria-hidden="true" />
+      <span>Manajemen Pengguna</span>
+    </button>
+
+    <button
+      type="button"
+      (click)="setTab('audit-log')"
+      [class]="
+        activeTab() === 'audit-log'
+          ? 'border-b-2 border-primary text-primary font-bold bg-primary/5'
+          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+      "
+      class="flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-xs transition-colors whitespace-nowrap"
+    >
+      <ng-icon hlm size="xs" name="lucideFileText" aria-hidden="true" />
+      <span>Jejak Audit (Audit Trail)</span>
+    </button>
+
+    <button
+      type="button"
+      (click)="setTab('klinik')"
+      [class]="
+        activeTab() === 'klinik'
+          ? 'border-b-2 border-primary text-primary font-bold bg-primary/5'
+          : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+      "
+      class="flex items-center gap-2 px-4 py-2.5 rounded-t-lg text-xs transition-colors whitespace-nowrap"
+    >
+      <ng-icon hlm size="xs" name="lucideKey" aria-hidden="true" />
+      <span>Pengaturan Display Token</span>
     </button>
   </div>
+
+  <!-- Tab Content Views -->
+  @switch (activeTab()) {
+    @case ('users') {
+      <app-admin-users />
+    }
+    @case ('audit-log') {
+      <hlm-card class="p-8 text-center text-muted-foreground space-y-2 border-dashed">
+        <ng-icon hlm size="lg" name="lucideFileText" class="mx-auto text-primary/60" aria-hidden="true" />
+        <div class="text-sm font-semibold text-foreground">Jejak Audit (Audit Trail)</div>
+        <p class="text-xs text-muted-foreground max-w-md mx-auto">
+          Fitur filter tabel target, pencarian jejak rekaman perubahan pasien dan rekam medis klinis dengan Visual Diff Viewer (Tahap 3).
+        </p>
+      </hlm-card>
+    }
+    @case ('klinik') {
+      <hlm-card class="p-8 text-center text-muted-foreground space-y-2 border-dashed">
+        <ng-icon hlm size="lg" name="lucideKey" class="mx-auto text-primary/60" aria-hidden="true" />
+        <div class="text-sm font-semibold text-foreground">Pengaturan Display Token Antrian</div>
+        <p class="text-xs text-muted-foreground max-w-md mx-auto">
+          Fitur pembuatan ulang token papan antrian ruang tunggu dengan dialog konfirmasi dampak dan Reveal Once Secret (Tahap 4).
+        </p>
+      </hlm-card>
+    }
+  }
 </div>

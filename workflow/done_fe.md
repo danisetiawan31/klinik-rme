@@ -216,6 +216,24 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `AdminService`: Client HTTP Angular untuk interaksi endpoint admin: `getUsers`, `createUser`, `resendInvite`, `updateUser`, `updateUserRoles`, `getAuditLogs`, `getAuditLogDetail`, dan `regenerateDisplayToken` (termasuk ekstraksi header `X-Total-Count` untuk pagination).
 - **Verifikasi**: `npm test -- --run` → **37 files, 202 tests PASS** (exit 0).
 
+---
+
+## Admin Dashboard — Tahap 2 (Manajemen Pengguna, Invite & Reveal Once, Edit Biodata, Roles & Resend)
+
+- `RevealOnceSecretComponent` (`shared/components/reveal-once-secret/`): Komponen composed reusable untuk menampilkan rahasia sekali-lihat (invite link / display token) dengan tombol copy 1-klik, feedback tersalin, dan banner peringatan keamanan.
+- `AdminUsersComponent` (`features/admin/components/admin-users/`): Manajemen lengkap akun pengguna staf:
+  - Tabel daftar user dengan pagination numerik (`PaginationComponent`).
+  - Badge visual roles per akun (`petugas`, `dokter`, `admin`).
+  - Modal Form Invite User Baru (`POST /admin/users`) dengan proteksi validasi mutual exclusivity `dokter` vs `admin`.
+  - Integrasi modal `RevealOnceSecret` untuk menampilkan `inviteLink` setelah pembuatan akun berhasil.
+  - Modal Form Edit Biodata User (`PATCH /admin/users/:id`).
+  - Modal Form Kelola Peran (`PATCH /admin/users/:id/roles`) dengan validasi eksklusivitas peran `dokter` vs `admin`.
+  - Aksi Kirim Ulang Tautan Undangan (`POST /admin/users/:id/resend-invite`).
+- `AdminDashboardComponent`: Kerangka navigasi tab dashboard admin (`users`, `audit-log`, `klinik`).
+- `docs/DESIGN.md`: Update Component Registry (`RevealOnceSecret`).
+- **Verifikasi**: `npm test -- --run` → **40 files, 213 tests PASS** (exit 0).
+
+
 
 
 
