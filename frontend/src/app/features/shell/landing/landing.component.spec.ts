@@ -75,7 +75,7 @@ describe('LandingComponent', () => {
     antrianServiceSpy = { getAntrian: vi.fn().mockReturnValue(of(mockAntrian)) };
     klinikSignal = signal<KlinikResponse | null>({
       id: 1,
-      nama: 'Klinik Pratama Sehat',
+      nama: 'Klinik Sehat Jaya',
       jamBuka: '08:00',
       jamTutup: '20:00',
       isBuka: true,

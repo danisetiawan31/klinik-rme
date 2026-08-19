@@ -66,8 +66,8 @@ describe('PapanAntrianComponent', () => {
     };
 
     klinikServiceMock = {
-      klinikInfo: signal({ id: 1, nama: 'Klinik Pratama Sehat', isBuka: true }),
-      fetchKlinikInfo: vi.fn().mockReturnValue(of({ id: 1, nama: 'Klinik Pratama Sehat' })),
+      klinikInfo: signal({ id: 1, nama: 'Klinik Sehat Jaya', isBuka: true }),
+      fetchKlinikInfo: vi.fn().mockReturnValue(of({ id: 1, nama: 'Klinik Sehat Jaya' })),
     };
 
     await TestBed.configureTestingModule({

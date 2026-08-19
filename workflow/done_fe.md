@@ -276,6 +276,24 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `e2e-test.mjs`: Pengujian otomatis Playwright Headless Chromium (1440x900) mencakup seluruh 17 alur (Admin, Dokter, Petugas, Papan Antrian TV) dengan 100% PASS.
 - **Verifikasi**: `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
 
+## Addendum — Unifikasi Identitas Nama Klinik (Klinik Sehat Jaya)
+
+- **Unifikasi Nama Klinik di Seluruh Lapisan**:
+  - Standarisasi nama klinik menjadi **`Klinik Sehat Jaya`** secara konsisten di seluruh layer.
+  - `backend/.env`: Update `KLINIK_NAMA=Klinik Sehat Jaya`.
+  - Database PostgreSQL (`klinik` table): Update row `id=1` nama menjadi `'Klinik Sehat Jaya'`.
+  - `frontend/src/index.html`: Update title menjadi `<title>Klinik Sehat Jaya — Rekam Medis Elektronik & Antrian</title>`.
+  - `shell.component.ts` & `shell.component.html`: Update default fallback nama klinik ke `'Klinik Sehat Jaya'`.
+  - `papan-antrian.component.html`: Update fallback display TV ke `'Klinik Sehat Jaya'`.
+  - `landing.component.html`: Update subtitle banner ke `Klinik Sehat Jaya — Rekam Medis Elektronik & Antrian`.
+  - `admin-klinik.component.html`: Update fallback profil operasional ke `'Klinik Sehat Jaya'`.
+  - `login.component.html`, `forgot-password.component.html`, `set-password.component.html`: Update brand header ke `Klinik Sehat Jaya`.
+  - `e2e-test.mjs` & Test specs: Menyelaraskan seluruh mock dan assertion nama klinik.
+- **Verifikasi**:
+  - `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
+  - `node e2e-test.mjs` → **17/17 automated flows PASS** (exit 0).
+
+
 
 
 

@@ -82,7 +82,7 @@ export class ShellComponent {
   readonly currentUser = this.authService.currentUser;
   readonly klinikInfo = this.klinikService.klinikInfo;
 
-  readonly klinikName = computed(() => this.klinikInfo()?.nama || 'Klinik Pratama Sehat');
+  readonly klinikName = computed(() => this.klinikInfo()?.nama || 'Klinik Sehat Jaya');
   readonly userName = computed(() => this.currentUser()?.nama || 'Pengguna Staff');
   readonly userInitial = computed(() => {
     const name = this.userName();

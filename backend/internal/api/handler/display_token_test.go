@@ -98,7 +98,7 @@ func TestDisplayTokenAndDualAuth_Integration(t *testing.T) {
 
 	q := dbgen.New(pool)
 	cfg := &config.Config{
-		KlinikNama:     "Klinik Pratama Sehat",
+		KlinikNama:     "Klinik Sehat Jaya",
 		KlinikJamBuka:  "08:00",
 		KlinikJamTutup: "23:59",
 	}

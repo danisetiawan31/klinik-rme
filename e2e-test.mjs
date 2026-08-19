@@ -87,7 +87,7 @@ async function runE2ETests() {
 
     const klinikContent = await page.textContent('body');
     assert(
-      klinikContent.includes('Display Token') || klinikContent.includes('Regenerasi') || klinikContent.includes('Jam Buka') || klinikContent.includes('Klinik Pratama'),
+      klinikContent.includes('Display Token') || klinikContent.includes('Regenerasi') || klinikContent.includes('Jam Buka') || klinikContent.includes('Klinik Sehat Jaya'),
       'Halaman Pengaturan Klinik BERHASIL BERGANTI dan menampilkan konten pengaturan display token (TIDAK STUCK)'
     );
     await page.screenshot({ path: path.join(screenshotsDir, '05_admin_pengaturan_klinik.png'), fullPage: true });

@@ -80,7 +80,7 @@ func TestKlinikAntrianDomain_RealPostgreSQL(t *testing.T) {
 	// 2. Verifikasi Idempotensi Seed Klinik
 	t.Run("Seed Klinik Idempotency Verification", func(t *testing.T) {
 		cfg := &config.Config{
-			KlinikNama:     "Klinik Pratama Sehat",
+			KlinikNama:     "Klinik Sehat Jaya",
 			KlinikJamBuka:  "08:00",
 			KlinikJamTutup: "17:00",
 		}
@@ -95,7 +95,7 @@ func TestKlinikAntrianDomain_RealPostgreSQL(t *testing.T) {
 
 		klinik, err := q.GetSingleKlinik(ctx)
 		require.NoError(t, err)
-		assert.Equal(t, "Klinik Pratama Sehat", klinik.Nama)
+		assert.Equal(t, "Klinik Sehat Jaya", klinik.Nama)
 
 		// Modify klinik name manually via SQL
 		_, err = pool.Exec(ctx, `UPDATE klinik SET nama = 'Klinik Modified Manual' WHERE id = $1`, klinik.ID)
