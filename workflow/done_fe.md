@@ -259,6 +259,17 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `AdminDashboardComponent`: Integrasi rendering `AdminKlinikComponent` pada tab `klinik`.
 - **Verifikasi**: `npm test -- --run` → **43 files, 224 tests PASS** (exit 0).
 
+---
+
+## Admin Dashboard — Tahap 5 (Routing Shell, Verifikasi Menyeluruh & Penutupan Fitur)
+
+- `app.routes.ts`: Memverifikasi rute `/admin` terlindungi dengan `canActivate: [roleGuard('admin')]` di bawah Shell layout staf.
+- `app.spec.ts`: Unit test konfigurasi proteksi role admin pada rute `/admin`.
+- `docs/DESIGN.md`: Update Component Registry (`AdminDashboard`).
+- `workflow/backlog.md`: Update Item 18 ke status `[x]` (Selesai Penuh).
+- **Verifikasi**: `npm test -- --run` → **43 files, 225 tests PASS** (exit 0).
+
+
 
 
 

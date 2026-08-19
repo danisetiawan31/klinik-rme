@@ -42,4 +42,14 @@ describe('App', () => {
     expect(papanRoute?.resolve).toBeUndefined();
     expect(papanRoute?.loadComponent).toBeTruthy();
   });
+
+  it('should have admin route configured with role guard', async () => {
+    const { routes } = await import('./app.routes');
+    const shellRoute = routes.find((r) => r.path === '');
+    const adminRoute = shellRoute?.children?.find((r) => r.path === 'admin');
+
+    expect(adminRoute).toBeTruthy();
+    expect(adminRoute?.canActivate).toBeDefined();
+    expect(adminRoute?.loadComponent).toBeTruthy();
+  });
 });
