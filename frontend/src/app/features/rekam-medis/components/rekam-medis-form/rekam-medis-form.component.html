@@ -133,7 +133,7 @@
               @for (item of riwayatList(); track item.kunjunganId) {
                 <div class="p-3.5 rounded-xl border border-border/60 bg-muted/20 text-xs space-y-1.5">
                   <div class="flex items-center justify-between">
-                    <span class="font-bold text-foreground">Kunjungan: {{ item.tanggal }}</span>
+                    <span class="font-bold text-foreground">Kunjungan: {{ formatDate(item.tanggal) }}</span>
                     @if (item.rekamMedis.isAddendum) {
                       <span hlmBadge variant="secondary" class="text-[10px] px-1.5 py-0">Addendum</span>
                     }

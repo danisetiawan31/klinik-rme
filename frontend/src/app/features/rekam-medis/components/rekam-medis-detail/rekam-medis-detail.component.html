@@ -113,7 +113,7 @@
         <div class="text-left md:text-right space-y-1">
           <div class="text-xs text-muted-foreground">Waktu Pemeriksaan:</div>
           <div class="text-xs font-mono font-medium text-foreground">
-            {{ rekamMedis()!.createdAt }}
+            {{ formatCreatedAt(rekamMedis()!.createdAt) }}
           </div>
         </div>
       </div>

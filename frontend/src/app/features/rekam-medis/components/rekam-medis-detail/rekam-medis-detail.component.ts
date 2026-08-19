@@ -22,18 +22,19 @@ import {
   lucideAlertTriangle,
   lucideArrowLeft,
   lucideCheckCircle2,
-  lucideClock,
   lucideEdit3,
   lucideFileText,
-  lucideHistory,
   lucidePill,
   lucidePlus,
   lucideStethoscope,
   lucideTrash2,
-  lucideUser,
 } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
+import {
+  formatJakartaDate,
+  getJakartaTimeString,
+} from '../../../../core/utils/date.utils';
 import { PriorityBadgeComponent } from '../../../../shared/components/priority-badge/priority-badge.component';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
 import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
@@ -42,12 +43,10 @@ import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmDialog } from '../../../../shared/ui/dialog/src/lib/hlm-dialog';
 import { HlmDialogImports } from '../../../../shared/ui/dialog/src/index';
-import { HlmEmptyImports } from '../../../../shared/ui/empty/src/index';
 import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
-import { HlmTableImports } from '../../../../shared/ui/table/src/index';
 import { HlmTextarea } from '../../../../shared/ui/textarea/src/lib/hlm-textarea';
 import { AntrianService } from '../../../antrian/antrian.service';
 import { KunjunganDetail } from '../../../antrian/antrian.types';
@@ -80,9 +79,7 @@ import {
     ...HlmAlertImports,
     ...HlmCardImports,
     ...HlmDialogImports,
-    ...HlmEmptyImports,
     ...HlmSkeletonImports,
-    ...HlmTableImports,
   ],
   providers: [
     provideIcons({
@@ -90,9 +87,6 @@ import {
       lucideFileText,
       lucidePlus,
       lucideTrash2,
-      lucideHistory,
-      lucideUser,
-      lucideClock,
       lucideCheckCircle2,
       lucideAlertCircle,
       lucideAlertTriangle,
@@ -115,14 +109,18 @@ export class RekamMedisDetailComponent implements OnInit {
 
   readonly addendumDialog = viewChild<HlmDialog>('addendumDialog');
 
-  readonly kunjunganId = signal<number | null>(null);
+  readonly kunjunganId = signal<number>(0);
+  readonly rekamMedis = signal<RekamMedis | null>(null);
   readonly kunjungan = signal<KunjunganDetail | null>(null);
   readonly pasien = signal<Pasien | null>(null);
-  readonly rekamMedis = signal<RekamMedis | null>(null);
-
-  readonly isLoading = signal<boolean>(true);
-  readonly isSubmittingAddendum = signal<boolean>(false);
+  readonly isLoading = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
+  readonly isSubmittingAddendum = signal<boolean>(false);
+
+  formatCreatedAt(dateStr?: string): string {
+    if (!dateStr) return '-';
+    return `${formatJakartaDate(dateStr)}, ${getJakartaTimeString(dateStr)} WIB`;
+  }
 
   readonly currentUser = this.authService.currentUser;
   readonly isDokter = computed(() => this.currentUser()?.roles.includes('dokter') ?? false);
