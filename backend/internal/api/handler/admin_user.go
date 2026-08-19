@@ -402,7 +402,6 @@ func UpdateUserRoles(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc {
 	}
 }
 
-
 // CreateUser handles POST /api/v1/admin/users [admin]
 func CreateUser(pool *pgxpool.Pool, q *dbgen.Queries, emailSender mailer.EmailSender, frontendBaseURL string) gin.HandlerFunc {
 	return func(c *gin.Context) {

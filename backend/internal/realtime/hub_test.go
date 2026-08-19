@@ -269,4 +269,3 @@ func TestHub_PostShutdownCalls(t *testing.T) {
 		t.Fatal("FAIL: Memanggil method Hub publik pasca-shutdown mengalami deadlock!")
 	}
 }
-

@@ -67,8 +67,8 @@ func (r *ResendMailer) SendResetEmail(ctx context.Context, toEmail, resetLink st
 
 // MockMailer is a thread-safe mock implementation for unit testing.
 type MockMailer struct {
-	mu         sync.Mutex
-	ShouldFail bool
+	mu          sync.Mutex
+	ShouldFail  bool
 	SentInvites []string
 	SentResets  []string
 }

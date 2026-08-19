@@ -377,7 +377,7 @@ func TestPasienEndpoints_Integration(t *testing.T) {
 			"version":   1,
 			"nama":      newNama,
 			"alamat":    newAlamat,
-			"consent":   false,                             // Should be silently ignored
+			"consent":   false,                          // Should be silently ignored
 			"consentAt": time.Now().Add(24 * time.Hour), // Should be silently ignored
 		}
 		jsonPatch, _ := json.Marshal(patchBody)

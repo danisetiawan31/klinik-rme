@@ -531,12 +531,12 @@ func CreateAddendum(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc {
 
 		beforeData := map[string]interface{}{
 			"id":               parentRM.ID,
-			"kunjunganId":       parentRM.KunjunganID,
-			"dokterId":          parentRM.DokterID,
-			"keluhan":           parentRM.Keluhan,
-			"hasilPemeriksaan":  parentRM.HasilPemeriksaan,
-			"diagnosis":         parentDiagSnapshots,
-			"tindakan":          parentTinSnapshots,
+			"kunjunganId":      parentRM.KunjunganID,
+			"dokterId":         parentRM.DokterID,
+			"keluhan":          parentRM.Keluhan,
+			"hasilPemeriksaan": parentRM.HasilPemeriksaan,
+			"diagnosis":        parentDiagSnapshots,
+			"tindakan":         parentTinSnapshots,
 		}
 		beforeDataJSON, err := json.Marshal(beforeData)
 		if err != nil {
@@ -547,14 +547,14 @@ func CreateAddendum(pool *pgxpool.Pool, q *dbgen.Queries) gin.HandlerFunc {
 		// e. Build afterData snapshot for new addendum record
 		afterData := map[string]interface{}{
 			"id":               newRM.ID,
-			"kunjunganId":       parentRM.KunjunganID,
-			"dokterId":          dokterID,
-			"addendumOf":        parentRM.ID,
-			"alasanAddendum":    strings.TrimSpace(req.AlasanAddendum),
-			"keluhan":           newRM.Keluhan,
-			"hasilPemeriksaan":  newRM.HasilPemeriksaan,
-			"diagnosis":         diagSnapshots,
-			"tindakan":          tindakanSnapshots,
+			"kunjunganId":      parentRM.KunjunganID,
+			"dokterId":         dokterID,
+			"addendumOf":       parentRM.ID,
+			"alasanAddendum":   strings.TrimSpace(req.AlasanAddendum),
+			"keluhan":          newRM.Keluhan,
+			"hasilPemeriksaan": newRM.HasilPemeriksaan,
+			"diagnosis":        diagSnapshots,
+			"tindakan":         tindakanSnapshots,
 		}
 		afterDataJSON, err := json.Marshal(afterData)
 		if err != nil {
@@ -762,4 +762,3 @@ func GetRiwayatRekamMedisPasien(q *dbgen.Queries) gin.HandlerFunc {
 		c.JSON(http.StatusOK, result)
 	}
 }
-

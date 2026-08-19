@@ -130,7 +130,7 @@ func (h *KlinikAntrianHandler) CreateKunjungan(c *gin.Context) {
 	klinik, err := h.q.GetSingleKlinik(c.Request.Context())
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			log.Printf("[CREATE_KUNJUNGAN_ERROR] Klinik table is empty!");
+			log.Printf("[CREATE_KUNJUNGAN_ERROR] Klinik table is empty!")
 			middleware.RespondError(c, http.StatusInternalServerError, "KLINIK_NOT_CONFIGURED", "Klinik belum terkonfigurasi di sistem", err)
 			return
 		}
