@@ -12,6 +12,7 @@ describe('AdminDashboardComponent', () => {
   };
   let mockAdminService: {
     getUsers: ReturnType<typeof vi.fn>;
+    getAuditLogs: ReturnType<typeof vi.fn>;
   };
 
   beforeEach(async () => {
@@ -25,6 +26,7 @@ describe('AdminDashboardComponent', () => {
 
     mockAdminService = {
       getUsers: vi.fn().mockReturnValue(of({ users: [], totalCount: 0 })),
+      getAuditLogs: vi.fn().mockReturnValue(of({ logs: [], totalCount: 0 })),
     };
 
     await TestBed.configureTestingModule({

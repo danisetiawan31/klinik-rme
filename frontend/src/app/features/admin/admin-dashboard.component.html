@@ -74,13 +74,7 @@
       <app-admin-users />
     }
     @case ('audit-log') {
-      <hlm-card class="p-8 text-center text-muted-foreground space-y-2 border-dashed">
-        <ng-icon hlm size="lg" name="lucideFileText" class="mx-auto text-primary/60" aria-hidden="true" />
-        <div class="text-sm font-semibold text-foreground">Jejak Audit (Audit Trail)</div>
-        <p class="text-xs text-muted-foreground max-w-md mx-auto">
-          Fitur filter tabel target, pencarian jejak rekaman perubahan pasien dan rekam medis klinis dengan Visual Diff Viewer (Tahap 3).
-        </p>
-      </hlm-card>
+      <app-admin-audit-log />
     }
     @case ('klinik') {
       <hlm-card class="p-8 text-center text-muted-foreground space-y-2 border-dashed">

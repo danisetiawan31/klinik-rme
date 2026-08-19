@@ -233,6 +233,20 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `docs/DESIGN.md`: Update Component Registry (`RevealOnceSecret`).
 - **Verifikasi**: `npm test -- --run` → **40 files, 213 tests PASS** (exit 0).
 
+---
+
+## Admin Dashboard — Tahap 3 (Jejak Audit, Filter Bar & Visual Diff Viewer)
+
+- `AuditDiffViewerComponent` (`features/admin/components/audit-diff-viewer/`): Komponen composed penampil perbandingan perubahan data (before/after field diff) dengan penyorotan warna semantik, visualisasi nilai terhapus (strikethrough/muted), nilai ditambah/diubah (green/accent), peringatan banner akses data klinis rekam medis, dan bukti tamper-evident SHA-256 hash chain per `docs/DESIGN.md §9.9`.
+- `AdminAuditLogComponent` (`features/admin/components/admin-audit-log/`): Modul penampil riwayat audit:
+  - Filter bar multi-kriteria: `tabelTarget` (`pasien`, `rekam_medis`), `recordId`, `actorId`.
+  - Tabel log ringkas dengan pagination numerik (`X-Total-Count`) dan formatting tanggal jam lokal WIB (`Asia/Jakarta`).
+  - Integrasi modal pop-up `AuditDiffViewerComponent` saat aksi "Lihat Diff" diklik.
+- `AdminDashboardComponent`: Integrasi rendering `AdminAuditLogComponent` pada tab `audit-log`.
+- `docs/DESIGN.md`: Update Component Registry (`AuditDiffViewer`).
+- **Verifikasi**: `npm test -- --run` → **42 files, 220 tests PASS** (exit 0).
+
+
 
 
 

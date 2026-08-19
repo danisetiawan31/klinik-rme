@@ -16,6 +16,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { HlmIconDirective } from '../../shared/ui/icon/src/lib/hlm-icon.directive';
+import { AdminAuditLogComponent } from './components/admin-audit-log/admin-audit-log.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 
 export type AdminTab = 'users' | 'audit-log' | 'klinik';
@@ -29,6 +30,7 @@ export type AdminTab = 'users' | 'audit-log' | 'klinik';
     HlmIconDirective,
     ...HlmCardImports,
     AdminUsersComponent,
+    AdminAuditLogComponent,
   ],
   providers: [
     provideIcons({
