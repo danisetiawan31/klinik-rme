@@ -27,39 +27,37 @@
         </button>
       }
 
-      <app-clinic-status-indicator />
-
       <!-- Realtime Connection Status Indicator -->
       <app-connection-status-indicator />
     </div>
   </div>
 
   <!-- Summary Statistics Cards -->
-  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-    <hlm-card size="sm">
-      <div hlmCardContent class="p-0">
-        <div class="text-xs font-medium text-muted-foreground">Total Antrian</div>
-        <div class="text-2xl font-bold text-foreground mt-1 tabular-nums">{{ totalCount() }}</div>
-      </div>
-    </hlm-card>
-    <hlm-card size="sm">
-      <div hlmCardContent class="p-0">
-        <div class="text-xs font-medium text-warning-foreground">Menunggu</div>
-        <div class="text-2xl font-bold text-warning-foreground mt-1 tabular-nums">{{ menungguCount() }}</div>
-      </div>
-    </hlm-card>
-    <hlm-card size="sm">
-      <div hlmCardContent class="p-0">
-        <div class="text-xs font-medium text-primary">Sedang Dipanggil</div>
-        <div class="text-2xl font-bold text-primary mt-1 tabular-nums">{{ dipanggilCount() }}</div>
-      </div>
-    </hlm-card>
-    <hlm-card size="sm">
-      <div hlmCardContent class="p-0">
-        <div class="text-xs font-medium text-accent">Selesai</div>
-        <div class="text-2xl font-bold text-accent mt-1 tabular-nums">{{ selesaiCount() }}</div>
-      </div>
-    </hlm-card>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <app-landing-kpi-card
+      label="Total Antrian"
+      [value]="totalCount()"
+      iconName="lucideUsers"
+      colorVariant="primary"
+    />
+    <app-landing-kpi-card
+      label="Menunggu"
+      [value]="menungguCount()"
+      iconName="lucideClock"
+      colorVariant="amber"
+    />
+    <app-landing-kpi-card
+      label="Sedang Dipanggil"
+      [value]="dipanggilCount()"
+      iconName="lucideActivity"
+      colorVariant="sky"
+    />
+    <app-landing-kpi-card
+      label="Selesai"
+      [value]="selesaiCount()"
+      iconName="lucideCheckCircle2"
+      colorVariant="emerald"
+    />
   </div>
 
   <!-- Main Content: Queue Table & List -->

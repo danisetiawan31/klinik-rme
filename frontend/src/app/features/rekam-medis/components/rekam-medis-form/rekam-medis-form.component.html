@@ -7,14 +7,14 @@
         class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-1"
       >
         <ng-icon hlm size="xs" name="lucideArrowLeft" aria-hidden="true" />
-        Kembali ke Antrian Klinik
+        Kembali ke Antrian
       </a>
       <h1 class="text-2xl sm:text-3xl font-heading font-bold text-foreground tracking-tight flex items-center gap-2.5">
         <ng-icon hlm size="base" name="lucideStethoscope" class="text-primary" aria-hidden="true" />
-        Pemeriksaan Pasien (RME)
+        Pemeriksaan Pasien (SOAP)
       </h1>
       <p class="text-sm text-muted-foreground">
-        Catat hasil pemeriksaan klinis terstruktur, diagnosis, dan terapi obat untuk kunjungan aktif.
+        Catat hasil anamnesis klinis, pemeriksaan fisik objektif, diagnosis ICD-10, dan terapi resep.
       </p>
     </div>
   </div>
@@ -53,7 +53,7 @@
     </hlm-alert>
   } @else {
     <!-- Patient Context Strip Card -->
-    <hlm-card class="p-5 sm:p-6 border-border/80 shadow-sm">
+    <hlm-card class="p-5 sm:p-6 border-border/80 shadow-xs">
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
         <div class="flex items-start gap-4">
           <!-- Queue Number Badge -->
@@ -119,9 +119,9 @@
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <ng-icon hlm size="xs" name="lucideHistory" class="text-primary" aria-hidden="true" />
-              Riwayat Kunjungan & Rekam Medis Sebelumnya
+              Riwayat Pemeriksaan Sebelumnya
             </h3>
-            <span class="text-xs text-muted-foreground">Total: {{ riwayatList().length }} riwayat tercatat</span>
+            <span class="text-xs text-muted-foreground">Total: {{ riwayatList().length }} riwayat</span>
           </div>
 
           @if (riwayatList().length === 0) {
@@ -159,23 +159,23 @@
 
     <!-- Main Clinical Examination Form -->
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
-      <!-- Section 1: Anamnesis (Keluhan Utama) -->
+      <!-- Section 1: Anamnesis (Subjektif) -->
       <hlm-card class="p-5 sm:p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-border/60 pb-3">
           <div class="space-y-0.5">
             <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
-              <ng-icon hlm size="xs" name="lucideFileText" class="text-primary" aria-hidden="true" />
-              1. Anamnesis / Keluhan Utama <span class="text-destructive">*</span>
+              <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">S</span>
+              Anamnesis / Keluhan Pasien <span class="text-destructive">*</span>
             </h3>
             <p class="text-xs text-muted-foreground">
-              Uraian gejala, keluhan utama yang dirasakan pasien, riwayat penyakit saat ini, dan durasi.
+              Uraian keluhan utama pasien, durasi gejala, riwayat penyakit saat ini, dan alergi.
             </p>
           </div>
         </div>
 
         <div class="space-y-2">
           <label hlmLabel for="keluhan" class="text-xs font-semibold text-foreground">
-            Keluhan Pasien <span class="text-destructive">*</span>
+            Keluhan & Gejala <span class="text-destructive">*</span>
           </label>
           <textarea
             hlmTextarea
@@ -183,7 +183,7 @@
             formControlName="keluhan"
             rows="3"
             class="w-full text-sm resize-y"
-            placeholder="Contoh: Pasien mengeluh demam tinggi sejak 3 hari lalu, disertai batuk berdahak dan sakit tenggorokan saat menelan..."
+            placeholder="Contoh: Pasien mengeluh demam sejak 3 hari lalu disertai batuk berdahak dan nyeri tenggorokan..."
           ></textarea>
           @if (form.get('keluhan')?.touched && form.get('keluhan')?.invalid) {
             <p class="text-xs text-destructive flex items-center gap-1">
@@ -194,23 +194,23 @@
         </div>
       </hlm-card>
 
-      <!-- Section 2: Pemeriksaan Fisik & Penunjang -->
+      <!-- Section 2: Pemeriksaan Fisik (Objektif) -->
       <hlm-card class="p-5 sm:p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-border/60 pb-3">
           <div class="space-y-0.5">
             <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
-              <ng-icon hlm size="xs" name="lucideActivity" class="text-primary" aria-hidden="true" />
-              2. Pemeriksaan Fisik & Penunjang <span class="text-destructive">*</span>
+              <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">O</span>
+              Pemeriksaan Fisik & Tanda Vital <span class="text-destructive">*</span>
             </h3>
             <p class="text-xs text-muted-foreground">
-              Tanda-tanda vital (TD, Nadi, Suhu, RR), pemeriksaan organ fisik, atau hasil tes lab penunjang.
+              Tanda-tanda vital (TD, Nadi, Suhu, RR), pemeriksaan fisik umum, atau hasil lab penunjang.
             </p>
           </div>
         </div>
 
         <div class="space-y-2">
           <label hlmLabel for="hasilPemeriksaan" class="text-xs font-semibold text-foreground">
-            Hasil Pemeriksaan Fisik <span class="text-destructive">*</span>
+            Hasil Pemeriksaan Fisik & Status Klinis <span class="text-destructive">*</span>
           </label>
           <textarea
             hlmTextarea
@@ -218,7 +218,7 @@
             formControlName="hasilPemeriksaan"
             rows="3"
             class="w-full text-sm resize-y"
-            placeholder="Contoh: TD 120/80 mmHg, Nadi 82x/mnt, Suhu 38.4°C, RR 18x/mnt. Faring hiperemis (+), pembesaran tonsil T1-T1, vesikuler normal..."
+            placeholder="Contoh: TD: 120/80 mmHg, Nadi: 82x/m, Suhu: 38.2°C, RR: 18x/m. Faring hiperemis (+), pembesaran tonsil T1-T1..."
           ></textarea>
           @if (form.get('hasilPemeriksaan')?.touched && form.get('hasilPemeriksaan')?.invalid) {
             <p class="text-xs text-destructive flex items-center gap-1">
@@ -229,16 +229,16 @@
         </div>
       </hlm-card>
 
-      <!-- Section 3: Diagnosis (Dynamic FormArray, min 1 required) -->
+      <!-- Section 3: Diagnosis (Asesmen) -->
       <hlm-card class="p-5 sm:p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-border/60 pb-3">
           <div class="space-y-0.5">
             <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
-              <ng-icon hlm size="xs" name="lucideStethoscope" class="text-primary" aria-hidden="true" />
-              3. Diagnosis Medis <span class="text-destructive">*</span>
+              <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">A</span>
+              Diagnosis Klinis (ICD-10) <span class="text-destructive">*</span>
             </h3>
             <p class="text-xs text-muted-foreground">
-              Minimal 1 diagnosis wajib diisi. Masukkan kode ICD-10 (opsional) dan deskripsi diagnosis klinis.
+              Minimal 1 diagnosis klinis. Kode ICD-10 opsional jika diagnosa deskriptif sudah jelas.
             </p>
           </div>
 
@@ -248,10 +248,10 @@
             size="sm"
             type="button"
             (click)="addDiagnosis()"
-            class="flex items-center gap-1.5 text-xs"
+            class="flex items-center gap-1.5 text-xs font-medium"
           >
             <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-            Tambah Diagnosis
+            Diagnosis
           </button>
         </div>
 
@@ -283,7 +283,7 @@
                   [id]="'deskripsi-' + i"
                   formControlName="deskripsi"
                   type="text"
-                  placeholder="Contoh: Acute Nasopharyngitis (Common Cold)"
+                  placeholder="Contoh: Nasofaringitis Akut (Common Cold)"
                   class="text-xs"
                 />
                 @if (diagGroup.get('deskripsi')?.touched && diagGroup.get('deskripsi')?.invalid) {
@@ -311,16 +311,16 @@
         </div>
       </hlm-card>
 
-      <!-- Section 4: Tindakan & Terapi / Resep (Dynamic FormArray) -->
+      <!-- Section 4: Tindakan & Terapi / Resep (Plan) -->
       <hlm-card class="p-5 sm:p-6 space-y-4">
         <div class="flex items-center justify-between border-b border-border/60 pb-3">
           <div class="space-y-0.5">
             <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
-              <ng-icon hlm size="xs" name="lucidePill" class="text-primary" aria-hidden="true" />
-              4. Tindakan Medis & Resep Terapi
+              <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">P</span>
+              Tindakan Medis & Terapi Resep
             </h3>
             <p class="text-xs text-muted-foreground">
-              Tambahkan tindakan medis yang dilakukan atau resep obat yang diberikan kepada pasien.
+              Rencana terapi farmakologi (resep obat) atau tindakan medis yang diberikan kepada pasien.
             </p>
           </div>
 
@@ -331,10 +331,10 @@
               size="sm"
               type="button"
               (click)="addTindakan('resep')"
-              class="flex items-center gap-1.5 text-xs"
+              class="flex items-center gap-1.5 text-xs font-medium"
             >
               <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-              + Resep
+              Resep
             </button>
             <button
               hlmBtn
@@ -342,25 +342,49 @@
               size="sm"
               type="button"
               (click)="addTindakan('tindakan')"
-              class="flex items-center gap-1.5 text-xs"
+              class="flex items-center gap-1.5 text-xs font-medium"
             >
               <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-              + Tindakan
+              Tindakan
             </button>
           </div>
         </div>
 
         @if (tindakanArray.length === 0) {
-          <div class="p-6 rounded-xl border border-dashed border-border/80 bg-muted/10 text-center space-y-2">
-            <p class="text-xs text-muted-foreground">
-              Belum ada tindakan atau resep obat yang ditambahkan.
-            </p>
+          <div class="p-6 rounded-xl border border-border/60 bg-muted/10 text-center space-y-3">
+            <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+              <ng-icon hlm size="sm" name="lucidePill" aria-hidden="true" />
+            </div>
+            <div class="space-y-0.5">
+              <p class="text-xs font-medium text-foreground">
+                Belum ada resep obat atau tindakan medis yang ditambahkan.
+              </p>
+              <p class="text-[11px] text-muted-foreground">
+                Klik tombol di bawah untuk menambahkan resep atau tindakan.
+              </p>
+            </div>
             <div class="flex justify-center gap-2 pt-1">
-              <button hlmBtn variant="secondary" size="sm" type="button" (click)="addTindakan('resep')">
-                Tambah Resep Obat
+              <button
+                hlmBtn
+                variant="outline"
+                size="sm"
+                type="button"
+                (click)="addTindakan('resep')"
+                class="flex items-center gap-1.5 text-xs"
+              >
+                <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+                Resep Obat
               </button>
-              <button hlmBtn variant="secondary" size="sm" type="button" (click)="addTindakan('tindakan')">
-                Tambah Tindakan Medis
+              <button
+                hlmBtn
+                variant="outline"
+                size="sm"
+                type="button"
+                (click)="addTindakan('tindakan')"
+                class="flex items-center gap-1.5 text-xs"
+              >
+                <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+                Tindakan Medis
               </button>
             </div>
           </div>
@@ -386,7 +410,7 @@
                 <!-- Tindakan Description -->
                 <div class="w-full flex-1 space-y-1">
                   <label [for]="'deskripsi-tindakan-' + j" class="text-[11px] font-semibold text-foreground">
-                    Deskripsi Tindakan / Aturan Pakai Resep <span class="text-destructive">*</span>
+                    Deskripsi & Aturan Pakai <span class="text-destructive">*</span>
                   </label>
                   <input
                     hlmInput
@@ -430,21 +454,21 @@
           routerLink="/antrian"
           [disabled]="isSubmitting()"
         >
-          Batal & Kembali
+          Batal
         </a>
         <button
           hlmBtn
           variant="default"
           type="submit"
           [disabled]="isSubmitting() || form.invalid"
-          class="w-full sm:w-auto flex items-center justify-center gap-2 min-w-48"
+          class="w-full sm:w-auto flex items-center justify-center gap-2 min-w-44"
         >
           @if (isSubmitting()) {
             <span class="animate-spin size-4 border-2 border-primary-foreground border-t-transparent rounded-full" aria-hidden="true"></span>
-            <span>Menyimpan Rekam Medis...</span>
+            <span>Menyimpan...</span>
           } @else {
             <ng-icon hlm size="xs" name="lucideCheckCircle2" aria-hidden="true" />
-            <span>Simpan Rekam Medis (Selesai)</span>
+            <span>Simpan Rekam Medis</span>
           }
         </button>
       </div>

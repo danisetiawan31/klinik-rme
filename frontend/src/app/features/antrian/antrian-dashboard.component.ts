@@ -13,7 +13,6 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../core/auth/auth.service';
 import { KlinikService } from '../../core/klinik/klinik.service';
 import { RealtimeService } from '../../core/realtime/realtime.service';
-import { ClinicStatusIndicatorComponent } from '../../shared/components/clinic-status-indicator/clinic-status-indicator.component';
 import { ConnectionStatusIndicatorComponent } from '../../shared/components/connection-status-indicator/connection-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
 import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
@@ -33,6 +32,7 @@ import { HlmEmptyImports } from '../../shared/ui/empty/src/index';
 import { HlmIconDirective } from '../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmSkeletonImports } from '../../shared/ui/skeleton/src/index';
 import { HlmTableImports } from '../../shared/ui/table/src/index';
+import { LandingKpiCardComponent } from '../shell/landing/components/landing-kpi-card/landing-kpi-card.component';
 import { AntrianService } from './antrian.service';
 import { KunjunganListItem } from './antrian.types';
 
@@ -43,8 +43,8 @@ import { KunjunganListItem } from './antrian.types';
     RouterLink,
     StatusBadgeComponent,
     PriorityBadgeComponent,
-    ClinicStatusIndicatorComponent,
     ConnectionStatusIndicatorComponent,
+    LandingKpiCardComponent,
     HlmButton,
     NgIcon,
     HlmIconDirective,

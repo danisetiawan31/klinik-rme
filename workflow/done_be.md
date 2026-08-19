@@ -162,3 +162,21 @@
 - **Fitur**: Integrasi `github.com/getsentry/sentry-go` pada Go + Gin backend. Konfigurasi `SentryDSN` & `AppEnv` di `config.go`, inisialisasi di `main.go` dengan `BeforeSend` data scrubber untuk menyensor PII/data klinis, serta pelaporan otomatis pada error 5xx di `RespondError` dan unhandled panic di `GlobalRecovery` lengkap dengan tag `requestId`. SDK otomatis berstatus *no-op* jika DSN tidak dikonfigurasi.
 - **Verifikasi**: Seluruh backend test suite (`go test -v -p 1 ./...`) lolos 100% (termasuk PostgreSQL 16 Testcontainers integration).
 
+---
+
+## Addendum — Realistic High-Performance Bulk Seeder Generator
+
+- **Fitur**: Implementasi sistem generator data otomatis di `cmd/seed/` (`factory.go` & `main.go`) tanpa dependency eksternal tambahan:
+  - **Generator Pasien & NIK Unik**: Formula NIK 16-digit valid Indonesia (+40 tanggal untuk perempuan), nama lengkap Indonesia, alamat jalan, kota, dan no HP `08xx`, dengan jaminan NIK 100% unik tanpa duplikasi.
+  - **Generator Kasus Klinis SOAP & ICD-10**: Pasangan keluhan subyektif, pemeriksaan obyektif tanda vital, diagnosis ICD-10 (J00, I10, K29.7, A09, M79.1, G44.2), dan resep/tindakan medis.
+  - **High-Performance Bulk Copy**: Pemuatan ratusan pasien dalam hitungan milidetik menggunakan `pgx.CopyFrom` (Postgres binary COPY protocol).
+  - **Integrasi Audit Trail SHA-256**: Setiap rekam medis dengan status `selesai` dicatat otomatis via `audit.Record` dalam transaksi database, menjaga rantai hash chain SHA-256 tetap valid.
+  - **Clean Reseed & Idempotensi Penuh**: Default `-clean=true` membersihkan data operasional sebelum menyemai, menjamin 1 tiket antrian per pasien unik hari ini tanpa ada nomor antrian dobel atau pasien kembar. Mendukung `-seed=N` untuk determinisme data testing.
+  - **CLI Flags**: Mendukung `-patients=N` (default 30), `-queue=N` (default 12), `-completed=N` (default 6), `-clean=true/false`, dan `-seed=N`.
+- **Verifikasi**:
+  - `go run ./cmd/seed` → Berhasil me-reset dan menyemai 30 pasien unik, 12 antrian berturut-turut (#1..#12), 6 SOAP & audit log.
+  - `go test -v -p 1 ./...` → Seluruh backend integration & unit tests PASS 100%.
+  - `node e2e-test.mjs` → 19/19 automated E2E & visual tests PASS 100%.
+
+
+

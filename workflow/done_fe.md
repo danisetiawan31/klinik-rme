@@ -328,20 +328,37 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - `node e2e-test.mjs` → **19/19 automated E2E & visual tests PASS** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match** (100% token semantik).
 - **Perbaikan Reaktivitas Status Operasional & Pembersihan Panah Dekoratif (AI Slop)**:
-  - Hero banner Dokter & Petugas kini terikat dinamis ke `isKlinikBuka` riil (`KlinikService`) — saat klinik tutup, status otomatis menampilkan `Poli Tutup · Di Luar Jam Praktek` / `Loket Tutup · Di Luar Jam Pelayanan` dengan status dot merah `closed`.
-  - Menghapus seluruh simbol panah dekoratif (`&rarr;` / `→`) pada tombol aksi, link, dan kartu tata kelola di seluruh sub-komponen dashboard.
-  - Audit panah `rarr` / `→` di direktori landing: **0 match**.
+## Addendum — Elevasi UI/UX Rekam Medis (EMR) SOAP & Perbaikan Tombol
 
+- **Fitur**: Refinement visual, perbaikan UX copy, dan eliminasi cacat UI pada modul Rekam Medis:
+  - **Perbaikan Double Plus**: Menghilangkan duplikasi icon `<ng-icon name="lucidePlus">` yang diikuti teks literal `+ Resep` / `+ Tindakan` pada header Section 4 dan modal addendum (`+ + Resep`, `+ + Tindakan`, `+ + Diagnosis` kini menjadi `Resep`, `Tindakan`, `Diagnosis` bersih dengan 1 ikon plus).
+  - **Penyederhanaan Teks Tombol (Concise UX Copy)**:
+    - Tombol footer: `Simpan Rekam Medis (Selesai)` → `Simpan Rekam Medis`, `Batal & Kembali` → `Batal`.
+    - Tombol modal addendum: `Buat Addendum / Koreksi` → `Buat Addendum`, `Simpan Addendum Resmi` → `Simpan Addendum`.
+    - Tombol empty state: `Tambah Resep Obat` → `Resep Obat`, `Tambah Tindakan Medis` → `Tindakan Medis`.
+  - **Elevasi Metodologi SOAP**:
+    - Memberikan badge inisial mono yang tegas: **S** (Anamnesis), **O** (Pemeriksaan Fisik), **A** (Diagnosis ICD-10), **P** (Tindakan & Resep).
+    - Merancang ulang empty state Section 4 menjadi clinical action card yang bersih dengan icon `lucidePill` dan panduan terarah.
+  - **Pembersihan AI Slop Panah**: Menghapus `lucideArrowRight` dari tombol aksi di `rekam-medis-list.component.html`.
+- **Verifikasi**:
+  - `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
+  - `node e2e-test.mjs` → **19/19 automated E2E & visual tests PASS** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+  - Regex audit double plus (`\+\s*\+`) → **0 match**.
 
+---
 
+## Addendum — Redesain Kartu KPI Dashboard Antrian (`AntrianDashboardComponent`)
 
-
-
-
-
-
-
-
-
-
-
+- **Fitur**: Menggantikan 4 kartu KPI ringkasan statistik yang sebelumnya terhimpit (*squished*) tanpa padding di `/antrian` dengan komponen Spartan `LandingKpiCardComponent` (`<app-landing-kpi-card>`):
+  - **Total Antrian**: Icon `lucideUsers`, varian warna `primary` (teal), nilai `totalCount()`.
+  - **Menunggu**: Icon `lucideClock`, varian warna `amber` (kuning hangat ruang tunggu), nilai `menungguCount()`.
+  - **Sedang Dipanggil**: Icon `lucideActivity`, varian warna `sky` (biru aktif), nilai `dipanggilCount()`.
+  - **Selesai**: Icon `lucideCheckCircle2`, varian warna `emerald` (hijau selesai), nilai `selesaiCount()`.
+  - Mengatur grid responsif (`grid-cols-2 lg:grid-cols-4 gap-4`) dengan padding presisi dan border token semantik seragam.
+- **Verifikasi**:
+  - `npx ng test --watch=false` → **44 test files, 229 tests PASS** (exit 0).
+  - `node e2e-test.mjs` → **19/19 automated E2E & visual snapshot tests PASS** (exit 0).
+  - Visual snapshot `screenshots/07_antrian_dashboard.png` terverifikasi rapi, proporsional, dan seimbang.
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+  - **Pembersihan Indikator Header**: Menghapus `<app-clinic-status-indicator />` dari header `/antrian` untuk tampilan yang lebih bersih dan fokus.
