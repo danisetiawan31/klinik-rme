@@ -179,3 +179,12 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `workflow/backlog.md`: Update item 17 ke status `[x]` (Selesai Penuh).
 - **Verifikasi**: `npm test -- --run` → **35 files, 185 tests PASS** (exit 0).
 
+---
+
+## Papan Antrian (Publik) — Tahap 1 (Service Layer & Display Token Support)
+
+- `AntrianService.getAntrian(klinikId, displayToken?)`: Penambahan parameter opsional `displayToken` yang secara otomatis menyematkan header `X-Display-Token` untuk autentikasi surface publik papan antrian ke endpoint `GET /api/v1/klinik/:id/antrian`.
+- `RealtimeService`: Memverifikasi integrasi koneksi WebSocket via query param `GET /ws?klinikId=:id&displayToken=:token` (karena browser WebSocket API tidak mendukung custom HTTP header).
+- **Verifikasi**: `npm test -- --run` → **35 files, 186 tests PASS** (exit 0).
+
+

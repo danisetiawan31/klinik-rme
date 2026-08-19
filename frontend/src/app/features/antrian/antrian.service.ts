@@ -33,9 +33,20 @@ export class AntrianService {
 
   /**
    * Fetch daftar antrian aktif klinik hari ini (GET /api/v1/klinik/:id/antrian)
+   * Mendukung sesi staff (via cookie) atau display token (via header X-Display-Token).
    */
-  getAntrian(klinikId: number = environment.defaultKlinikId): Observable<KunjunganListItem[]> {
-    return this.http.get<KunjunganListItem[]>(`${environment.apiUrl}/klinik/${klinikId}/antrian`);
+  getAntrian(
+    klinikId: number = environment.defaultKlinikId,
+    displayToken?: string
+  ): Observable<KunjunganListItem[]> {
+    const headers: Record<string, string> = {};
+    if (displayToken) {
+      headers['X-Display-Token'] = displayToken;
+    }
+    return this.http.get<KunjunganListItem[]>(
+      `${environment.apiUrl}/klinik/${klinikId}/antrian`,
+      { headers }
+    );
   }
 
   /**

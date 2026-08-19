@@ -53,7 +53,7 @@ describe('AntrianService', () => {
     req.flush(mockResponse, { status: 201, statusText: 'Created' });
   });
 
-  it('should fetch antrian list for given klinikId', () => {
+  it('should fetch antrian list for given klinikId without displayToken', () => {
     const mockData: KunjunganListItem[] = [
       {
         id: 1,
@@ -72,6 +72,30 @@ describe('AntrianService', () => {
 
     const req = httpTesting.expectOne(`${environment.apiUrl}/klinik/1/antrian`);
     expect(req.request.method).toBe('GET');
+    expect(req.request.headers.has('X-Display-Token')).toBe(false);
+    req.flush(mockData);
+  });
+
+  it('should fetch antrian list with X-Display-Token header when displayToken is provided', () => {
+    const mockData: KunjunganListItem[] = [
+      {
+        id: 1,
+        nomorAntrian: 1,
+        status: 'menunggu',
+        isPriority: false,
+        priorityReason: null,
+        skipCount: 0,
+        pasienNama: 'Budi Santoso',
+      },
+    ];
+
+    service.getAntrian(1, 'display-token-secret-123').subscribe((res) => {
+      expect(res).toEqual(mockData);
+    });
+
+    const req = httpTesting.expectOne(`${environment.apiUrl}/klinik/1/antrian`);
+    expect(req.request.method).toBe('GET');
+    expect(req.request.headers.get('X-Display-Token')).toBe('display-token-secret-123');
     req.flush(mockData);
   });
 
