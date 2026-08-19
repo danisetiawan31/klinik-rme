@@ -141,3 +141,11 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 **File**: `landing.*`, `date.utils.*`, `package.json`.
 **Verifikasi**: `npm test -- --run` → **31 files, 166 tests PASS** (exit 0) & GitNexus `impact`/`detect_changes` (risk: LOW).
 
+---
+
+## Rekam Medis — Tahap 1 (Types & Service Layer)
+
+- `rekam-medis.types.ts`: Interface domain `RekamMedis`, `DiagnosisItem`, `TindakanItem`, `RiwayatRekamMedisItem`, `CreateRekamMedisDto`, `CreateAddendumDto` sesuai kontrak `docs/api-contract.md`.
+- `RekamMedisService`: Client HTTP Angular untuk `getRekamMedisByKunjungan`, `createRekamMedis`, `createAddendum`, dan `getRiwayatByPasien`.
+- **Verifikasi**: `npm test -- --run` → **32 files, 171 tests PASS** (exit 0).
+
