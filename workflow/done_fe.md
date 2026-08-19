@@ -208,6 +208,15 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `workflow/backlog.md`: Update Item 16 ke status `[x]` (Selesai Penuh).
 - **Verifikasi**: `npm test -- --run` → **36 files, 193 tests PASS** (exit 0).
 
+---
+
+## Admin Dashboard — Tahap 1 (Types & Service Layer)
+
+- `admin.types.ts`: Definisi antarmuka DTO domain admin (`AdminUser`, `AdminUserListResult`, `CreateAdminUserRequest`, `CreateAdminUserResponse`, `UpdateAdminUserRequest`, `UpdateUserRolesRequest`, `AuditLogSummary`, `AuditLogDetail`, `AuditLogFilterParams`, `RegenerateDisplayTokenResponse`) sesuai kontrak `docs/api-contract.md`.
+- `AdminService`: Client HTTP Angular untuk interaksi endpoint admin: `getUsers`, `createUser`, `resendInvite`, `updateUser`, `updateUserRoles`, `getAuditLogs`, `getAuditLogDetail`, dan `regenerateDisplayToken` (termasuk ekstraksi header `X-Total-Count` untuk pagination).
+- **Verifikasi**: `npm test -- --run` → **37 files, 202 tests PASS** (exit 0).
+
+
 
 
 
