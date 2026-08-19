@@ -198,5 +198,16 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - Dual-trigger reaktivitas: Subscribe WebSocket `queue_updated` + refetch on reconnect + fallback interval timer 30 detik.
 - **Verifikasi**: `npm test -- --run` → **36 files, 192 tests PASS** (exit 0).
 
+---
+
+## Papan Antrian (Publik) — Tahap 3 (Routing Publik & Integrasi End-to-End)
+
+- `app.routes.ts`: Pendaftaran rute publik `/papan-antrian` di root (di luar shell staff layout, tanpa `staffAuthResolver` dan tanpa `roleGuard`).
+- `app.spec.ts`: Unit test konfigurasi rute `/papan-antrian` bebas guard staff.
+- `docs/DESIGN.md`: Update Component Registry (`PapanAntrian`).
+- `workflow/backlog.md`: Update Item 16 ke status `[x]` (Selesai Penuh).
+- **Verifikasi**: `npm test -- --run` → **36 files, 193 tests PASS** (exit 0).
+
+
 
 

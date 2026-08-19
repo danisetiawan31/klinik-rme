@@ -32,4 +32,14 @@ describe('App', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('router-outlet')).toBeTruthy();
   });
+
+  it('should have public papan-antrian route configured without staff guards', async () => {
+    const { routes } = await import('./app.routes');
+    const papanRoute = routes.find((r) => r.path === 'papan-antrian');
+
+    expect(papanRoute).toBeTruthy();
+    expect(papanRoute?.canActivate).toBeUndefined();
+    expect(papanRoute?.resolve).toBeUndefined();
+    expect(papanRoute?.loadComponent).toBeTruthy();
+  });
 });

@@ -30,6 +30,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'papan-antrian',
+    loadComponent: () =>
+      import('./features/papan-antrian/papan-antrian.component').then(
+        (m) => m.PapanAntrianComponent
+      ),
+  },
+  {
     path: '',
     resolve: { user: staffAuthResolver },
     loadComponent: () =>
