@@ -1,0 +1,413 @@
+<div class="max-w-5xl mx-auto space-y-6 pb-12">
+  <!-- Top Navigation & Actions Bar -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="space-y-1">
+      <a
+        routerLink="/antrian"
+        class="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-1"
+      >
+        <ng-icon hlm size="xs" name="lucideArrowLeft" aria-hidden="true" />
+        Kembali ke Antrian Klinik
+      </a>
+      <h1 class="text-2xl sm:text-3xl font-heading font-bold text-foreground tracking-tight flex items-center gap-2.5">
+        <ng-icon hlm size="base" name="lucideFileText" class="text-primary" aria-hidden="true" />
+        Rekam Medis Pasien (Leaf View)
+      </h1>
+      <p class="text-sm text-muted-foreground">
+        Tampilan versi klinis terkini untuk kunjungan pasien.
+      </p>
+    </div>
+
+    @if (rekamMedis() && isDokter()) {
+      <div class="flex items-center gap-3">
+        <button
+          hlmBtn
+          variant="outline"
+          size="default"
+          type="button"
+          (click)="openAddendumModal()"
+          class="flex items-center gap-2 shadow-xs"
+        >
+          <ng-icon hlm size="xs" name="lucideEdit3" class="text-primary" aria-hidden="true" />
+          <span>Buat Addendum / Koreksi</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <!-- Skeleton Loading State -->
+    <div class="space-y-6">
+      <hlm-card class="p-6 space-y-4">
+        <div class="flex items-center gap-4">
+          <hlm-skeleton class="size-14 rounded-2xl" />
+          <div class="space-y-2 flex-1">
+            <hlm-skeleton class="h-6 w-48 rounded" />
+            <hlm-skeleton class="h-4 w-72 rounded" />
+          </div>
+        </div>
+      </hlm-card>
+      <hlm-card class="p-6 space-y-6">
+        <hlm-skeleton class="h-28 w-full rounded-xl" />
+        <hlm-skeleton class="h-28 w-full rounded-xl" />
+        <hlm-skeleton class="h-20 w-full rounded-xl" />
+      </hlm-card>
+    </div>
+  } @else if (errorMessage()) {
+    <!-- Error State -->
+    <hlm-alert variant="destructive" class="p-6">
+      <ng-icon hlm size="base" name="lucideAlertCircle" aria-hidden="true" />
+      <div hlmAlertTitle class="font-bold">Rekam Medis Tidak Ditemukan</div>
+      <div hlmAlertDescription class="mt-1 text-sm">
+        {{ errorMessage() }}
+      </div>
+      <div class="mt-4 flex gap-3">
+        <a hlmBtn variant="outline" size="sm" routerLink="/antrian">
+          Kembali ke Antrian
+        </a>
+      </div>
+    </hlm-alert>
+  } @else if (rekamMedis()) {
+    <!-- Patient Context Strip Card -->
+    <hlm-card class="p-5 sm:p-6 border-border/80 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+        <div class="flex items-start gap-4">
+          <!-- Queue Number Badge -->
+          <div class="size-13 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col items-center justify-center shrink-0 text-primary">
+            <span class="text-[10px] font-bold uppercase tracking-wider leading-none">Antrian</span>
+            <span class="text-xl font-heading font-black tabular-nums leading-tight">#{{ kunjungan()?.nomorAntrian || '-' }}</span>
+          </div>
+
+          <!-- Patient Identity Details -->
+          <div class="space-y-1">
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <h2 class="text-lg sm:text-xl font-heading font-bold text-foreground">
+                {{ pasien()?.nama }}
+              </h2>
+              @if (kunjungan()?.isPriority) {
+                <app-priority-badge />
+              }
+              <span hlmBadge variant="outline" class="text-xs uppercase font-mono text-muted-foreground">
+                {{ pasien()?.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
+              </span>
+            </div>
+            <div class="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+              <div class="flex items-center gap-1.5">
+                <span class="font-semibold text-foreground/80">NIK:</span>
+                <app-sensitive-value mode="display" [displayValue]="pasien()?.nik || '-'" />
+              </div>
+              <span class="text-border">•</span>
+              <div class="flex items-center gap-1.5">
+                <span class="font-semibold text-foreground/80">Tgl Lahir:</span>
+                <span>{{ pasien()?.tanggalLahir }}</span>
+              </div>
+              <span class="text-border">•</span>
+              <div class="flex items-center gap-1.5">
+                <span class="font-semibold text-foreground/80">No. Telp:</span>
+                <span>{{ pasien()?.noTelp || '-' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-left md:text-right space-y-1">
+          <div class="text-xs text-muted-foreground">Waktu Pemeriksaan:</div>
+          <div class="text-xs font-mono font-medium text-foreground">
+            {{ rekamMedis()!.createdAt }}
+          </div>
+        </div>
+      </div>
+    </hlm-card>
+
+    <!-- Addendum Notice Banner if record is an Addendum -->
+    @if (rekamMedis()!.isAddendum) {
+      <hlm-alert variant="warning" class="border-l-4 border-l-warning">
+        <ng-icon hlm size="base" name="lucideAlertTriangle" aria-hidden="true" />
+        <div hlmAlertTitle class="font-bold">Rekam Medis Hasil Koreksi (Addendum)</div>
+        <div hlmAlertDescription class="text-xs mt-1">
+          Tampilan ini memuat versi terkini yang telah diperbarui melalui proses addendum klinis resmi.
+        </div>
+      </hlm-alert>
+    }
+
+    <!-- Section 1 & 2: Anamnesis & Pemeriksaan Fisik -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <hlm-card class="p-5 sm:p-6 space-y-3">
+        <h3 class="text-sm font-heading font-bold text-foreground flex items-center gap-2 border-b border-border/60 pb-2.5">
+          <ng-icon hlm size="xs" name="lucideFileText" class="text-primary" aria-hidden="true" />
+          1. Anamnesis / Keluhan Utama
+        </h3>
+        <p class="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+          {{ rekamMedis()!.keluhan }}
+        </p>
+      </hlm-card>
+
+      <hlm-card class="p-5 sm:p-6 space-y-3">
+        <h3 class="text-sm font-heading font-bold text-foreground flex items-center gap-2 border-b border-border/60 pb-2.5">
+          <ng-icon hlm size="xs" name="lucideActivity" class="text-primary" aria-hidden="true" />
+          2. Pemeriksaan Fisik & Penunjang
+        </h3>
+        <p class="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
+          {{ rekamMedis()!.hasilPemeriksaan }}
+        </p>
+      </hlm-card>
+    </div>
+
+    <!-- Section 3: Diagnosis -->
+    <hlm-card class="p-5 sm:p-6 space-y-4">
+      <h3 class="text-sm font-heading font-bold text-foreground flex items-center gap-2 border-b border-border/60 pb-2.5">
+        <ng-icon hlm size="xs" name="lucideStethoscope" class="text-primary" aria-hidden="true" />
+        3. Diagnosis Medis
+      </h3>
+
+      <div class="space-y-2">
+        @for (diag of rekamMedis()!.diagnosis; track diag.id; let i = $index) {
+          <div class="p-3 rounded-xl border border-border/70 bg-muted/20 flex items-center justify-between gap-4 text-xs">
+            <div class="flex items-center gap-3">
+              <span class="font-bold text-muted-foreground">#{{ i + 1 }}</span>
+              <span class="font-medium text-foreground">{{ diag.deskripsi }}</span>
+            </div>
+            @if (diag.kodeIcd) {
+              <span class="font-mono bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded text-[11px] font-bold">
+                ICD-10: {{ diag.kodeIcd }}
+              </span>
+            }
+          </div>
+        }
+      </div>
+    </hlm-card>
+
+    <!-- Section 4: Tindakan & Terapi / Resep -->
+    <hlm-card class="p-5 sm:p-6 space-y-4">
+      <h3 class="text-sm font-heading font-bold text-foreground flex items-center gap-2 border-b border-border/60 pb-2.5">
+        <ng-icon hlm size="xs" name="lucidePill" class="text-primary" aria-hidden="true" />
+        4. Tindakan Medis & Terapi Resep Obat
+      </h3>
+
+      @if (!rekamMedis()!.tindakan || rekamMedis()!.tindakan.length === 0) {
+        <div class="p-4 rounded-xl bg-muted/20 text-center text-xs text-muted-foreground">
+          Tidak ada tindakan medis atau resep obat tambahan pada pemeriksaan ini.
+        </div>
+      } @else {
+        <div class="space-y-2">
+          @for (t of rekamMedis()!.tindakan; track t.id; let j = $index) {
+            <div class="p-3 rounded-xl border border-border/70 bg-muted/20 flex items-center justify-between gap-4 text-xs">
+              <div class="flex items-center gap-3">
+                <span class="font-bold text-muted-foreground">#{{ j + 1 }}</span>
+                <span class="text-foreground">{{ t.deskripsi }}</span>
+              </div>
+              <span
+                hlmBadge
+                [variant]="t.jenis === 'resep' ? 'secondary' : 'outline'"
+                class="text-[11px] uppercase font-semibold shrink-0"
+              >
+                {{ t.jenis === 'resep' ? 'Resep Obat' : 'Tindakan' }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </hlm-card>
+  }
+
+  <!-- Spartan Dialog Modal for Creating Addendum -->
+  <hlm-dialog #addendumDialog>
+    <hlm-dialog-content *hlmDialogPortal="let ctx" class="sm:max-w-2xl max-h-[90vh] overflow-y-auto" [showCloseButton]="false">
+      <hlm-dialog-header>
+        <h3 hlmDialogTitle class="flex items-center gap-2 text-lg font-heading font-bold">
+          <ng-icon hlm size="xs" name="lucideEdit3" class="text-primary" aria-hidden="true" />
+          Buat Addendum / Koreksi Rekam Medis
+        </h3>
+        <p hlmDialogDescription class="text-xs text-muted-foreground">
+          Koreksi rekam medis akan mencatat versi baru secara berantai dan tercatat resmi di Audit Trail. Data lama tidak dihapus.
+        </p>
+      </hlm-dialog-header>
+
+      <form [formGroup]="addendumForm" (ngSubmit)="submitAddendum()" class="space-y-5 pt-2">
+        <!-- Field Wajib: Alasan Addendum -->
+        <div class="p-4 rounded-xl bg-warning/10 border border-warning/30 space-y-2">
+          <label hlmLabel for="alasanAddendum" class="text-xs font-bold text-warning-foreground flex items-center gap-1.5">
+            <ng-icon hlm size="xs" name="lucideAlertTriangle" aria-hidden="true" />
+            Alasan Koreksi / Addendum Medis <span class="text-destructive">*</span>
+          </label>
+          <textarea
+            hlmTextarea
+            id="alasanAddendum"
+            formControlName="alasanAddendum"
+            rows="2"
+            class="w-full text-xs bg-card"
+            placeholder="Wajib diisi: Uraikan alasan koreksi (mis. Perubahan diagnosis pasca tes lab penunjang, koreksi dosis obat, dst)..."
+          ></textarea>
+          @if (addendumForm.get('alasanAddendum')?.touched && addendumForm.get('alasanAddendum')?.invalid) {
+            <p class="text-[11px] text-destructive">Alasan addendum wajib diisi minimal 5 karakter</p>
+          }
+        </div>
+
+        <!-- Keluhan -->
+        <div class="space-y-1.5">
+          <label hlmLabel for="addendum-keluhan" class="text-xs font-semibold text-foreground">
+            Keluhan Pasien <span class="text-destructive">*</span>
+          </label>
+          <textarea
+            hlmTextarea
+            id="addendum-keluhan"
+            formControlName="keluhan"
+            rows="2"
+            class="w-full text-xs"
+          ></textarea>
+        </div>
+
+        <!-- Hasil Pemeriksaan -->
+        <div class="space-y-1.5">
+          <label hlmLabel for="addendum-hasilPemeriksaan" class="text-xs font-semibold text-foreground">
+            Hasil Pemeriksaan Fisik & Penunjang <span class="text-destructive">*</span>
+          </label>
+          <textarea
+            hlmTextarea
+            id="addendum-hasilPemeriksaan"
+            formControlName="hasilPemeriksaan"
+            rows="2"
+            class="w-full text-xs"
+          ></textarea>
+        </div>
+
+        <!-- Diagnosis FormArray -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-foreground">Diagnosis Medis</label>
+            <button
+              hlmBtn
+              variant="outline"
+              size="sm"
+              type="button"
+              (click)="addDiagnosis()"
+              class="text-xs h-7 px-2"
+            >
+              <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+              + Diagnosis
+            </button>
+          </div>
+
+          <div formArrayName="diagnosis" class="space-y-2">
+            @for (diagGroup of diagnosisArray.controls; track $index; let i = $index) {
+              <div [formGroupName]="i" class="p-2.5 rounded-lg border border-border/70 bg-muted/20 flex items-center gap-2">
+                <input
+                  hlmInput
+                  formControlName="kodeIcd"
+                  type="text"
+                  placeholder="ICD-10"
+                  class="w-24 font-mono text-xs uppercase h-8"
+                />
+                <input
+                  hlmInput
+                  formControlName="deskripsi"
+                  type="text"
+                  placeholder="Deskripsi Diagnosis"
+                  class="flex-1 text-xs h-8"
+                />
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  type="button"
+                  (click)="removeDiagnosis(i)"
+                  [disabled]="diagnosisArray.length <= 1"
+                  class="size-8 text-muted-foreground hover:text-destructive shrink-0"
+                >
+                  <ng-icon hlm size="xs" name="lucideTrash2" aria-hidden="true" />
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Tindakan FormArray -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-foreground">Tindakan & Resep Terapi</label>
+            <div class="flex gap-1.5">
+              <button
+                hlmBtn
+                variant="outline"
+                size="sm"
+                type="button"
+                (click)="addTindakan('resep')"
+                class="text-xs h-7 px-2"
+              >
+                + Resep
+              </button>
+              <button
+                hlmBtn
+                variant="outline"
+                size="sm"
+                type="button"
+                (click)="addTindakan('tindakan')"
+                class="text-xs h-7 px-2"
+              >
+                + Tindakan
+              </button>
+            </div>
+          </div>
+
+          <div formArrayName="tindakan" class="space-y-2">
+            @for (tGroup of tindakanArray.controls; track $index; let j = $index) {
+              <div [formGroupName]="j" class="p-2.5 rounded-lg border border-border/70 bg-muted/20 flex items-center gap-2">
+                <select
+                  formControlName="jenis"
+                  class="w-28 h-8 rounded-md border border-input bg-card px-2 py-1 text-xs text-foreground focus:outline-none"
+                >
+                  <option value="resep">Resep</option>
+                  <option value="tindakan">Tindakan</option>
+                </select>
+                <input
+                  hlmInput
+                  formControlName="deskripsi"
+                  type="text"
+                  placeholder="Deskripsi Tindakan / Aturan Pakai Resep"
+                  class="flex-1 text-xs h-8"
+                />
+                <button
+                  hlmBtn
+                  variant="ghost"
+                  size="icon"
+                  type="button"
+                  (click)="removeTindakan(j)"
+                  class="size-8 text-muted-foreground hover:text-destructive shrink-0"
+                >
+                  <ng-icon hlm size="xs" name="lucideTrash2" aria-hidden="true" />
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+
+        <hlm-dialog-footer class="pt-2 border-t border-border flex justify-end gap-2">
+          <button
+            hlmBtn
+            variant="outline"
+            type="button"
+            (click)="closeAddendumModal()"
+            [disabled]="isSubmittingAddendum()"
+          >
+            Batal
+          </button>
+          <button
+            hlmBtn
+            variant="default"
+            type="submit"
+            [disabled]="isSubmittingAddendum() || addendumForm.invalid"
+            class="flex items-center gap-2"
+          >
+            @if (isSubmittingAddendum()) {
+              <span class="animate-spin size-3.5 border-2 border-primary-foreground border-t-transparent rounded-full" aria-hidden="true"></span>
+              <span>Menyimpan Addendum...</span>
+            } @else {
+              <ng-icon hlm size="xs" name="lucideCheckCircle2" aria-hidden="true" />
+              <span>Simpan Addendum Resmi</span>
+            }
+          </button>
+        </hlm-dialog-footer>
+      </form>
+    </hlm-dialog-content>
+  </hlm-dialog>
+</div>

@@ -159,3 +159,11 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - `AntrianService.getKunjungan(id)`: Helper fetch `KunjunganDetail` (`GET /kunjungan/:id`).
 - **Verifikasi**: `npm test -- --run` → **33 files, 178 tests PASS** (exit 0).
 
+---
+
+## Rekam Medis — Tahap 3 (Tampilan Versi Terkini & Modal Addendum)
+
+- `RekamMedisDetailComponent`: Tampilan leaf record terkini (`GET /kunjungan/:id/rekam-medis`), banner khusus bila record merupakan hasil addendum (`isAddendum === true`), ringkasan SOAP, tabel diagnosis & tindakan terstruktur.
+- Modal Addendum Spartan Dialog (`HlmDialog`): Form koreksi medis dengan validasi wajib `alasanAddendum`, pre-fill data lama, modifikasi dinamis diagnosis & tindakan FormArray, penanganan submit POST `/rekam-medis/:id/addendum`, dan penanganan error 409 `ADDENDUM_CONFLICT` (auto-reload leaf data).
+- **Verifikasi**: `npm test -- --run` → **34 files, 184 tests PASS** (exit 0).
+
