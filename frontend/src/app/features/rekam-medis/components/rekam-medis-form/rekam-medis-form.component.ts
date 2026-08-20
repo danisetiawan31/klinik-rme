@@ -29,18 +29,11 @@ import {
 } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
 import { AuthService } from '../../../../core/auth/auth.service';
-import { formatJakartaDate } from '../../../../core/utils/date.utils';
-import { PriorityBadgeComponent } from '../../../../shared/components/priority-badge/priority-badge.component';
-import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
 import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
-import { HlmBadge } from '../../../../shared/ui/badge/src/lib/hlm-badge';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
-import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
-import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
-import { HlmTextarea } from '../../../../shared/ui/textarea/src/lib/hlm-textarea';
 import { AntrianService } from '../../../antrian/antrian.service';
 import { KunjunganDetail } from '../../../antrian/antrian.types';
 import { PasienService } from '../../../pasien/pasien.service';
@@ -52,6 +45,11 @@ import {
   CreateTindakanDto,
   RiwayatRekamMedisItem,
 } from '../../rekam-medis.types';
+import { SoapAssessmentSectionComponent } from './components/soap-assessment-section/soap-assessment-section.component';
+import { SoapObjectiveSectionComponent } from './components/soap-objective-section/soap-objective-section.component';
+import { SoapPatientHeaderComponent } from './components/soap-patient-header/soap-patient-header.component';
+import { SoapPlanSectionComponent } from './components/soap-plan-section/soap-plan-section.component';
+import { SoapSubjectiveSectionComponent } from './components/soap-subjective-section/soap-subjective-section.component';
 
 @Component({
   selector: 'app-rekam-medis-form',
@@ -60,31 +58,24 @@ import {
   imports: [
     ReactiveFormsModule,
     RouterLink,
-    PriorityBadgeComponent,
-    SensitiveValueComponent,
     HlmButton,
-    HlmInput,
-    HlmLabel,
-    HlmTextarea,
-    HlmBadge,
     NgIcon,
     HlmIconDirective,
     ...HlmAlertImports,
     ...HlmCardImports,
     ...HlmSkeletonImports,
+    SoapPatientHeaderComponent,
+    SoapSubjectiveSectionComponent,
+    SoapObjectiveSectionComponent,
+    SoapAssessmentSectionComponent,
+    SoapPlanSectionComponent,
   ],
   providers: [
     provideIcons({
       lucideStethoscope,
-      lucideFileText,
-      lucidePlus,
-      lucideTrash2,
-      lucideHistory,
+      lucideArrowLeft,
       lucideCheckCircle2,
       lucideAlertCircle,
-      lucideArrowLeft,
-      lucidePill,
-      lucideActivity,
     }),
   ],
   templateUrl: './rekam-medis-form.component.html',
@@ -105,11 +96,6 @@ export class RekamMedisFormComponent implements OnInit {
   readonly isLoading = signal<boolean>(false);
   readonly isSubmitting = signal<boolean>(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly showHistory = signal<boolean>(false);
-
-  formatDate(dateStr?: string): string {
-    return dateStr ? formatJakartaDate(dateStr) : '-';
-  }
 
   readonly currentUser = this.authService.currentUser;
   readonly isDokter = computed(() => this.currentUser()?.roles.includes('dokter') ?? false);
@@ -174,10 +160,6 @@ export class RekamMedisFormComponent implements OnInit {
 
   removeTindakan(index: number): void {
     this.tindakanArray.removeAt(index);
-  }
-
-  toggleHistory(): void {
-    this.showHistory.update((prev) => !prev);
   }
 
   loadKunjunganData(kunjunganId: number): void {

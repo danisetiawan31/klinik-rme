@@ -1,0 +1,33 @@
+<hlm-card class="p-5 sm:p-6 space-y-4" [formGroup]="form()">
+  <div class="flex items-center justify-between border-b border-border/60 pb-3">
+    <div class="space-y-0.5">
+      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
+        <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">O</span>
+        Pemeriksaan Fisik & Tanda Vital <span class="text-destructive">*</span>
+      </h3>
+      <p class="text-xs text-muted-foreground">
+        Tanda-tanda vital (TD, Nadi, Suhu, RR), pemeriksaan fisik umum, atau hasil lab penunjang.
+      </p>
+    </div>
+  </div>
+
+  <div class="space-y-2">
+    <label hlmLabel for="hasilPemeriksaan" class="text-xs font-semibold text-foreground">
+      Hasil Pemeriksaan Fisik & Status Klinis <span class="text-destructive">*</span>
+    </label>
+    <textarea
+      hlmTextarea
+      id="hasilPemeriksaan"
+      formControlName="hasilPemeriksaan"
+      rows="3"
+      class="w-full text-sm resize-y"
+      placeholder="Contoh: TD: 120/80 mmHg, Nadi: 82x/m, Suhu: 38.2°C, RR: 18x/m. Faring hiperemis (+), pembesaran tonsil T1-T1..."
+    ></textarea>
+    @if (form().get('hasilPemeriksaan')?.touched && form().get('hasilPemeriksaan')?.invalid) {
+      <p class="text-xs text-destructive flex items-center gap-1">
+        <ng-icon hlm size="xs" name="lucideAlertCircle" aria-hidden="true" />
+        Hasil pemeriksaan fisik wajib diisi minimal 3 karakter
+      </p>
+    }
+  </div>
+</hlm-card>

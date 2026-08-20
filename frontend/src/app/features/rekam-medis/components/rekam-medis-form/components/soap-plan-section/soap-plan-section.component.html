@@ -1,0 +1,132 @@
+<hlm-card class="p-5 sm:p-6 space-y-4">
+  <div class="flex items-center justify-between border-b border-border/60 pb-3">
+    <div class="space-y-0.5">
+      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
+        <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">P</span>
+        Tindakan Medis & Terapi Resep
+      </h3>
+      <p class="text-xs text-muted-foreground">
+        Rencana terapi farmakologi (resep obat) atau tindakan medis yang diberikan kepada pasien.
+      </p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <button
+        hlmBtn
+        variant="outline"
+        size="sm"
+        type="button"
+        (click)="onAdd('resep')"
+        class="flex items-center gap-1.5 text-xs font-medium"
+      >
+        <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+        Resep
+      </button>
+      <button
+        hlmBtn
+        variant="outline"
+        size="sm"
+        type="button"
+        (click)="onAdd('tindakan')"
+        class="flex items-center gap-1.5 text-xs font-medium"
+      >
+        <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+        Tindakan
+      </button>
+    </div>
+  </div>
+
+  @if (tindakanArray().length === 0) {
+    <div class="p-6 rounded-xl border border-border/60 bg-muted/10 text-center space-y-3">
+      <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+        <ng-icon hlm size="sm" name="lucidePill" aria-hidden="true" />
+      </div>
+      <div class="space-y-0.5">
+        <p class="text-xs font-medium text-foreground">
+          Belum ada resep obat atau tindakan medis yang ditambahkan.
+        </p>
+        <p class="text-[11px] text-muted-foreground">
+          Klik tombol di bawah untuk menambahkan resep atau tindakan.
+        </p>
+      </div>
+      <div class="flex justify-center gap-2 pt-1">
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          type="button"
+          (click)="onAdd('resep')"
+          class="flex items-center gap-1.5 text-xs"
+        >
+          <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+          Resep Obat
+        </button>
+        <button
+          hlmBtn
+          variant="outline"
+          size="sm"
+          type="button"
+          (click)="onAdd('tindakan')"
+          class="flex items-center gap-1.5 text-xs"
+        >
+          <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+          Tindakan Medis
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for (tindakanGroup of tindakanArray().controls; track $index; let j = $index) {
+        <div [formGroup]="$any(tindakanGroup)" class="p-3.5 rounded-xl border border-border/70 bg-muted/20 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <!-- Jenis Selector -->
+          <div class="w-full sm:w-32 shrink-0 space-y-1">
+            <label [for]="'jenis-' + j" class="text-[11px] font-semibold text-muted-foreground uppercase">
+              Jenis
+            </label>
+            <select
+              [id]="'jenis-' + j"
+              formControlName="jenis"
+              class="w-full h-9 rounded-md border border-input bg-card px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="resep">Resep Obat</option>
+              <option value="tindakan">Tindakan Medis</option>
+            </select>
+          </div>
+
+          <!-- Tindakan Description -->
+          <div class="w-full flex-1 space-y-1">
+            <label [for]="'deskripsi-tindakan-' + j" class="text-[11px] font-semibold text-foreground">
+              Deskripsi & Aturan Pakai <span class="text-destructive">*</span>
+            </label>
+            <input
+              hlmInput
+              [id]="'deskripsi-tindakan-' + j"
+              formControlName="deskripsi"
+              type="text"
+              placeholder="Contoh: Paracetamol 500mg 3x1 tablet sesudah makan (3 hari)"
+              class="text-xs"
+            />
+            @if (tindakanGroup.get('deskripsi')?.touched && tindakanGroup.get('deskripsi')?.invalid) {
+              <p class="text-[11px] text-destructive">Deskripsi tindakan/resep wajib diisi</p>
+            }
+          </div>
+
+          <!-- Delete Action -->
+          <div class="self-end sm:self-center sm:pt-4">
+            <button
+              hlmBtn
+              variant="ghost"
+              size="icon"
+              type="button"
+              (click)="onRemove(j)"
+              class="text-muted-foreground hover:text-destructive size-8"
+              title="Hapus baris"
+            >
+              <ng-icon hlm size="xs" name="lucideTrash2" aria-hidden="true" />
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</hlm-card>

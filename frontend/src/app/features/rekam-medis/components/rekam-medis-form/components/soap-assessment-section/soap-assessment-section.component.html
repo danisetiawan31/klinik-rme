@@ -1,0 +1,80 @@
+<hlm-card class="p-5 sm:p-6 space-y-4">
+  <div class="flex items-center justify-between border-b border-border/60 pb-3">
+    <div class="space-y-0.5">
+      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
+        <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">A</span>
+        Diagnosis Klinis (ICD-10) <span class="text-destructive">*</span>
+      </h3>
+      <p class="text-xs text-muted-foreground">
+        Minimal 1 diagnosis klinis. Kode ICD-10 opsional jika diagnosa deskriptif sudah jelas.
+      </p>
+    </div>
+
+    <button
+      hlmBtn
+      variant="outline"
+      size="sm"
+      type="button"
+      (click)="onAdd()"
+      class="flex items-center gap-1.5 text-xs font-medium"
+    >
+      <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
+      Diagnosis
+    </button>
+  </div>
+
+  <div class="space-y-3">
+    @for (diagGroup of diagnosisArray().controls; track $index; let i = $index) {
+      <div [formGroup]="$any(diagGroup)" class="p-3.5 rounded-xl border border-border/70 bg-muted/20 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <!-- Monospace ICD-10 Code -->
+        <div class="w-full sm:w-36 shrink-0 space-y-1">
+          <label [for]="'icd-' + i" class="text-[11px] font-semibold text-muted-foreground uppercase">
+            Kode ICD-10
+          </label>
+          <input
+            hlmInput
+            [id]="'icd-' + i"
+            formControlName="kodeIcd"
+            type="text"
+            placeholder="Mis. J00"
+            class="font-mono text-xs uppercase"
+          />
+        </div>
+
+        <!-- Diagnosis Description -->
+        <div class="w-full flex-1 space-y-1">
+          <label [for]="'deskripsi-' + i" class="text-[11px] font-semibold text-foreground">
+            Deskripsi Diagnosis <span class="text-destructive">*</span>
+          </label>
+          <input
+            hlmInput
+            [id]="'deskripsi-' + i"
+            formControlName="deskripsi"
+            type="text"
+            placeholder="Contoh: Nasofaringitis Akut (Common Cold)"
+            class="text-xs"
+          />
+          @if (diagGroup.get('deskripsi')?.touched && diagGroup.get('deskripsi')?.invalid) {
+            <p class="text-[11px] text-destructive">Deskripsi diagnosis wajib diisi</p>
+          }
+        </div>
+
+        <!-- Delete Action -->
+        <div class="self-end sm:self-center sm:pt-4">
+          <button
+            hlmBtn
+            variant="ghost"
+            size="icon"
+            type="button"
+            (click)="onRemove(i)"
+            [disabled]="diagnosisArray().length <= 1"
+            class="text-muted-foreground hover:text-destructive size-8"
+            title="Hapus diagnosis"
+          >
+            <ng-icon hlm size="xs" name="lucideTrash2" aria-hidden="true" />
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</hlm-card>

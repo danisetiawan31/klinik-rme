@@ -159,12 +159,13 @@ describe('RekamMedisFormComponent', () => {
     expect(component.tindakanArray.length).toBe(1);
   });
 
-  it('should toggle history panel visibility', () => {
-    expect(component.showHistory()).toBe(false);
-    component.toggleHistory();
-    expect(component.showHistory()).toBe(true);
-    component.toggleHistory();
-    expect(component.showHistory()).toBe(false);
+  it('should render child SOAP subcomponents and patient header correctly', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('app-soap-patient-header')).toBeTruthy();
+    expect(compiled.querySelector('app-soap-subjective-section')).toBeTruthy();
+    expect(compiled.querySelector('app-soap-objective-section')).toBeTruthy();
+    expect(compiled.querySelector('app-soap-assessment-section')).toBeTruthy();
+    expect(compiled.querySelector('app-soap-plan-section')).toBeTruthy();
   });
 
   it('should submit valid rekam medis and navigate to /antrian on success', () => {

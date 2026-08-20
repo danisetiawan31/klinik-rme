@@ -1,0 +1,103 @@
+<hlm-card class="p-5 sm:p-6 border-border/80 shadow-xs">
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-5">
+    <div class="flex items-start gap-4">
+      <!-- Queue Number Badge -->
+      <div class="size-13 rounded-2xl bg-primary/10 border border-primary/20 flex flex-col items-center justify-center shrink-0 text-primary">
+        <span class="text-[10px] font-bold uppercase tracking-wider leading-none">Antrian</span>
+        <span class="text-xl font-heading font-black tabular-nums leading-tight">#{{ kunjungan()?.nomorAntrian }}</span>
+      </div>
+
+      <!-- Patient Identity Details -->
+      <div class="space-y-1">
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <h2 class="text-lg sm:text-xl font-heading font-bold text-foreground">
+            {{ pasien()?.nama }}
+          </h2>
+          @if (kunjungan()?.isPriority) {
+            <app-priority-badge />
+          }
+          <span hlmBadge variant="outline" class="text-xs uppercase font-mono text-muted-foreground">
+            {{ pasien()?.jenisKelamin === 'L' ? 'Laki-laki' : 'Perempuan' }}
+          </span>
+        </div>
+        <div class="flex items-center gap-4 text-xs text-muted-foreground flex-wrap">
+          <div class="flex items-center gap-1.5">
+            <span class="font-semibold text-foreground/80">NIK:</span>
+            <app-sensitive-value mode="display" [displayValue]="pasien()?.nik || '-'" />
+          </div>
+          <span class="text-border">•</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-semibold text-foreground/80">Tgl Lahir:</span>
+            <span>{{ pasien()?.tanggalLahir }}</span>
+          </div>
+          <span class="text-border">•</span>
+          <div class="flex items-center gap-1.5">
+            <span class="font-semibold text-foreground/80">No. Telp:</span>
+            <span>{{ pasien()?.noTelp || '-' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Toggle Button -->
+    <div class="flex items-center gap-2 self-start md:self-center">
+      <button
+        hlmBtn
+        variant="outline"
+        size="sm"
+        type="button"
+        (click)="toggleHistory()"
+        class="flex items-center gap-2 shrink-0 text-xs font-medium"
+      >
+        <ng-icon hlm size="xs" name="lucideHistory" aria-hidden="true" />
+        <span>{{ showHistory() ? 'Tutup Riwayat' : 'Riwayat Medis' }}</span>
+        <span hlmBadge variant="secondary" class="text-[10px] px-1.5 py-0 h-4 min-w-4 text-center">
+          {{ riwayatList().length }}
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Collapsible Patient Medical History Panel -->
+  @if (showHistory()) {
+    <div class="mt-5 pt-5 border-t border-border/80 space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+          <ng-icon hlm size="xs" name="lucideHistory" class="text-primary" aria-hidden="true" />
+          Riwayat Pemeriksaan Sebelumnya
+        </h3>
+        <span class="text-xs text-muted-foreground">Total: {{ riwayatList().length }} riwayat</span>
+      </div>
+
+      @if (riwayatList().length === 0) {
+        <div class="p-4 rounded-xl bg-muted/40 text-center text-xs text-muted-foreground">
+          Belum ada riwayat rekam medis terdahulu untuk pasien ini.
+        </div>
+      } @else {
+        <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
+          @for (item of riwayatList(); track item.kunjunganId) {
+            <div class="p-3.5 rounded-xl border border-border/60 bg-muted/20 text-xs space-y-1.5">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-foreground">Kunjungan: {{ formatDate(item.tanggal) }}</span>
+                @if (item.rekamMedis.isAddendum) {
+                  <span hlmBadge variant="secondary" class="text-[10px] px-1.5 py-0">Addendum</span>
+                }
+              </div>
+              <p class="text-muted-foreground">
+                <strong class="text-foreground">Keluhan:</strong> {{ item.rekamMedis.keluhan }}
+              </p>
+              <div class="text-muted-foreground">
+                <strong class="text-foreground">Diagnosis:</strong>
+                @for (d of item.rekamMedis.diagnosis; track d.id) {
+                  <span class="inline-block bg-muted px-1.5 py-0.5 rounded text-[11px] mr-1 mt-0.5 text-foreground">
+                    {{ d.kodeIcd ? '[' + d.kodeIcd + '] ' : '' }}{{ d.deskripsi }}
+                  </span>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</hlm-card>

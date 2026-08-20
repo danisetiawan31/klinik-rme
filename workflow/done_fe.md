@@ -392,3 +392,22 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - **Verifikasi**:
   - `npm test -- --run` → **44 test files, 233 tests PASS** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Penyelesaian Masalah P3 Frontend (Modularisasi Form SOAP Rekam Medis)
+
+- **Modularisasi Subkomponen Form SOAP (`RekamMedisFormComponent`)**:
+  - Mengurai template `rekam-medis-form.component.html` (~480 baris) menjadi 5 subkomponen modular dan terisolasi dengan OnPush change detection:
+    - `<app-soap-patient-header>`: Strip identitas pasien & drawer riwayat kunjungan terdahulu yang collapsible.
+    - `<app-soap-subjective-section>`: Section **S** (Anamnesis / Keluhan & Gejala Pasien) dengan visual badge initial S mono.
+    - `<app-soap-objective-section>`: Section **O** (Pemeriksaan Fisik & Tanda Vital Objektif) dengan visual badge initial O mono.
+    - `<app-soap-assessment-section>`: Section **A** (Diagnosis ICD-10 `FormArray`) dengan visual badge initial A mono.
+    - `<app-soap-plan-section>`: Section **P** (Tindakan Medis & Terapi Resep Obat `FormArray`) dengan visual badge initial P mono.
+  - Merampingkan template parent `rekam-medis-form.component.html` menjadi ~75 baris deklaratif.
+  - Menambahkan 11 unit test terdedikasi untuk subkomponen SOAP baru (`soap-patient-header`, `soap-subjective-section`, `soap-objective-section`, `soap-assessment-section`, `soap-plan-section`).
+  - Memperbarui Component Registry pada `docs/DESIGN.md`.
+- **Verifikasi**:
+  - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
+  - `npm run build` → **Build produksi sukses** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
