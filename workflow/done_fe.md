@@ -411,3 +411,20 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
   - `npm run build` → **Build produksi sukses** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Penyelesaian Tahap A: Penajaman Kontras, Surface Depth & Design Tokens
+
+- **Penyempurnaan Token Semantik & Surface Depth (`styles.css`)**:
+  - Menyatukan dan menormalisasi definisi token `:root` menjadi satu blok bersih dan konsisten:
+    - `--background`: Diperbarui menjadi *clean ultra-subtle canvas* (`oklch(0.985 0.005 215.0)`), mengeliminasi efek *mint washout* dan memberi kontras tegas terhadap kartu putih murni (`--card: oklch(1 0 0)`).
+    - `--foreground` & `--card-foreground`: Diperbarui menjadi slate gelap kontras tinggi (`oklch(0.205 0.035 225.0)` / `#0F172A`).
+    - `--border` & `--input`: Diperbarui menjadi neutral crisp structural border (`oklch(0.915 0.012 215.0)` / `#E2E8F0`).
+    - `--muted-foreground`: Ditingkatkan ke rasio kontras > 4.5:1 (WCAG AA) (`oklch(0.460 0.025 235.0)` / `#64748B`).
+    - `--shadow-1` s.d. `--shadow-4`: Ditingkatkan dengan multi-layer ambient diffusion modern untuk kedalaman visual yang halus dan profesional.
+  - Memperbarui dokumentasi design token warna pada `docs/DESIGN.md §2`.
+- **Verifikasi**:
+  - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
+  - `npm run build` → **Build produksi sukses** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.

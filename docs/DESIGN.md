@@ -47,15 +47,15 @@ Palet dasar "Medical Clinic" — teal sebagai primary, hijau kesehatan sebagai a
 | `secondary-foreground`         | `--color-secondary-foreground`   | `#0F172A` | `text-secondary-foreground`                    | Teks di atas secondary                          |
 | `accent`                       | `--color-accent`                 | `#16A34A` | `bg-accent`, `text-accent`, `border-accent`    | Sukses, status positif, CTA sekunder            |
 | `accent-foreground`            | `--color-accent-foreground`      | `#FFFFFF` | `text-accent-foreground`                       | Teks di atas accent                             |
-| `background`                   | `--color-background`             | `#F0FDFA` | `bg-background`                                | Latar halaman                                   |
-| `foreground`                   | `--color-foreground`             | `#134E4A` | `text-foreground`                              | Teks utama                                      |
-| `card`                         | `--color-card`                   | `#FFFFFF` | `bg-card`                                      | Latar card/panel                                |
-| `card-foreground`              | `--color-card-foreground`        | `#134E4A` | `text-card-foreground`                         | Teks di dalam card                              |
-| `muted`                        | `--color-muted`                  | `#E8F1F6` | `bg-muted`                                     | Latar elemen non-aktif/disabled                 |
-| `muted-foreground`             | `--color-muted-foreground`       | `#64748B` | `text-muted-foreground`                        | Teks sekunder, meta, state netral               |
-| `border`                       | `--color-border`                 | `#CCFBF1` | `border-border`                                | Border, divider                                 |
-| `input`                        | `--color-input`                  | `#CCFBF1` | `border-input`                                 | Border input (teal muda)                        |
-| `ring`                         | `--color-ring`                   | `#0891B2` | `ring-ring`, `outline-ring`                    | Focus ring (3–4px)                              |
+| `background`                   | `--color-background`             | `#F8FAFC` (Canvas neutral bersih) | `bg-background`                                | Latar halaman / canvas                          |
+| `foreground`                   | `--color-foreground`             | `#0F172A` (Slate gelap kontras tinggi) | `text-foreground`                              | Teks utama                                      |
+| `card`                         | `--color-card`                   | `#FFFFFF` | `bg-card`                                      | Latar card/panel terangkat (elevated)           |
+| `card-foreground`              | `--color-card-foreground`        | `#0F172A` | `text-card-foreground`                         | Teks di dalam card                              |
+| `muted`                        | `--color-muted`                  | `#F1F5F9` | `bg-muted`                                     | Latar elemen non-aktif/disabled                 |
+| `muted-foreground`             | `--color-muted-foreground`       | `#64748B` | `text-muted-foreground`                        | Teks sekunder, meta, state netral (WCAG AA >4.5:1) |
+| `border`                       | `--color-border`                 | `#E2E8F0` (Neutral crisp border)  | `border-border`                                | Border container, divider                       |
+| `input`                        | `--color-input`                  | `#E2E8F0`                         | `border-input`                                 | Border form input                               |
+| `ring`                         | `--color-ring`                   | `#0891B2`                         | `ring-ring`, `outline-ring`                    | Focus ring (2–3px)                              |
 | `destructive`                  | `--color-destructive`            | `#DC2626` | `bg-destructive`, `text-destructive`           | Error sungguhan, aksi destruktif                |
 | `destructive-foreground`       | `--color-destructive-foreground` | `#FFFFFF` | `text-destructive-foreground`                  | Teks di atas destructive                        |
 | `warning`                      | `--color-warning`                | `#D97706` | `bg-warning`, `text-warning`, `border-warning` | Menunggu/pending, perlu perhatian (bukan error) |
