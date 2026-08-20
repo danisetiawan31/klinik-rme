@@ -191,9 +191,9 @@
         <hlm-skeleton class="h-12 w-full rounded-lg" />
       </div>
     } @else if (filteredList().length === 0) {
-      <div class="p-8 text-center border border-border/60 rounded-xl bg-card">
+      <div class="p-8 text-center border border-border/70 rounded-2xl bg-card shadow-2xs">
         <ng-icon hlm size="lg" name="lucideFileText" class="text-muted-foreground/60 mx-auto mb-2" aria-hidden="true" />
-        <p class="text-sm font-semibold text-foreground">Tidak ada kunjungan di tab ini</p>
+        <p class="text-sm font-bold text-foreground">Tidak ada kunjungan di tab ini</p>
         <p class="text-xs text-muted-foreground mt-1">
           @if (activeTab() === 'dipanggil') {
             Belum ada pasien yang sedang dipanggil. Buka panel antrian untuk memanggil pasien berikutnya.
@@ -205,43 +205,45 @@
         </p>
       </div>
     } @else {
-      <div class="overflow-x-auto rounded-xl border border-border bg-card">
+      <div class="overflow-x-auto rounded-2xl border border-border bg-card shadow-2xs">
         <table class="w-full text-left text-xs border-collapse">
           <thead>
-            <tr class="border-b border-border/80 bg-muted/40 font-semibold text-muted-foreground">
-              <th class="p-3 w-20">No. Antrian</th>
-              <th class="p-3">Nama Pasien</th>
-              <th class="p-3 w-32">Kategori</th>
-              <th class="p-3 w-32">Status</th>
-              <th class="p-3 text-right w-48">Aksi</th>
+            <tr class="border-b border-border/80 bg-muted/30 font-bold text-foreground">
+              <th class="p-3.5 w-24">No. Antrian</th>
+              <th class="p-3.5">Nama Pasien</th>
+              <th class="p-3.5 w-36">Kategori</th>
+              <th class="p-3.5 w-36">Status</th>
+              <th class="p-3.5 text-right w-52">Aksi</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-border/60">
             @for (item of filteredList(); track item.id) {
-              <tr class="hover:bg-muted/30 transition-colors">
-                <td class="p-3 font-mono font-bold text-foreground">
-                  {{ formatQueueNumber(item.nomorAntrian) }}
+              <tr class="hover:bg-muted/40 transition-colors">
+                <td class="p-3.5">
+                  <span class="inline-flex items-center justify-center font-mono font-black text-xs bg-primary/10 border border-primary/25 text-primary px-2.5 py-0.5 rounded-lg tabular-nums shadow-2xs">
+                    {{ formatQueueNumber(item.nomorAntrian) }}
+                  </span>
                 </td>
-                <td class="p-3 font-semibold text-foreground">
+                <td class="p-3.5 font-semibold text-foreground text-xs sm:text-sm">
                   {{ item.pasienNama }}
                 </td>
-                <td class="p-3">
+                <td class="p-3.5">
                   @if (item.isPriority) {
-                    <app-priority-badge [reason]="item.priorityReason" />
+                    <app-priority-badge [reason]="item.priorityReason" size="sm" />
                   } @else {
-                    <span class="text-muted-foreground text-[11px]">Reguler</span>
+                    <span class="text-muted-foreground text-xs font-medium">Pasien Umum</span>
                   }
                 </td>
-                <td class="p-3">
-                  <app-status-badge [status]="item.status" />
+                <td class="p-3.5">
+                  <app-status-badge [status]="item.status" size="sm" />
                 </td>
-                <td class="p-3 text-right">
+                <td class="p-3.5 text-right">
                   @if (item.status === 'dipanggil') {
                     <a
                       hlmBtn
                       size="sm"
                       [routerLink]="['/rekam-medis/pemeriksaan', item.id]"
-                      class="gap-1 font-bold cursor-pointer"
+                      class="gap-1.5 font-bold cursor-pointer text-xs shadow-2xs"
                     >
                       <ng-icon hlm size="xs" name="lucideFileEdit" aria-hidden="true" />
                       <span>Isi SOAP</span>
@@ -252,13 +254,13 @@
                       variant="outline"
                       size="sm"
                       [routerLink]="['/rekam-medis/kunjungan', item.id]"
-                      class="gap-1 cursor-pointer"
+                      class="gap-1.5 cursor-pointer text-xs font-semibold border-border hover:bg-muted/60"
                     >
                       <ng-icon hlm size="xs" name="lucideFileText" aria-hidden="true" />
                       <span>Lihat RME / Addendum</span>
                     </a>
                   } @else {
-                    <span class="text-muted-foreground text-[11px]">Menunggu panggilan</span>
+                    <span class="text-muted-foreground text-xs font-mono">-</span>
                   }
                 </td>
               </tr>

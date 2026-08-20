@@ -13,7 +13,6 @@ import { RouterLink } from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
   lucideActivity,
-  lucideArrowRight,
   lucideCheckCircle2,
   lucideClock,
   lucideFileEdit,
@@ -67,7 +66,6 @@ import { PasienSearchItem } from '../../../pasien/pasien.types';
       lucideActivity,
       lucideCheckCircle2,
       lucideClock,
-      lucideArrowRight,
       lucideFileEdit,
       lucideUsers,
       lucideListOrdered,

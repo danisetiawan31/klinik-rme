@@ -23,7 +23,6 @@ import { toast } from '@spartan-ng/brain/sonner';
 import { formatJakartaDate, getJakartaTimeString } from '../../../../core/utils/date.utils';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
-import { HlmBadge } from '../../../../shared/ui/badge/src/lib/hlm-badge';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
@@ -46,7 +45,6 @@ import { AuditDiffViewerComponent } from '../audit-diff-viewer/audit-diff-viewer
     HlmButton,
     HlmInput,
     HlmLabel,
-    HlmBadge,
     NgIcon,
     HlmIconDirective,
     ...HlmAlertImports,

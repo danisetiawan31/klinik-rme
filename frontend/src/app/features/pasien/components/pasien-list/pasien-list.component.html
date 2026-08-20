@@ -1,28 +1,28 @@
 <!-- ── Page Wrapper (Zona Content — DESIGN.md §1.1) ── -->
-<div class="min-h-full p-6 bg-background">
+<div class="min-h-full p-4 sm:p-6 bg-background space-y-5">
   <!-- Header section -->
-  <div class="flex items-center justify-between mb-6 flex-wrap gap-4">
+  <div class="flex items-center justify-between flex-wrap gap-4">
     <div>
-      <h1 class="font-heading text-2xl font-bold text-foreground mb-1">
+      <h1 class="font-heading text-xl sm:text-2xl font-bold tracking-tight text-foreground">
         Pencarian &amp; Data Pasien
       </h1>
-      <p class="font-sans text-sm text-muted-foreground">
-        Cari data pasien berdasarkan Nama atau NIK.
+      <p class="text-xs sm:text-sm text-muted-foreground mt-0.5">
+        Cari data rekam medis pasien berdasarkan Nama atau 16 digit NIK.
       </p>
     </div>
 
     <a
       hlmBtn
       routerLink="/pasien/baru"
-      class="no-underline inline-flex items-center gap-2"
+      class="no-underline inline-flex items-center gap-2 font-semibold shadow-2xs cursor-pointer text-xs sm:text-sm"
     >
       <ng-icon hlm size="sm" name="lucidePlus" aria-hidden="true" />
-      Registrasi Pasien Baru
+      <span>Registrasi Pasien Baru</span>
     </a>
   </div>
 
   <!-- Search form card -->
-  <div class="bg-card border border-border rounded-md shadow-2 p-6 mb-6">
+  <div class="bg-card border border-border rounded-2xl shadow-2xs p-4 sm:p-5">
     <form
       [formGroup]="searchForm"
       class="grid grid-cols-1 sm:grid-cols-2 gap-4"
@@ -32,15 +32,18 @@
         <label
           hlmLabel
           for="search-nama"
+          class="text-xs font-semibold text-foreground flex items-center gap-1.5"
         >
-          Nama Pasien
+          <ng-icon hlm size="xs" name="lucideUser" class="text-muted-foreground" aria-hidden="true" />
+          <span>Nama Pasien</span>
         </label>
         <input
           hlmInput
           id="search-nama"
           type="text"
           formControlName="nama"
-          placeholder="Cari berdasarkan nama (min. 1 huruf)..."
+          placeholder="Cari berdasarkan nama pasien..."
+          class="w-full text-xs"
         />
       </div>
 
@@ -49,8 +52,10 @@
         <label
           hlmLabel
           for="search-nik"
+          class="text-xs font-semibold text-foreground flex items-center gap-1.5"
         >
-          NIK
+          <ng-icon hlm size="xs" name="lucideSearch" class="text-muted-foreground" aria-hidden="true" />
+          <span>Nomor Induk Kependudukan (NIK)</span>
         </label>
         <input
           hlmInput
@@ -59,32 +64,38 @@
           formControlName="nik"
           inputmode="numeric"
           maxlength="16"
-          placeholder="16 digit NIK..."
+          placeholder="Masukkan 16 digit NIK..."
+          class="w-full text-xs font-mono"
         />
       </div>
     </form>
   </div>
 
   <!-- Results section -->
-  <div class="bg-card border border-border rounded-md shadow-2 overflow-hidden">
+  <div class="bg-card border border-border rounded-2xl shadow-2xs overflow-hidden">
     @if (isLoading()) {
       <div hlmTableContainer>
         <table hlmTable>
-          <thead hlmTableHeader>
+          <thead hlmTableHeader class="bg-muted/30">
             <tr hlmTableRow>
-              <th hlmTableHead>NIK</th>
-              <th hlmTableHead>Nama Lengkap</th>
-              <th hlmTableHead>Tanggal Lahir</th>
-              <th hlmTableHead class="text-right">Aksi</th>
+              <th hlmTableHead class="w-48 font-bold text-xs">NIK</th>
+              <th hlmTableHead class="font-bold text-xs">Nama Lengkap</th>
+              <th hlmTableHead class="w-40 font-bold text-xs">Tanggal Lahir</th>
+              <th hlmTableHead class="text-right w-32 font-bold text-xs">Aksi</th>
             </tr>
           </thead>
           <tbody hlmTableBody>
             @for (i of [1, 2, 3, 4, 5]; track i) {
               <tr hlmTableRow>
-                <td hlmTableCell><hlm-skeleton class="h-5 w-32 rounded" /></td>
-                <td hlmTableCell><hlm-skeleton class="h-5 w-44 rounded" /></td>
-                <td hlmTableCell><hlm-skeleton class="h-5 w-28 rounded" /></td>
-                <td hlmTableCell class="text-right"><hlm-skeleton class="h-8 w-20 ml-auto rounded-full" /></td>
+                <td hlmTableCell><hlm-skeleton class="h-5 w-32 rounded-md" /></td>
+                <td hlmTableCell>
+                  <div class="flex items-center gap-3">
+                    <hlm-skeleton class="size-8 rounded-full" />
+                    <hlm-skeleton class="h-5 w-40 rounded-md" />
+                  </div>
+                </td>
+                <td hlmTableCell><hlm-skeleton class="h-5 w-28 rounded-md" /></td>
+                <td hlmTableCell class="text-right"><hlm-skeleton class="h-8 w-20 ml-auto rounded-lg" /></td>
               </tr>
             }
           </tbody>
@@ -97,13 +108,13 @@
           <hlm-empty-media variant="icon">
             <ng-icon hlm size="base" name="lucideSearch" class="text-muted-foreground" aria-hidden="true" />
           </hlm-empty-media>
-          <div hlmEmptyTitle>Tidak Ada Data Pasien</div>
-          <div hlmEmptyDescription>
+          <div hlmEmptyTitle class="font-bold text-foreground">Tidak Ada Data Pasien</div>
+          <div hlmEmptyDescription class="text-xs text-muted-foreground">
             Coba ubah kata kunci pencarian NIK atau nama pasien di atas, atau daftarkan pasien baru.
           </div>
         </hlm-empty-header>
         <hlm-empty-content>
-          <a hlmBtn routerLink="/pasien/baru" size="sm" class="no-underline">
+          <a hlmBtn routerLink="/pasien/baru" size="sm" class="no-underline text-xs font-semibold cursor-pointer shadow-2xs">
             Daftar Pasien Baru
           </a>
         </hlm-empty-content>
@@ -112,49 +123,59 @@
       <!-- Table list -->
       <div hlmTableContainer>
         <table hlmTable>
-          <thead hlmTableHeader>
+          <thead hlmTableHeader class="bg-muted/30">
             <tr hlmTableRow>
-              <th hlmTableHead>NIK</th>
-              <th hlmTableHead>Nama Lengkap</th>
-              <th hlmTableHead>Tanggal Lahir</th>
-              <th hlmTableHead class="text-right">Aksi</th>
+              <th hlmTableHead class="w-48 font-bold text-xs">NIK</th>
+              <th hlmTableHead class="font-bold text-xs">Nama Pasien</th>
+              <th hlmTableHead class="w-44 font-bold text-xs">Tanggal Lahir</th>
+              <th hlmTableHead class="text-right w-32 font-bold text-xs">Aksi</th>
             </tr>
           </thead>
           <tbody hlmTableBody>
             @for (pasien of items(); track pasien.id) {
               <tr
                 hlmTableRow
-                class="cursor-pointer"
+                class="cursor-pointer hover:bg-muted/40 transition-colors"
                 (click)="onSelectPasien(pasien.id)"
               >
                 <td hlmTableCell>
                   @if (pasien.nik) {
-                    <app-sensitive-value
-                      mode="display"
-                      [displayValue]="pasien.nik"
-                    />
+                    <div class="font-mono text-xs font-semibold text-foreground tracking-wider">
+                      <app-sensitive-value
+                        mode="display"
+                        [displayValue]="pasien.nik"
+                      />
+                    </div>
                   } @else {
-                    <span class="text-muted-foreground italic">
+                    <span class="text-xs text-muted-foreground italic">
                       (Tidak ada NIK)
                     </span>
                   }
                 </td>
-                <td hlmTableCell class="font-semibold text-foreground">
-                  {{ pasien.nama }}
+                <td hlmTableCell>
+                  <div class="flex items-center gap-3">
+                    <div class="size-8 rounded-full bg-primary/10 border border-primary/20 text-primary font-mono font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                      {{ getInitials(pasien.nama) }}
+                    </div>
+                    <div class="font-semibold text-xs sm:text-sm text-foreground">
+                      {{ pasien.nama }}
+                    </div>
+                  </div>
                 </td>
-                <td hlmTableCell class="text-muted-foreground">
+                <td hlmTableCell class="text-xs text-muted-foreground font-medium">
                   {{ formatDate(pasien.tanggalLahir) }}
                 </td>
                 <td hlmTableCell class="text-right">
                   <a
                     hlmBtn
-                    variant="secondary"
+                    variant="outline"
                     size="sm"
                     [routerLink]="['/pasien', pasien.id]"
-                    class="no-underline"
+                    class="no-underline text-xs font-semibold cursor-pointer border-border hover:bg-muted/60 inline-flex items-center"
                     (click)="$event.stopPropagation()"
                   >
-                    Detail &rarr;
+                    <ng-icon hlm size="xs" name="lucideEye" class="mr-1 text-primary" aria-hidden="true" />
+                    <span>Detail</span>
                   </a>
                 </td>
               </tr>

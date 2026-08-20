@@ -13,7 +13,13 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PaginationComponent } from '../../../../shared/components/pagination/pagination.component';
 import { SensitiveValueComponent } from '../../../../shared/components/sensitive-value/sensitive-value.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucidePlus, lucideSearch } from '@ng-icons/lucide';
+import {
+  lucideCalendar,
+  lucideEye,
+  lucidePlus,
+  lucideSearch,
+  lucideUser,
+} from '@ng-icons/lucide';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmEmptyImports } from '../../../../shared/ui/empty/src/index';
 import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
@@ -42,7 +48,15 @@ import { PasienSearchItem } from '../../pasien.types';
     ...HlmSkeletonImports,
     ...HlmTableImports,
   ],
-  providers: [provideIcons({ lucidePlus, lucideSearch })],
+  providers: [
+    provideIcons({
+      lucidePlus,
+      lucideSearch,
+      lucideEye,
+      lucideUser,
+      lucideCalendar,
+    }),
+  ],
   templateUrl: './pasien-list.component.html',
 })
 export class PasienListComponent implements OnInit {
@@ -131,17 +145,24 @@ export class PasienListComponent implements OnInit {
     this.router.navigate(['/pasien', id]);
   }
 
-  formatDate(isoDateStr: string): string {
-    if (!isoDateStr) return '-';
+  formatDate(dateStr: string | null | undefined): string {
+    if (!dateStr) return '-';
     try {
-      const d = new Date(isoDateStr);
+      const d = new Date(dateStr);
       return d.toLocaleDateString('id-ID', {
         day: 'numeric',
-        month: 'long',
+        month: 'short',
         year: 'numeric',
       });
     } catch {
-      return isoDateStr;
+      return dateStr;
     }
+  }
+
+  getInitials(name: string | null | undefined): string {
+    if (!name) return 'P';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 }

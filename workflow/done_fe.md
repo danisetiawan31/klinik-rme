@@ -496,3 +496,23 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
   - `npm run build` → **Build produksi sukses** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Tahap D: Data Density & High-Scanability Tables
+
+- **Penyempurnaan Visual & Data Density**:
+  - `PasienListComponent`:
+    - Mengintegrasikan avatar inisial nama (*Initials Badge*) per pasien (`BS`, `AS`) dengan background `bg-primary/10 text-primary border-primary/20`.
+    - Format NIK sensitif monospace tabular berjarak rapi (`font-mono text-xs`).
+    - Merapikan table rows dengan hover elevation `hover:bg-muted/40` dan tombol aksi taktil `Detail &rarr;`.
+  - `RekamMedisListComponent`:
+    - Memoles badge nomor antrian menjadi monospace 3-digit zero-padded `#007` dengan border shadow.
+    - Menyeragamkan status badge dan priority badge pasien.
+  - `AdminAuditLogComponent`:
+    - Memoles badge tabel target (`rekam_medis` purple vs `pasien` sky) dan badge aksi semantik (`insert` emerald, `update` amber).
+    - Merapikan baris log dengan timestamp berikon jam dan tombol `Lihat Diff`.
+- **Verifikasi**:
+  - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
+  - `npm run build` → **Build produksi sukses** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
