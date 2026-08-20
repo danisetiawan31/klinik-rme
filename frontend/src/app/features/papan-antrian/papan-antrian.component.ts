@@ -30,6 +30,7 @@ import {
 } from '../../core/utils/date.utils';
 import { ConnectionStatusIndicatorComponent } from '../../shared/components/connection-status-indicator/connection-status-indicator.component';
 import { PriorityBadgeComponent } from '../../shared/components/priority-badge/priority-badge.component';
+import { StatusBadgeComponent } from '../../shared/components/status-badge/status-badge.component';
 import { HlmAlertImports } from '../../shared/ui/alert/src/index';
 import { HlmBadge } from '../../shared/ui/badge/src/lib/hlm-badge';
 import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
@@ -52,6 +53,7 @@ export const DISPLAY_TOKEN_STORAGE_KEY = 'klinik_display_token';
     FormsModule,
     ConnectionStatusIndicatorComponent,
     PriorityBadgeComponent,
+    StatusBadgeComponent,
     HlmButton,
     HlmInput,
     HlmLabel,

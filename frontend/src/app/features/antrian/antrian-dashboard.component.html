@@ -61,16 +61,16 @@
   </div>
 
   <!-- Main Content: Queue Table & List -->
-  <div class="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
-    <div class="px-6 py-4 border-b border-border flex items-center justify-between">
+  <div class="bg-card border border-border rounded-2xl shadow-2xs overflow-hidden">
+    <div class="px-5 sm:px-6 py-4 border-b border-border/80 flex items-center justify-between bg-muted/20">
       <div class="flex items-center gap-2">
-        <h2 class="font-semibold text-foreground">Urutan Antrian Hari Ini</h2>
-        <span class="text-xs font-normal text-muted-foreground">
+        <h2 class="font-heading font-bold text-foreground text-sm sm:text-base">Urutan Antrian Hari Ini</h2>
+        <span class="text-xs font-mono font-semibold text-muted-foreground">
           ({{ sortedAntrian().length }} pasien)
         </span>
       </div>
       @if (isLoading()) {
-        <span class="text-xs text-muted-foreground animate-pulse">
+        <span class="text-xs text-muted-foreground animate-pulse font-medium">
           Memperbarui data...
         </span>
       }
@@ -81,24 +81,24 @@
         <table hlmTable>
           <thead hlmTableHeader>
             <tr hlmTableRow>
-              <th hlmTableHead class="w-24">No. Antrian</th>
+              <th hlmTableHead class="w-28">No. Antrian</th>
               <th hlmTableHead>Nama Pasien</th>
               <th hlmTableHead class="w-36">Status</th>
               <th hlmTableHead class="w-28 text-center">Dilewati</th>
               @if (hasAnyAction()) {
-                <th hlmTableHead class="text-right w-44">Aksi</th>
+                <th hlmTableHead class="text-right w-48">Aksi</th>
               }
             </tr>
           </thead>
           <tbody hlmTableBody>
             @for (i of [1, 2, 3, 4]; track i) {
               <tr hlmTableRow>
-                <td hlmTableCell><hlm-skeleton class="h-6 w-12 rounded" /></td>
+                <td hlmTableCell><hlm-skeleton class="h-7 w-16 rounded-lg" /></td>
                 <td hlmTableCell><hlm-skeleton class="h-5 w-40 rounded" /></td>
                 <td hlmTableCell><hlm-skeleton class="h-6 w-24 rounded-full" /></td>
-                <td hlmTableCell class="text-center"><hlm-skeleton class="h-5 w-8 mx-auto rounded" /></td>
+                <td hlmTableCell class="text-center"><hlm-skeleton class="h-5 w-12 mx-auto rounded" /></td>
                 @if (hasAnyAction()) {
-                  <td hlmTableCell class="text-right"><hlm-skeleton class="h-8 w-20 ml-auto rounded-full" /></td>
+                  <td hlmTableCell class="text-right"><hlm-skeleton class="h-8 w-24 ml-auto rounded-xl" /></td>
                 }
               </tr>
             }
@@ -112,8 +112,8 @@
           <hlm-empty-media variant="icon">
             <ng-icon hlm size="base" name="lucideInbox" class="text-muted-foreground" aria-hidden="true" />
           </hlm-empty-media>
-          <div hlmEmptyTitle>Belum ada antrian hari ini</div>
-          <div hlmEmptyDescription>
+          <div hlmEmptyTitle class="font-bold text-foreground">Belum ada antrian hari ini</div>
+          <div hlmEmptyDescription class="text-xs text-muted-foreground">
             Pasien yang didaftarkan ke antrian klinik hari ini akan muncul secara otomatis di daftar ini.
           </div>
         </hlm-empty-header>
@@ -122,26 +122,28 @@
       <!-- Queue Table -->
       <div hlmTableContainer>
         <table hlmTable>
-          <thead hlmTableHeader>
+          <thead hlmTableHeader class="bg-muted/30">
             <tr hlmTableRow>
-              <th hlmTableHead class="w-24">No. Antrian</th>
-              <th hlmTableHead>Nama Pasien</th>
-              <th hlmTableHead class="w-36">Status</th>
-              <th hlmTableHead class="w-28 text-center">Dilewati</th>
+              <th hlmTableHead class="w-28 font-bold text-xs">No. Antrian</th>
+              <th hlmTableHead class="font-bold text-xs">Nama Pasien</th>
+              <th hlmTableHead class="w-36 font-bold text-xs">Status</th>
+              <th hlmTableHead class="w-32 text-center font-bold text-xs">Dilewati</th>
               @if (hasAnyAction()) {
-                <th hlmTableHead class="text-right w-44">Aksi</th>
+                <th hlmTableHead class="text-right w-48 font-bold text-xs">Aksi</th>
               }
             </tr>
           </thead>
           <tbody hlmTableBody>
             @for (item of sortedAntrian(); track item.id) {
-              <tr hlmTableRow>
-                <td hlmTableCell class="font-mono font-bold text-base text-foreground tabular-nums">
-                  #{{ item.nomorAntrian }}
+              <tr hlmTableRow class="hover:bg-muted/40 transition-colors">
+                <td hlmTableCell>
+                  <span class="inline-flex items-center justify-center font-mono font-black text-xs sm:text-sm bg-primary/10 border border-primary/25 text-primary px-2.5 py-1 rounded-lg tabular-nums shadow-2xs">
+                    #{{ formatQueue(item.nomorAntrian) }}
+                  </span>
                 </td>
                 <td hlmTableCell>
                   <div class="flex items-center gap-2 flex-wrap">
-                    <span class="font-medium text-foreground">{{ item.pasienNama }}</span>
+                    <span class="font-semibold text-foreground text-xs sm:text-sm">{{ item.pasienNama }}</span>
                     @if (item.isPriority) {
                       <app-priority-badge [reason]="item.priorityReason" />
                     }
@@ -152,11 +154,11 @@
                 </td>
                 <td hlmTableCell class="text-center">
                   @if (item.skipCount && item.skipCount > 0) {
-                    <span class="text-xs font-medium text-warning-foreground bg-muted border border-border px-2 py-0.5 rounded tabular-nums">
+                    <span class="inline-flex items-center text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-500/10 border border-amber-500/25 px-2 py-0.5 rounded-md tabular-nums shadow-2xs">
                       {{ item.skipCount }}x
                     </span>
                   } @else {
-                    <span class="text-xs text-muted-foreground">-</span>
+                    <span class="text-xs text-muted-foreground font-mono">-</span>
                   }
                 </td>
                 @if (hasAnyAction()) {
@@ -169,7 +171,7 @@
                           variant="default"
                           size="sm"
                           [routerLink]="['/rekam-medis/pemeriksaan', item.id]"
-                          class="flex items-center gap-1.5"
+                          class="flex items-center gap-1.5 cursor-pointer font-semibold shadow-2xs text-xs"
                           title="Periksa pasien dan catat rekam medis"
                         >
                           <ng-icon hlm size="xs" name="lucideStethoscope" aria-hidden="true" />
@@ -177,11 +179,12 @@
                         </a>
                         <button
                           hlmBtn
-                          variant="secondary"
+                          variant="outline"
                           size="sm"
                           type="button"
                           (click)="onLewati(item)"
                           [disabled]="isSubmittingAction()"
+                          class="cursor-pointer border-border hover:bg-muted/60 text-xs font-semibold"
                           title="Lewati pasien dan kembalikan ke status menunggu"
                         >
                           Lewati
@@ -195,7 +198,7 @@
                           variant="outline"
                           size="sm"
                           [routerLink]="['/rekam-medis/kunjungan', item.id]"
-                          class="text-xs"
+                          class="text-xs font-semibold cursor-pointer border-border hover:bg-muted/60"
                           title="Lihat rekam medis kunjungan ini"
                         >
                           Lihat RME
@@ -211,6 +214,7 @@
                           type="button"
                           (click)="openConfirmTidakHadir(item)"
                           [disabled]="isSubmittingAction()"
+                          class="cursor-pointer text-xs font-semibold shadow-2xs"
                           title="Tandai pasien tidak hadir secara permanen"
                         >
                           Tidak Hadir

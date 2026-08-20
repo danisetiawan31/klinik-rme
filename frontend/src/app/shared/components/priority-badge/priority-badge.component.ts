@@ -9,8 +9,8 @@ import {
   lucideAccessibility,
   lucideActivity,
   lucideBaby,
-  lucideFlag,
   lucideHeart,
+  lucideStar,
   lucideUserCheck,
 } from '@ng-icons/lucide';
 import { HlmBadge } from '../../ui/badge/src/lib/hlm-badge';
@@ -25,7 +25,7 @@ export type PriorityBadgeSize = 'default' | 'sm' | 'xs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     provideIcons({
-      lucideFlag,
+      lucideStar,
       lucideUserCheck,
       lucideBaby,
       lucideHeart,
@@ -47,7 +47,7 @@ export class PriorityBadgeComponent {
     if (r.includes('hamil')) return 'lucideHeart';
     if (r.includes('disabilitas') || r.includes('kursi roda')) return 'lucideAccessibility';
     if (r.includes('darurat') || r.includes('kritis') || r.includes('medis')) return 'lucideActivity';
-    return 'lucideFlag';
+    return 'lucideStar';
   });
 
   readonly displayLabel = computed(() => {

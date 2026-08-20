@@ -475,3 +475,24 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
   - `npm run build` → **Build produksi sukses** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Tahap B: Operational Command Center & Papan Antrian
+
+- **Penyempurnaan Visual & Operasional**:
+  - `PriorityBadgeComponent`:
+    - Mengganti ikon fallback prioritas dari `lucideFlag` menjadi `lucideStar` (bintang emas/ungu) yang jauh lebih universal, ramah, dan intuitif untuk status pasien prioritas.
+  - `AntrianDashboardComponent`:
+    - Mengintegrasikan chip nomor antrian zero-padded 3-digit `#007` dengan font-mono tebal dan kontras tinggi (`bg-primary/10 text-primary border-primary/25`).
+    - Merapikan badge dilewati / no-show (`Dilewati 2x`) dengan amber pill styling yang jelas.
+    - Menghaluskan baris tabel antrian dengan hover transitions (`hover:bg-muted/40`) dan tombol aksi (Periksa, Lewati, Tidak Hadir) yang berinteraksi taktil.
+  - `PapanAntrianComponent`:
+    - Memoles card panggilan dominan dengan background surface radial glow (`from-card via-card to-primary/5`), nomor antrian masif monospace zero-padded `#007`, label tujuan *"Silakan Menuju ke Ruang Pemeriksaan Poli"*, dan ripple indicator.
+    - Menyelaraskan badge `Menunggu` pada daftar antrian dengan `app-status-badge` (`lucideClock` timer amber) sehingga 100% seragam dengan seluruh dashboard klinik.
+    - Memperjelas daftar antrian menunggu di sisi kanan dengan badge urutan giliran (`#1`, `#2`), alasan prioritas spesifik, dan counter pasien menunggu.
+    - Memperkuat status konektivitas real-time pada footer papan TV.
+- **Verifikasi**:
+  - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
+  - `npm run build` → **Build produksi sukses** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.

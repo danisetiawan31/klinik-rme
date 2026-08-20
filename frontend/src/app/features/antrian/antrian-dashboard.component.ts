@@ -292,4 +292,8 @@ export class AntrianDashboardComponent implements OnInit {
       },
     });
   }
+
+  formatQueue(num: number | undefined | null): string {
+    return num != null ? String(num).padStart(3, '0') : '000';
+  }
 }
