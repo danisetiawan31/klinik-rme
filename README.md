@@ -35,6 +35,60 @@ Surat Edaran Bersama (BPJS Kesehatan, Kemenkes, Kemendagri, KPK, BSSN — 30 Jul
 
 ---
 
+## 📸 Preview Antarmuka & Showcase Fitur
+
+Sistem dirancang dengan antarmuka modern berkepadatan data tinggi (*high scanability*), transisi taktil responsif, dan isolasi role yang ketat:
+
+### 1️⃣ Papan Antrian TV (Layar Ruang Tunggu Publik)
+> Antarmuka publik resolusi tinggi untuk layar TV ruang tunggu klinik dengan pembaruan otomatis via WebSocket (*real-time invalidation ping*) dan proteksi *Display Token*.
+
+<div align="center">
+  <img src="frontend/public/images/papan-antrian.png" alt="Papan Antrian TV Ruang Tunggu" width="100%" />
+</div>
+
+- **Dual-Pane 12-Kolom**: Hero nomor panggilan aktif berukuran ekstra besar di sisi kiri dan daftar antrian menunggu urut di sisi kanan.
+- **Otentikasi Mandiri TV**: Menggunakan token display terpisah (`X-Display-Token` / query parameter) tanpa bergantung pada sesi login staf klinik.
+
+---
+
+### 2️⃣ Dashboard & Workbench Dokter (Ruang Konsultasi)
+> Panel kerja klinis dokter untuk pemanggilan pasien berikutnya, ringkasan beban kerja harian, dan akses langsung ke rekam medis elektronik (RME).
+
+<div align="center">
+  <img src="frontend/public/images/dokter-beranda.png" alt="Dashboard & Workbench Dokter" width="100%" />
+</div>
+
+- **Panggilan Non-Blocking**: Klaim pasien berikutnya secara atomik menggunakan PostgreSQL `FOR UPDATE SKIP LOCKED` sehingga dokter lain tidak pernah terblokir.
+- **Statistik & Triase Real-Time**: Visualisasi jumlah pasien menunggu, sedang diperiksa, dan selesai dengan indikator prioritas (Lansia, Anak, Disabilitas).
+- **Pencarian Riwayat Cepat**: Cari dan buka rekam medis pasien sebelumnya secara instan menggunakan pencarian debounce NIK/Nama.
+
+---
+
+### 3️⃣ Antrian & Loket Petugas Pendaftaran
+> Pusat kendali loket pendaftaran untuk penerbitan nomor antrian baru, triase pasien, dan pemanggilan antrian loket.
+
+<div align="center">
+  <img src="frontend/public/images/petugas-antrian.png" alt="Antrian & Loket Petugas Pendaftaran" width="100%" />
+</div>
+
+- **Atomic Counter Engine**: Penerbitan nomor tiket antrian urut anti-duplikasi via `INSERT ... ON CONFLICT DO UPDATE RETURNING`.
+- **Manajemen Status & Triase**: Pengaturan prioritas pasien, pemanggilan ulang, penandaan lewati (*skip count*), dan pencatatan kehadiran.
+
+---
+
+### 4️⃣ Jejak Audit & Integritas Data Admin (Audit Trail)
+> Panel transparansi administratif untuk audit mutasi data sensitif (biodata pasien & rekam medis) yang dilindungi rantai kriptografis *tamper-evident*.
+
+<div align="center">
+  <img src="frontend/public/images/admin-audit.png" alt="Jejak Audit & Integritas Data Admin" width="100%" />
+</div>
+
+- **Sleek Unified Filter Toolbar**: Toolbar filter terpadu satu baris dengan leading icon untuk pencarian instan berdasarkan tabel target, Record ID, atau Actor ID.
+- **Rantai Hash SHA-256**: Setiap perubahan data terhubung ke entri sebelumnya dan divalidasi oleh database trigger anti-manipulasi.
+- **Diff Viewer Interaktif**: Inspeksi perbandingan nilai sebelum (*before*) dan sesudah (*after*) perubahan secara transparan.
+
+---
+
 ## 🏛️ Arsitektur Sistem
 
 ```mermaid
@@ -185,6 +239,19 @@ RETURNING last_number;
 ```
 
 ### 2️⃣ Klaim Antrian Dokter — SKIP LOCKED (Non-Blocking)
+
+```mermaid
+graph LR
+    subgraph Queue ["Daftar Antrian Menunggu"]
+        P1["Pasien #007 (⭐ Prioritas)"]
+        P2["Pasien #008 (Reguler)"]
+    end
+    D1["👨‍⚕️ Dokter A\nPOST /panggil-berikutnya"] -->|SKIP LOCKED| P1
+    D2["👨‍⚕️ Dokter B\nPOST /panggil-berikutnya"] -->|SKIP LOCKED| P2
+    P1 -->|Klaim Atomik| D1
+    P2 -->|Klaim Paralel| D2
+```
+
 ```sql
 -- Dua dokter bisa klaim pasien berbeda secara paralel tanpa saling tunggu
 -- Prioritas: is_priority DESC → skip_count ASC → nomor_antrian ASC
@@ -199,6 +266,15 @@ WHERE id = (
 ```
 
 ### 3️⃣ Audit Hash-Chain — FOR UPDATE Sequential (Blocking)
+
+```mermaid
+graph LR
+    G["Genesis Hash\nSHA-256('klinik-rme-genesis')"] --> E1["Audit Entry #1\nSHA-256(G + Data1)"]
+    E1 --> E2["Audit Entry #2\nSHA-256(E1 + Data2)"]
+    E2 --> E3["Audit Entry #3\nSHA-256(E2 + Data3)"]
+    E3 -.->|Lock FOR UPDATE| Tail[("audit_log_tail\n(Singleton id=1)")]
+```
+
 ```sql
 -- Bukan SKIP LOCKED — chain harus sekuensial ketat, tidak boleh lompat
 -- Satu transaksi atomik: [write bisnis] + [lock tail] + [insert log] + [update tail]
@@ -211,6 +287,14 @@ COMMIT;
 ```
 
 ### 4️⃣ Versi Terkini Rekam Medis — Leaf Traverse Query
+
+```mermaid
+graph LR
+    R1["Rekam Medis Awal (v1)\nid: 101, addendum_of: null"] --> R2["Addendum Koreksi (v2)\nid: 105, addendum_of: 101"]
+    R2 --> R3["Addendum Terkini (v3 — Daun Aktif)\nid: 110, addendum_of: 105"]
+    R3 -.-> Query["Leaf Query (NOT EXISTS) → Mengembalikan v3"]
+```
+
 ```sql
 -- Bukan flag is_latest (bisa de-sync) — cari yang tidak punya penerus aktif
 SELECT r.* FROM rekam_medis r
@@ -221,9 +305,6 @@ WHERE r.kunjungan_id = $1
     WHERE r2.addendum_of = r.id AND r2.deleted_at IS NULL  -- tidak ada yang menunjuk ke r
   )
 ORDER BY r.created_at DESC LIMIT 1;
-
--- DB juga menjaga integritas via partial unique index:
--- CREATE UNIQUE INDEX uq_addendum_of_active ON rekam_medis (addendum_of) WHERE deleted_at IS NULL;
 ```
 
 ---
@@ -241,57 +322,19 @@ Walaupun aplikasi ini bekerja sebagai sistem internal mandiri (*standalone*), sk
 | `tindakan` | `Procedure` / `MedicationRequest` | `jenis='tindakan'` → `Procedure`, `jenis='resep'` → `MedicationRequest` | Pemisahan resep obat dan tindakan medis per kunjungan |
 | `audit_log` | `AuditEvent` | `actor_user_id` → `agent`, `tabel_target` → `entity`, `hash_entry` → `security label` | Jejak rekam aktivitas medis anti-manipulasi |
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 📋 CLINICAL EMR WORKSPACE — 5-STAGE MODULAR SOAP ARCHITECTURE               │
-├──────────────┬──────────────────────────────────────────────────────────────┤
-│ [Header]     │ No. Antrian #007 · NIK Tabular · Status Badge · Riwayat Pasien│
-│ [S] Anamnesis│ Keluhan Utama & Riwayat Perjalanan Penyakit Sekarang (RPS)   │
-│ [O] Objektif │ Tanda Vital: TD (mmHg), Nadi (bpm), Suhu (°C), RR, TB/BB     │
-│ [A] Asesmen  │ Diagnosis Primer & Sekunder terstandar ICD-10 (FormArray)    │
-│ [P] Plan     │ Resep Obat (R/ Signa) + Tindakan Medis (Rx) + Edukasi Pasien │
-└──────────────┴──────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 📺 Papan Antrian TV & Command Center Real-Time
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 📺 PAPAN ANTRIAN TV (/papan-antrian) — 12-COLUMN DUAL VIEW REAL-TIME        │
-├──────────────────────────────────────────┬──────────────────────────────────┤
-│ 🔊 HERO PANGGILAN AKTIF (Col 1-7)        │ 📋 DAFTAR TUNGGU URUT (Col 8-12) │
-│                                          │                                  │
-│   NOMOR ANTRIAN DIPANGGIL                │  #1  [ #008 ] Bpk. Ahmad (⭐)     │
-│   ┌────────────────────────────────────┐ │      Menunggu · Prioritas Lansia │
-│   │               #007                 │ │                                  │
-│   └────────────────────────────────────┘ │  #2  [ #009 ] Ibu Siti           │
-│   "Silakan Menuju Ruang Periksa Poli"    │      Menunggu 5 menit            │
-│   dr. Budi Santoso (Poli Umum)           │  ...                             │
-├──────────────────────────────────────────┴──────────────────────────────────┤
-│ ⚡ WEBSOCKET: Invalidation Ping Sync · Audio Caller Ready · Display Token Auth│
-└─────────────────────────────────────────────────────────────────────────────┘
-```
-
 ---
 
 ## 🛡️ Observabilitas & Sanitasi Error (Zero Data Leakage)
 
-Untuk melindungi privasi data medis pasien (NIK, riwayat penyakit) dari kebocoran yang tidak disengaja lewat response HTTP atau pesan error:
+Untuk melindungi privasi data medis pasien (NIK, riwayat klinis) dari kebocoran yang tidak disengaja lewat response HTTP atau pesan error:
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  Standardized Error Envelope                                                │
-├─────────────────────────────────────────────────────────────────────────────┤
-│  {                                                                          │
-│    "error": {                                                               │
-│      "code": "NIK_DUPLICATE",                                               │
-│      "message": "NIK sudah terdaftar dalam sistem",                         │
-│      "requestId": "550e8400-e29b-41d4-a716-446655440000"                    │
-│    }                                                                        │
-│  }                                                                          │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Server ["Backend Security & Error Sanitizer"]
+        Err["🐘 PostgreSQL Error\n(Constraint Violation / NIK)"] --> Sanitizer["⚡ Error Sanitizer"]
+        Sanitizer -->|Catat Detail & Stack Trace| Log[("📁 Server Audit Log\nrequestId: 550e8400...")]
+    end
+    Sanitizer -->|Response Publik Aman| Client["🌐 Client Response\n{ code, message, requestId }"]
 ```
 
 - **Pesan Bersih untuk Client**: `message` dikurasi per `code` bisnis. Raw error basis data (seperti pesan constraint violation PostgreSQL yang berpotensi memuat string NIK/nama) **dilarang nembus ke client**.
@@ -398,24 +441,33 @@ sequenceDiagram
 
 ## 🔐 Model Keamanan & Token
 
+```mermaid
+graph LR
+    subgraph ClientLayer ["Client / Browser"]
+        StaffCookie["🍪 Cookie httpOnly (SameSite=Strict)\nToken Sesi Mentah (128-bit)"]
+        TVHeader["📺 Header: X-Display-Token\nDisplay Token Mentah"]
+    end
+    subgraph ServerLayer ["Go Backend Middleware"]
+        Hasher["⚡ SHA-256 Hasher\n(crypto/sha256)"]
+    end
+    subgraph DBLayer ["PostgreSQL (Zero Plaintext Token)"]
+        DBSession[("sessions\nid_hash: SHA256(token)")]
+        DBKlinik[("klinik\ndisplay_token_hash: SHA256(token)")]
+    end
+    StaffCookie --> Hasher
+    TVHeader --> Hasher
+    Hasher -->|Lookup Hash| DBSession
+    Hasher -->|Lookup Hash| DBKlinik
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  Token Storage Rules — "DB tidak pernah menyimpan token mentah"             │
-├──────────────────┬──────────────────┬───────────────────────────────────────┤
-│ Jenis Token      │ Disimpan di DB   │ Token Mentah Ada Di...                │
-├──────────────────┼──────────────────┼───────────────────────────────────────┤
-│ Session staff    │ SHA256(token)    │ Cookie httpOnly (tidak bisa dibaca JS) │
-│ Invite user      │ SHA256(token)    │ Email link + response admin (1 kali)  │
-│ Reset password   │ SHA256(token)    │ Email link SAJA (tidak pernah di API) │
-│ Display token TV │ SHA256(token)    │ Response admin saat regenerate (1×)   │
-└──────────────────┴──────────────────┴───────────────────────────────────────┘
 
-Cookie: httpOnly + Secure + SameSite=Strict
-Session: Sliding expiry + absolute_expires_at 24 jam (hard cap)
-Password: Bcrypt cost 12 | Random token: crypto/rand 128-bit entropy base64url
-```
+| Jenis Token | Disimpan di DB | Token Mentah Berada Di... | Masa Berlaku (TTL) |
+| :--- | :--- | :--- | :--- |
+| **Session Staf** | `SHA256(token)` | Cookie `httpOnly`, `SameSite=Strict` | Sliding + Hard Cap 24 Jam |
+| **Undangan Pengguna** | `SHA256(token)` | Email link + Response Admin (1×) | 7 Hari |
+| **Reset Password** | `SHA256(token)` | Email link SAJA (*zero API leak*) | 1 Jam |
+| **Display Token TV** | `SHA256(token)` | Response Admin saat regenerate (1×) | Permanen sampai rotasi |
 
-**Anti-User-Enumeration:** `POST /auth/forgot-password` selalu return `200` generik, terlepas email terdaftar atau tidak. Token reset **tidak pernah** dikembalikan di response — hanya dikirim ke inbox email.
+> **Anti-User-Enumeration:** `POST /auth/forgot-password` selalu mengembalikan status `200` generik terlepas dari apakah email terdaftar atau tidak. Token reset tidak pernah dikembalikan ke antarmuka web, hanya dikirimkan via inbox email melalui Resend API.
 
 ---
 
