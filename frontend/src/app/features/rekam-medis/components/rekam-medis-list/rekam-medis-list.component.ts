@@ -21,6 +21,7 @@ import {
   lucidePlus,
   lucideSearch,
   lucideStethoscope,
+  lucideUser,
   lucideUserCheck,
   lucideUsers,
 } from '@ng-icons/lucide';
@@ -70,6 +71,7 @@ import { PasienSearchItem } from '../../../pasien/pasien.types';
       lucideUsers,
       lucideListOrdered,
       lucidePlus,
+      lucideUser,
       lucideUserCheck,
     }),
   ],

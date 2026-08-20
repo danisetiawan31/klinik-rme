@@ -510,8 +510,16 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
     - Memoles badge nomor antrian menjadi monospace 3-digit zero-padded `#007` dengan border shadow.
     - Menyeragamkan status badge dan priority badge pasien.
   - `AdminAuditLogComponent`:
+    - Menggabungkan kolom `ID & Waktu` menjadi 1 baris inline (`#ID` monospace badge + timestamp jam).
+    - Mengganti tombol `Filter` dan `Reset` form menjadi icon-only buttons (`lucideFilter` & `lucideRotateCcw`) yang ringkas dan scannable.
+    - Memoles kolom `Aktor` menjadi badge pill terstruktur (`User #ID`) dengan icon user.
     - Memoles badge tabel target (`rekam_medis` purple vs `pasien` sky) dan badge aksi semantik (`insert` emerald, `update` amber).
-    - Merapikan baris log dengan timestamp berikon jam dan tombol `Lihat Diff`.
+    - Merapikan baris log dengan tombol `Lihat Diff`.
+  - `AdminDashboardComponent`:
+    - Menghapus badge indikator admin yang redundan di header dashboard.
+  - `RekamMedisListComponent`, `DoctorDashboardComponent`, `PetugasDashboardComponent`:
+    - Mengganti label teks biasa `Pasien Umum` menjadi badge pill terstruktur (`Umum` berikon `lucideUser`) yang seragam dengan `app-priority-badge`.
+    - Menyelaraskan quick stat `Menunggu` pada header rekam medis dokter ke warna amber semantik (`bg-amber-500/10 border-amber-500/25 text-amber-700`).
 - **Verifikasi**:
   - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
   - `npm run build` → **Build produksi sukses** (exit 0).

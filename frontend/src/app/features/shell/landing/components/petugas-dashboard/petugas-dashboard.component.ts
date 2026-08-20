@@ -7,6 +7,7 @@ import {
   lucideClock,
   lucideInbox,
   lucideListOrdered,
+  lucideUser,
   lucideUserPlus,
   lucideUsers,
 } from '@ng-icons/lucide';
@@ -41,6 +42,7 @@ import { LandingKpiCardComponent } from '../landing-kpi-card/landing-kpi-card.co
       lucideCheckCircle2,
       lucideAlertCircle,
       lucideInbox,
+      lucideUser,
     }),
   ],
   templateUrl: './petugas-dashboard.component.html',

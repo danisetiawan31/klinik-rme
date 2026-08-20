@@ -9,7 +9,7 @@
 [![Angular](https://img.shields.io/badge/Angular_21-Standalone_%26_Signals-DD0031?style=flat-square&logo=angular)](https://angular.dev/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-sqlc_%26_pgx_v5-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Tailwind v4](https://img.shields.io/badge/Tailwind_CSS_v4-Spartan_UI-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Tests](https://img.shields.io/badge/Tests-229_Unit_%2B_17_E2E_%2B_Real_DB-22c55e?style=flat-square&logo=vitest)](https://vitest.dev/)
+[![Tests](https://img.shields.io/badge/Tests-244_Unit_%2B_17_E2E_%2B_Real_DB-22c55e?style=flat-square&logo=vitest)](https://vitest.dev/)
 [![E2E](https://img.shields.io/badge/Playwright-Headless_E2E_Automated-45ba4b?style=flat-square&logo=playwright&logoColor=white)](https://playwright.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
 
@@ -241,6 +241,39 @@ Walaupun aplikasi ini bekerja sebagai sistem internal mandiri (*standalone*), sk
 | `tindakan` | `Procedure` / `MedicationRequest` | `jenis='tindakan'` → `Procedure`, `jenis='resep'` → `MedicationRequest` | Pemisahan resep obat dan tindakan medis per kunjungan |
 | `audit_log` | `AuditEvent` | `actor_user_id` → `agent`, `tabel_target` → `entity`, `hash_entry` → `security label` | Jejak rekam aktivitas medis anti-manipulasi |
 
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📋 CLINICAL EMR WORKSPACE — 5-STAGE MODULAR SOAP ARCHITECTURE               │
+├──────────────┬──────────────────────────────────────────────────────────────┤
+│ [Header]     │ No. Antrian #007 · NIK Tabular · Status Badge · Riwayat Pasien│
+│ [S] Anamnesis│ Keluhan Utama & Riwayat Perjalanan Penyakit Sekarang (RPS)   │
+│ [O] Objektif │ Tanda Vital: TD (mmHg), Nadi (bpm), Suhu (°C), RR, TB/BB     │
+│ [A] Asesmen  │ Diagnosis Primer & Sekunder terstandar ICD-10 (FormArray)    │
+│ [P] Plan     │ Resep Obat (R/ Signa) + Tindakan Medis (Rx) + Edukasi Pasien │
+└──────────────┴──────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📺 Papan Antrian TV & Command Center Real-Time
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📺 PAPAN ANTRIAN TV (/papan-antrian) — 12-COLUMN DUAL VIEW REAL-TIME        │
+├──────────────────────────────────────────┬──────────────────────────────────┤
+│ 🔊 HERO PANGGILAN AKTIF (Col 1-7)        │ 📋 DAFTAR TUNGGU URUT (Col 8-12) │
+│                                          │                                  │
+│   NOMOR ANTRIAN DIPANGGIL                │  #1  [ #008 ] Bpk. Ahmad (⭐)     │
+│   ┌────────────────────────────────────┐ │      Menunggu · Prioritas Lansia │
+│   │               #007                 │ │                                  │
+│   └────────────────────────────────────┘ │  #2  [ #009 ] Ibu Siti           │
+│   "Silakan Menuju Ruang Periksa Poli"    │      Menunggu 5 menit            │
+│   dr. Budi Santoso (Poli Umum)           │  ...                             │
+├──────────────────────────────────────────┴──────────────────────────────────┤
+│ ⚡ WEBSOCKET: Invalidation Ping Sync · Audio Caller Ready · Display Token Auth│
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
 ---
 
 ## 🛡️ Observabilitas & Sanitasi Error (Zero Data Leakage)
@@ -461,12 +494,14 @@ Password: Bcrypt cost 12 | Random token: crypto/rand 128-bit entropy base64url
 ├────────────────────┬────────────────────────────────────────────┤
 │ Framework          │ Angular 21 (Standalone Components, Signals)│
 │ Change Detection   │ OnPush (semua komponen)                    │
-│ Styling            │ Tailwind CSS v4 + semantic @theme tokens   │
+│ Styling            │ Tailwind CSS v4 + OKLCH Tokens (DESIGN.md) │
 │ UI Primitives      │ Spartan UI (Headless CDK + Helm styled)    │
-│ Icons & Toast      │ Lucide (@ng-icons) + Sonner               │
+│ Icons & Toast      │ Lucide (@ng-icons) + Sonner Toast          │
+│ Charts & Analytics │ ApexCharts (ng-apexcharts)                 │
 │ Realtime           │ Native WebSocket + exponential backoff     │
 │ State              │ Angular Signals + RxJS untuk async stream  │
-│ Unit Tests         │ Vitest — 44 test suites, 229 tests        │
+│ Observability      │ @sentry/angular + zero data-leak error pkg │
+│ Unit Tests         │ Vitest — 49 test suites, 244 tests         │
 │ E2E & Visual Tests │ Playwright — Chromium Headless Automation  │
 └────────────────────┴────────────────────────────────────────────┘
 ┌─────────────────────────────────────────────────────────────────┐
@@ -507,7 +542,7 @@ Password: Bcrypt cost 12 | Random token: crypto/rand 128-bit entropy base64url
 │  • Migration runner: auto-run dari schema kosong, assert UP/DOWN     │
 └──────────────────────────────────────────────────────────────────────┘
 ┌──────────────────────────────────────────────────────────────────────┐
-│  Frontend Unit Tests — Vitest (44 suites, 229 tests)                 │
+│  Frontend Unit Tests — Vitest (49 suites, 244 tests)                 │
 │  • Auth & routing: resolver, roleGuard, interceptor 401 handler      │
 │  • Form validation: Reactive Forms, FormArray ICD-10, addendum       │
 │  • WebSocket: reconnect backoff, Signal derivation dari event        │
@@ -530,7 +565,7 @@ Password: Bcrypt cost 12 | Random token: crypto/rand 128-bit entropy base64url
 # 1. Backend — jalankan semua test termasuk concurrency (butuh Docker aktif)
 cd backend && go test -v -p 1 ./...
 
-# 2. Frontend — semua unit test (229 tests, ~5 detik)
+# 2. Frontend — semua unit test (244 tests, ~5 detik)
 cd frontend && npx ng test --watch=false
 
 # 3. Automated Headless E2E Browser Testing (Playwright)

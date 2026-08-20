@@ -9,6 +9,7 @@ import {
   lucideSearch,
   lucideStethoscope,
   lucideTrendingUp,
+  lucideUser,
 } from '@ng-icons/lucide';
 import { KunjunganListItem } from '../../../../antrian/antrian.types';
 import { PasienSearchItem } from '../../../../pasien/pasien.types';
@@ -40,6 +41,7 @@ import { LandingKpiCardComponent } from '../landing-kpi-card/landing-kpi-card.co
       lucideSearch,
       lucideFileText,
       lucideTrendingUp,
+      lucideUser,
     }),
   ],
   templateUrl: './doctor-dashboard.component.html',

@@ -119,9 +119,13 @@
                 <div class="min-w-0">
                   <div class="font-semibold text-xs sm:text-sm text-foreground truncate">{{ item.pasienNama }}</div>
                   <div class="text-[11px] text-muted-foreground flex items-center gap-1.5 mt-0.5">
-                    <span>Pasien Umum</span>
                     @if (item.isPriority) {
                       <app-priority-badge [reason]="item.priorityReason" size="sm" />
+                    } @else {
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted/60 text-muted-foreground border border-border/80 shadow-2xs">
+                        <ng-icon hlm size="xs" name="lucideUser" class="text-muted-foreground/70" aria-hidden="true" />
+                        <span>Umum</span>
+                      </span>
                     }
                   </div>
                 </div>

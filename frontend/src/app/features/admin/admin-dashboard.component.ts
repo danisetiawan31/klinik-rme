@@ -16,8 +16,6 @@ import {
   lucideUsers,
 } from '@ng-icons/lucide';
 import { filter } from 'rxjs';
-import { AuthService } from '../../core/auth/auth.service';
-import { HlmButton } from '../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../shared/ui/card/src/index';
 import { HlmIconDirective } from '../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { AdminAuditLogComponent } from './components/admin-audit-log/admin-audit-log.component';
@@ -53,7 +51,6 @@ export class AdminDashboardComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
-  readonly authService = inject(AuthService);
   readonly activeTab = signal<AdminTab>('users');
 
   ngOnInit(): void {

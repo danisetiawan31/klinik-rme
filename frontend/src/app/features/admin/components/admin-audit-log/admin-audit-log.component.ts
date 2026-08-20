@@ -14,9 +14,12 @@ import {
   lucideFileSpreadsheet,
   lucideFileText,
   lucideFilter,
+  lucideHash,
+  lucideLayers,
   lucideRotateCcw,
   lucideSearch,
   lucideShieldAlert,
+  lucideShieldCheck,
   lucideUser,
 } from '@ng-icons/lucide';
 import { toast } from '@spartan-ng/brain/sonner';
@@ -26,8 +29,6 @@ import { HlmAlertImports } from '../../../../shared/ui/alert/src/index';
 import { HlmButton } from '../../../../shared/ui/button/src/lib/hlm-button';
 import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
-import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
-import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
 import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
 import { HlmTableImports } from '../../../../shared/ui/table/src/index';
 import { AdminService } from '../../admin.service';
@@ -43,8 +44,6 @@ import { AuditDiffViewerComponent } from '../audit-diff-viewer/audit-diff-viewer
     PaginationComponent,
     AuditDiffViewerComponent,
     HlmButton,
-    HlmInput,
-    HlmLabel,
     NgIcon,
     HlmIconDirective,
     ...HlmAlertImports,
@@ -63,7 +62,10 @@ import { AuditDiffViewerComponent } from '../audit-diff-viewer/audit-diff-viewer
       lucideUser,
       lucideAlertCircle,
       lucideShieldAlert,
+      lucideShieldCheck,
       lucideFileSpreadsheet,
+      lucideLayers,
+      lucideHash,
     }),
   ],
   templateUrl: './admin-audit-log.component.html',
