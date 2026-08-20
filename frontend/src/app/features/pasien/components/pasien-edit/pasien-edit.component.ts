@@ -19,6 +19,7 @@ import { HlmCardImports } from '../../../../shared/ui/card/src/index';
 import { HlmIconDirective } from '../../../../shared/ui/icon/src/lib/hlm-icon.directive';
 import { HlmInput } from '../../../../shared/ui/input/src/lib/hlm-input';
 import { HlmLabel } from '../../../../shared/ui/label/src/lib/hlm-label';
+import { HlmSkeletonImports } from '../../../../shared/ui/skeleton/src/index';
 import { HlmTextarea } from '../../../../shared/ui/textarea/src/lib/hlm-textarea';
 import { PasienService } from '../../pasien.service';
 import { nikFormatValidator } from '../../pasien.validators';
@@ -37,6 +38,7 @@ import { nikFormatValidator } from '../../pasien.validators';
     HlmTextarea,
     ...HlmAlertImports,
     ...HlmCardImports,
+    ...HlmSkeletonImports,
   ],
   providers: [provideIcons({ lucideAlertTriangle, lucideLoader2 })],
   templateUrl: './pasien-edit.component.html',

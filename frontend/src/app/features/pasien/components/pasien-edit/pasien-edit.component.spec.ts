@@ -62,6 +62,16 @@ describe('PasienEditComponent', () => {
     fixture.detectChanges();
   });
 
+  it('renders skeleton placeholders when isLoadingInitial is true', () => {
+    component.isLoadingInitial.set(true);
+    fixture.detectChanges();
+
+    const compiled = fixture.nativeElement as HTMLElement;
+    const skeletons = compiled.querySelectorAll('hlm-skeleton');
+    expect(skeletons.length).toBeGreaterThanOrEqual(5);
+    expect(compiled.querySelector('[aria-busy="true"]')).toBeTruthy();
+  });
+
   it('pre-fills form with existing patient data on init', () => {
     expect(mockPasienService.getById).toHaveBeenCalledWith(42);
     expect(component.form.value).toEqual({

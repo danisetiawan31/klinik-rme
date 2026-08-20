@@ -96,4 +96,47 @@ describe('RekamMedisListComponent', () => {
     component.activeTab.set('semua');
     expect(component.filteredList().length).toBe(2);
   });
+
+  it('should perform debounced search by name using switchMap pipeline', async () => {
+    const mockSearchResults = [
+      { id: 10, nik: '3201123456789012', nama: 'Siti Rahma', tanggalLahir: '1995-04-12' },
+    ];
+    mockPasienService.search.mockReturnValue(of({ items: mockSearchResults, totalCount: 1 }));
+
+    component.onSearchInput('Siti');
+    expect(component.searchQuery()).toBe('Siti');
+
+    // Wait for debounceTime(300)
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    fixture.detectChanges();
+
+    expect(mockPasienService.search).toHaveBeenCalledWith({ nama: 'Siti', page: 1, limit: 5 });
+    expect(component.searchResults()).toEqual(mockSearchResults);
+    expect(component.isSearching()).toBe(false);
+  });
+
+  it('should perform debounced search by NIK when query is numeric', async () => {
+    const mockSearchResults = [
+      { id: 11, nik: '3201999988887777', nama: 'Budi Hartono', tanggalLahir: '1988-11-20' },
+    ];
+    mockPasienService.search.mockReturnValue(of({ items: mockSearchResults, totalCount: 1 }));
+
+    component.onSearchInput('3201999988887777');
+
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    fixture.detectChanges();
+
+    expect(mockPasienService.search).toHaveBeenCalledWith({ nik: '3201999988887777', page: 1, limit: 5 });
+    expect(component.searchResults()).toEqual(mockSearchResults);
+  });
+
+  it('should reset searchResults when search query is cleared', async () => {
+    component.onSearchInput('   ');
+
+    await new Promise((resolve) => setTimeout(resolve, 350));
+    fixture.detectChanges();
+
+    expect(component.searchResults()).toEqual([]);
+    expect(component.isSearching()).toBe(false);
+  });
 });

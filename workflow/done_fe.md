@@ -377,3 +377,18 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
 - **Verifikasi**:
   - `npm test -- --run` → **44 test files, 229 tests PASS** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Penyelesaian Masalah P2 Frontend (Race Condition Search & Skeleton Form Loading)
+
+- **Race Condition Prevention (`RekamMedisListComponent`)**:
+  - Menggantikan implementasi search debounced manual dengan reactive stream `pipe(debounceTime(300), distinctUntilChanged(), switchMap(...))` pada `searchSubject` di `rekam-medis-list.component.ts`. Request pencarian lama yang masih *in-flight* kini otomatis dibatalkan (*cancelled*) saat input baru diketik.
+  - Menambahkan 3 skenario unit test di `rekam-medis-list.component.spec.ts` (pencarian nama, pencarian NIK 16 digit, dan reset query).
+- **Skeleton Form Loading (`PasienEditComponent`)**:
+  - Menggantikan spinner animasi putar pada `@if (isLoadingInitial())` di `pasien-edit.component.html` dengan structured form placeholders (`<hlm-skeleton>`) yang mencerminkan NIK, Nama, Tanggal Lahir, Jenis Kelamin, Alamat, dan tombol aksi (mencegah CLS sesuai `docs/DESIGN.md §9.8`).
+  - Mendaftarkan `HlmSkeletonImports` di `pasien-edit.component.ts`.
+  - Menambahkan unit test di `pasien-edit.component.spec.ts` untuk memverifikasi skeleton placeholder ter-render saat data awal sedang dimuat.
+- **Verifikasi**:
+  - `npm test -- --run` → **44 test files, 233 tests PASS** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.

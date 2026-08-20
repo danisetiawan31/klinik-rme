@@ -25,7 +25,8 @@ import {
   lucideUserCheck,
   lucideUsers,
 } from '@ng-icons/lucide';
-import { debounceTime, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { RealtimeService } from '../../../../core/realtime/realtime.service';
 import { PriorityBadgeComponent } from '../../../../shared/components/priority-badge/priority-badge.component';
@@ -137,11 +138,35 @@ export class RekamMedisListComponent implements OnInit {
   ngOnInit(): void {
     this.loadAntrian();
 
-    // Debounced search
+    // Debounced search reactive pipeline with switchMap to prevent race conditions
     const searchSub = this.searchSubject
-      .pipe(debounceTime(350))
-      .subscribe((query) => {
-        this.performSearch(query);
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        switchMap((query) => {
+          const trimmed = query.trim();
+          if (!trimmed) {
+            this.isSearching.set(false);
+            this.searchResults.set([]);
+            return of({ items: [], totalCount: 0 });
+          }
+          this.isSearching.set(true);
+          const isNum = /^\d+$/.test(trimmed);
+          const params = isNum
+            ? { nik: trimmed, page: 1, limit: 5 }
+            : { nama: trimmed, page: 1, limit: 5 };
+          return this.pasienService.search(params);
+        })
+      )
+      .subscribe({
+        next: (res) => {
+          this.searchResults.set(res.items || []);
+          this.isSearching.set(false);
+        },
+        error: () => {
+          this.searchResults.set([]);
+          this.isSearching.set(false);
+        },
       });
 
     this.destroyRef.onDestroy(() => {
@@ -171,32 +196,6 @@ export class RekamMedisListComponent implements OnInit {
   onSearchInput(value: string): void {
     this.searchQuery.set(value);
     this.searchSubject.next(value);
-  }
-
-  private performSearch(query: string): void {
-    const trimmed = query.trim();
-    if (!trimmed) {
-      this.searchResults.set([]);
-      this.isSearching.set(false);
-      return;
-    }
-
-    this.isSearching.set(true);
-    const isNum = /^\d+$/.test(trimmed);
-    const params = isNum
-      ? { nik: trimmed, page: 1, limit: 5 }
-      : { nama: trimmed, page: 1, limit: 5 };
-
-    this.pasienService.search(params).subscribe({
-      next: (res) => {
-        this.searchResults.set(res.items || []);
-        this.isSearching.set(false);
-      },
-      error: () => {
-        this.searchResults.set([]);
-        this.isSearching.set(false);
-      },
-    });
   }
 
   formatQueueNumber(num?: number | null): string {

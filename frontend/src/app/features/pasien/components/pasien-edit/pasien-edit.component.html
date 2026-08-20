@@ -40,9 +40,37 @@
     }
 
     @if (isLoadingInitial()) {
-      <div class="p-8 text-center text-muted-foreground font-sans">
-        <ng-icon hlm size="lg" name="lucideLoader2" class="animate-spin text-primary mx-auto mb-3 block" aria-hidden="true" />
-        Memuat data pasien...
+      <div class="flex flex-col gap-4" aria-busy="true" aria-label="Memuat data pasien">
+        <!-- NIK Skeleton -->
+        <div class="flex flex-col gap-1.5">
+          <hlm-skeleton class="h-4 w-12 rounded" />
+          <hlm-skeleton class="h-9 w-full rounded-md" />
+        </div>
+        <!-- Nama Skeleton -->
+        <div class="flex flex-col gap-1.5">
+          <hlm-skeleton class="h-4 w-28 rounded" />
+          <hlm-skeleton class="h-9 w-full rounded-md" />
+        </div>
+        <!-- Tanggal Lahir Skeleton -->
+        <div class="flex flex-col gap-1.5">
+          <hlm-skeleton class="h-4 w-24 rounded" />
+          <hlm-skeleton class="h-9 w-full rounded-md" />
+        </div>
+        <!-- Jenis Kelamin Skeleton -->
+        <div class="flex flex-col gap-1.5">
+          <hlm-skeleton class="h-4 w-24 rounded" />
+          <hlm-skeleton class="h-9 w-full rounded-md" />
+        </div>
+        <!-- Alamat Skeleton -->
+        <div class="flex flex-col gap-1.5">
+          <hlm-skeleton class="h-4 w-16 rounded" />
+          <hlm-skeleton class="h-20 w-full rounded-md" />
+        </div>
+        <!-- Action Buttons Skeleton -->
+        <div class="flex items-center gap-3 pt-2">
+          <hlm-skeleton class="h-9 w-28 rounded-md" />
+          <hlm-skeleton class="h-9 w-20 rounded-md" />
+        </div>
       </div>
     } @else {
       <form
