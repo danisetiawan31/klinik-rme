@@ -74,4 +74,8 @@ export class DoctorDashboardComponent {
   onSearch(val: string): void {
     this.searchInput.emit(val);
   }
+
+  formatQueue(num: number | undefined | null): string {
+    return num != null ? String(num).padStart(3, '0') : '000';
+  }
 }

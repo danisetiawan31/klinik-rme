@@ -428,3 +428,50 @@ Seluruh migrasi Spartan primitive selesai sekaligus dilakukan dan diverifikasi p
   - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
   - `npm run build` → **Build produksi sukses** (exit 0).
   - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Penyelesaian Tahap C: Polishing Visual Form SOAP Medis
+
+- **Peningkatan Visual Subkomponen Form SOAP Medis**:
+  - `SoapPatientHeaderComponent`:
+    - Menambahkan nomor antrian 3-digit dominan zero-padded (`#007`) berbasis monospace font.
+    - Menambahkan chip metadata pasien yang terstruktur (NIK ter-masking, tanggal lahir, no telp).
+    - Mempercantik panel riwayat terdahulu dengan tombol toggle beranimasi chevron dan kartu timeline kunjungan masa lalu.
+  - `SoapSubjectiveSectionComponent`:
+    - Mengintegrasikan section anchor badge **[S]** dengan aksen Sky/Cyan (`bg-sky-500/15 text-sky-700 border-sky-500/30`) dan textarea berkarakter klinis.
+  - `SoapObjectiveSectionComponent`:
+    - Mengintegrasikan section anchor badge **[O]** dengan aksen Emerald/Green (`bg-emerald-500/15 text-emerald-700 border-emerald-500/30`) dan panduan pengisian tanda vital.
+  - `SoapAssessmentSectionComponent`:
+    - Mengintegrasikan section anchor badge **[A]** dengan aksen Purple/Indigo (`bg-purple-500/15 text-purple-700 border-purple-500/30`).
+    - Merancang baris diagnosis dinamis berbentuk card chip dengan input kode ICD-10 `uppercase font-mono` dan tombol hapus interaktif.
+  - `SoapPlanSectionComponent`:
+    - Mengintegrasikan section anchor badge **[P]** dengan aksen Amber/Orange (`bg-amber-500/15 text-amber-700 border-amber-500/30`).
+    - Menambahkan visual tag farmasi `R/ Resep Obat` dan `Rx Tindakan Medis`.
+    - Menyempurnakan empty state dengan ikon clipboard resep obat & quick-action buttons.
+- **Verifikasi**:
+  - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
+  - `npm run build` → **Build produksi sukses** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.
+
+---
+
+## Addendum — Penyempurnaan Card di Bawah Hero Banner Beranda (Spasi Kompak & Surface Depth)
+
+- **Optimasi Layout & Visual Surface Depth Card di Bawah Hero Banner**:
+  - `LandingHeroComponent` & `LandingKpiCardComponent`:
+    - Dikembalikan (*rollback*) ke kondisi semula sesuai arahan user.
+  - `DoctorDashboardComponent`:
+    - Mengetatkan vertical gap antar-seksi dari `gap-6 sm:gap-8` menjadi `gap-3.5 sm:gap-4`.
+    - Mengeliminasi kesan "putih polos" pada seluruh card di bawah banner (`Active Called Patient`, `Ruang Konsultasi Siap`, `Antrian Periksa Hari Ini`, dan `Cari Riwayat Medis Pasien`) dengan background surface depth `bg-gradient-to-b from-card to-muted/20`, border `border-border`, zero-padded queue chip `#007`, dan hover interactions yang halus.
+  - `PetugasDashboardComponent`:
+    - Mengetatkan vertical gap menjadi `gap-3.5 sm:gap-4`.
+    - Memoles `Fast Action Triage Cards` dengan gradient accents (`from-card via-card to-primary/5` & `to-sky-500/5`), elevated icon badge box, dan smooth hover elevation (`hover:-translate-y-0.5`).
+    - Memoles live table card dengan zero-padded nomor antrian.
+  - `AdminDashboardViewComponent`:
+    - Mengetatkan vertical gap menjadi `gap-3.5 sm:gap-4`.
+    - Memoles `System Governance & Control Hub Cards` (Audit Log, Pengaturan, Manajemen Staff) dengan gradient accents (`amber-500/5`, `slate-500/5`, `purple-500/5`) dan tactile hover states.
+- **Verifikasi**:
+  - `npm test -- --run` → **49 test files, 244 tests PASS** (exit 0).
+  - `npm run build` → **Build produksi sukses** (exit 0).
+  - Regex audit styling hardcode (`#[0-9a-fA-F]{3,6}|rgb\(`) → **0 match**.

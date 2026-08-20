@@ -61,7 +61,7 @@ describe('SoapPatientHeaderComponent', () => {
   it('should render patient identity details and queue badge correctly', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.textContent).toContain('Budi Santoso');
-    expect(compiled.textContent).toContain('#5');
+    expect(compiled.textContent).toContain('#005');
     expect(compiled.textContent).toContain('Laki-laki');
     expect(compiled.querySelector('app-priority-badge')).toBeTruthy();
   });
@@ -74,7 +74,7 @@ describe('SoapPatientHeaderComponent', () => {
     expect(component.showHistory()).toBe(true);
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Riwayat Pemeriksaan Sebelumnya');
+    expect(compiled.textContent).toContain('Histori Pemeriksaan');
     expect(compiled.textContent).toContain('Batuk kering');
 
     component.toggleHistory();

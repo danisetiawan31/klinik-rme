@@ -56,4 +56,8 @@ export class PetugasDashboardComponent {
   readonly selesaiDilayani = input.required<number>();
   readonly pasienPrioritas = input.required<number>();
   readonly antrianList = input.required<KunjunganListItem[]>();
+
+  formatQueue(num: number | undefined | null): string {
+    return num != null ? String(num).padStart(3, '0') : '000';
+  }
 }

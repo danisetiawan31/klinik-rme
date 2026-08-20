@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6 sm:gap-8">
+<div class="flex flex-col gap-3.5 sm:gap-4">
   <!-- Reusable Hero Ribbon for Petugas -->
   <app-landing-hero
     badgeIcon="lucideUserPlus"
@@ -42,17 +42,17 @@
   </app-landing-hero>
 
   <!-- Petugas Fast Action Triage Cards -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
     <a
       routerLink="/pasien/baru"
-      class="group p-5 rounded-2xl bg-card hover:bg-primary/5 border border-border/80 hover:border-primary/40 shadow-xs transition-all flex items-center justify-between"
+      class="group p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-card via-card to-primary/5 hover:to-primary/10 border border-border hover:border-primary/40 shadow-2xs hover:shadow-xs hover:-translate-y-0.5 transition-all flex items-center justify-between cursor-pointer"
     >
       <div class="flex items-center gap-4">
-        <div class="size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
+        <div class="size-11 sm:size-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
           <ng-icon hlm size="base" name="lucideUserPlus" aria-hidden="true" />
         </div>
         <div>
-          <h3 class="font-heading font-bold text-base text-foreground group-hover:text-primary transition-colors">
+          <h3 class="font-heading font-bold text-sm sm:text-base text-foreground group-hover:text-primary transition-colors">
             Registrasi Pasien Baru
           </h3>
           <p class="text-xs text-muted-foreground mt-0.5">Input data NIK, penerbitan NRM, dan persetujuan rekam medis</p>
@@ -62,14 +62,14 @@
 
     <a
       routerLink="/pasien"
-      class="group p-5 rounded-2xl bg-card hover:bg-sky-500/5 border border-border/80 hover:border-sky-500/40 shadow-xs transition-all flex items-center justify-between"
+      class="group p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-card via-card to-sky-500/5 hover:to-sky-500/10 border border-border hover:border-sky-500/40 shadow-2xs hover:shadow-xs hover:-translate-y-0.5 transition-all flex items-center justify-between cursor-pointer"
     >
       <div class="flex items-center gap-4">
-        <div class="size-12 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
+        <div class="size-11 sm:size-12 rounded-xl bg-sky-500 text-white flex items-center justify-center shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
           <ng-icon hlm size="base" name="lucideListOrdered" aria-hidden="true" />
         </div>
         <div>
-          <h3 class="font-heading font-bold text-base text-foreground group-hover:text-sky-600 transition-colors">
+          <h3 class="font-heading font-bold text-sm sm:text-base text-foreground group-hover:text-sky-600 transition-colors">
             Daftarkan Pasien ke Antrian
           </h3>
           <p class="text-xs text-muted-foreground mt-0.5">Cari pasien yang sudah terdaftar &amp; terbitkan tiket poli</p>
@@ -79,11 +79,11 @@
   </div>
 
   <!-- Petugas Live Queue Feed & Triage Guidelines -->
-  <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6">
-    <div class="lg:col-span-8 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs">
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4">
+    <div class="lg:col-span-8 bg-gradient-to-b from-card to-muted/20 border border-border rounded-2xl p-4 sm:p-5 shadow-2xs">
       <div class="flex items-center justify-between pb-3.5 border-b border-border/80">
         <div class="flex items-center gap-2.5">
-          <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shadow-2xs">
+          <div class="size-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shadow-2xs">
             <ng-icon hlm size="xs" name="lucideListOrdered" aria-hidden="true" />
           </div>
           <div>
@@ -91,7 +91,7 @@
             <p class="text-[11px] text-muted-foreground">Urutan panggilan pasien di loket &amp; poli klinik</p>
           </div>
         </div>
-        <a routerLink="/papan-antrian" target="_blank" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1">
+        <a routerLink="/papan-antrian" target="_blank" class="text-xs font-semibold text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-1 cursor-pointer">
           Buka TV Papan Antrian
         </a>
       </div>
@@ -109,12 +109,12 @@
       } @else {
         <div class="space-y-2 mt-3.5">
           @for (item of antrianList().slice(0, 6); track item.id) {
-            <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-muted/30 border border-border/60 hover:border-primary/40 transition-all">
+            <div class="flex items-center justify-between py-2.5 px-3.5 rounded-xl bg-card border border-border/70 hover:border-primary/40 transition-all shadow-2xs">
               <div class="flex items-center gap-3 min-w-0">
                 <div class="size-8 rounded-lg font-mono font-bold text-xs flex items-center justify-center shrink-0 border {{
                   item.status === 'dipanggil' ? 'bg-primary text-primary-foreground border-primary shadow-2xs' : 'bg-primary/10 text-primary border-primary/20'
                 }}">
-                  #{{ item.nomorAntrian }}
+                  #{{ formatQueue(item.nomorAntrian) }}
                 </div>
                 <div class="min-w-0">
                   <div class="font-semibold text-xs sm:text-sm text-foreground truncate">{{ item.pasienNama }}</div>
@@ -133,7 +133,7 @@
       }
     </div>
 
-    <div class="lg:col-span-4 bg-card border border-border/80 rounded-2xl p-5 sm:p-6 shadow-xs space-y-4">
+    <div class="lg:col-span-4 bg-gradient-to-b from-card to-muted/20 border border-border rounded-2xl p-4 sm:p-5 shadow-2xs space-y-4">
       <div class="flex items-center gap-2 pb-2.5 border-b border-border/80">
         <ng-icon hlm size="xs" name="lucideAlertCircle" class="text-purple-600" aria-hidden="true" />
         <h3 class="font-heading font-bold text-sm text-foreground">Panduan Triage Prioritas</h3>
@@ -160,7 +160,7 @@
         </li>
       </ul>
       <div class="pt-3 border-t border-border/60">
-        <a routerLink="/antrian" class="block w-full py-2 text-center text-xs font-semibold rounded-xl bg-muted hover:bg-muted/80 text-foreground transition-colors">
+        <a routerLink="/antrian" class="block w-full py-2 text-center text-xs font-semibold rounded-xl bg-card hover:bg-muted/70 border border-border text-foreground transition-colors shadow-2xs cursor-pointer">
           Buka Manajemen Antrian Lengkap
         </a>
       </div>

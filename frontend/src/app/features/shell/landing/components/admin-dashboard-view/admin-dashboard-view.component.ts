@@ -65,4 +65,8 @@ export class AdminDashboardViewComponent {
   readonly chartSeries = input.required<ApexNonAxisChartSeries>();
   readonly chartOptions = input.required<any>();
   readonly trendVsKemarin = input.required<{ text: string; isPositive: boolean | null; icon: string }>();
+
+  formatQueue(num: number | undefined | null): string {
+    return num != null ? String(num).padStart(3, '0') : '000';
+  }
 }

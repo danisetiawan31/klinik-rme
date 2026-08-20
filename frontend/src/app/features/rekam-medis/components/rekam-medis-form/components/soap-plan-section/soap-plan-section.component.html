@@ -1,9 +1,9 @@
-<hlm-card class="p-5 sm:p-6 space-y-4">
-  <div class="flex items-center justify-between border-b border-border/60 pb-3">
+<hlm-card class="p-5 sm:p-6 space-y-4 border-border shadow-2xs">
+  <div class="flex items-center justify-between border-b border-border/80 pb-3.5">
     <div class="space-y-0.5">
-      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
-        <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">P</span>
-        Tindakan Medis & Terapi Resep
+      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2.5">
+        <span class="size-7 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-700 flex items-center justify-center text-xs font-black font-mono shadow-2xs">P</span>
+        <span>Tindakan Medis & Terapi Resep</span>
       </h3>
       <p class="text-xs text-muted-foreground">
         Rencana terapi farmakologi (resep obat) atau tindakan medis yang diberikan kepada pasien.
@@ -17,10 +17,10 @@
         size="sm"
         type="button"
         (click)="onAdd('resep')"
-        class="flex items-center gap-1.5 text-xs font-medium"
+        class="flex items-center gap-1.5 text-xs font-semibold border-border hover:bg-muted/60 transition-colors cursor-pointer"
       >
-        <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-        Resep
+        <ng-icon hlm size="xs" name="lucidePlus" class="text-amber-600" aria-hidden="true" />
+        <span>+ Resep Obat</span>
       </button>
       <button
         hlmBtn
@@ -28,38 +28,38 @@
         size="sm"
         type="button"
         (click)="onAdd('tindakan')"
-        class="flex items-center gap-1.5 text-xs font-medium"
+        class="flex items-center gap-1.5 text-xs font-semibold border-border hover:bg-muted/60 transition-colors cursor-pointer"
       >
-        <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-        Tindakan
+        <ng-icon hlm size="xs" name="lucidePlus" class="text-primary" aria-hidden="true" />
+        <span>+ Tindakan Medis</span>
       </button>
     </div>
   </div>
 
   @if (tindakanArray().length === 0) {
-    <div class="p-6 rounded-xl border border-border/60 bg-muted/10 text-center space-y-3">
-      <div class="size-10 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto">
+    <div class="p-8 rounded-2xl border border-dashed border-border bg-muted/20 text-center space-y-3">
+      <div class="size-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-700 flex items-center justify-center mx-auto shadow-2xs">
         <ng-icon hlm size="sm" name="lucidePill" aria-hidden="true" />
       </div>
-      <div class="space-y-0.5">
-        <p class="text-xs font-medium text-foreground">
+      <div class="space-y-1">
+        <p class="text-xs font-bold text-foreground">
           Belum ada resep obat atau tindakan medis yang ditambahkan.
         </p>
-        <p class="text-[11px] text-muted-foreground">
-          Klik tombol di bawah untuk menambahkan resep atau tindakan.
+        <p class="text-[11px] text-muted-foreground max-w-sm mx-auto">
+          Klik tombol di bawah untuk menambahkan instruksi resep terapi atau tindakan medis klinis.
         </p>
       </div>
-      <div class="flex justify-center gap-2 pt-1">
+      <div class="flex justify-center gap-2.5 pt-2">
         <button
           hlmBtn
           variant="outline"
           size="sm"
           type="button"
           (click)="onAdd('resep')"
-          class="flex items-center gap-1.5 text-xs"
+          class="flex items-center gap-1.5 text-xs font-semibold border-border hover:bg-muted/60 cursor-pointer shadow-2xs"
         >
-          <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-          Resep Obat
+          <ng-icon hlm size="xs" name="lucidePlus" class="text-amber-600" aria-hidden="true" />
+          <span>Resep Obat (R/)</span>
         </button>
         <button
           hlmBtn
@@ -67,47 +67,47 @@
           size="sm"
           type="button"
           (click)="onAdd('tindakan')"
-          class="flex items-center gap-1.5 text-xs"
+          class="flex items-center gap-1.5 text-xs font-semibold border-border hover:bg-muted/60 cursor-pointer shadow-2xs"
         >
-          <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-          Tindakan Medis
+          <ng-icon hlm size="xs" name="lucidePlus" class="text-primary" aria-hidden="true" />
+          <span>Tindakan Medis (Rx)</span>
         </button>
       </div>
     </div>
   } @else {
     <div class="space-y-3">
       @for (tindakanGroup of tindakanArray().controls; track $index; let j = $index) {
-        <div [formGroup]="$any(tindakanGroup)" class="p-3.5 rounded-xl border border-border/70 bg-muted/20 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <!-- Jenis Selector -->
-          <div class="w-full sm:w-32 shrink-0 space-y-1">
-            <label [for]="'jenis-' + j" class="text-[11px] font-semibold text-muted-foreground uppercase">
-              Jenis
+        <div [formGroup]="$any(tindakanGroup)" class="p-3.5 sm:p-4 rounded-xl border border-border bg-muted/30 flex flex-col sm:flex-row items-start sm:items-center gap-3 hover:bg-muted/40 transition-colors">
+          <!-- Tag Identifier (R/ or Rx) -->
+          <div class="w-full sm:w-36 shrink-0 space-y-1">
+            <label [for]="'jenis-' + j" class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+              Kategori Terapi
             </label>
             <select
               [id]="'jenis-' + j"
               formControlName="jenis"
-              class="w-full h-9 rounded-md border border-input bg-card px-2.5 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              class="w-full h-9 rounded-md border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <option value="resep">Resep Obat</option>
-              <option value="tindakan">Tindakan Medis</option>
+              <option value="resep">R/ Resep Obat</option>
+              <option value="tindakan">Rx Tindakan Medis</option>
             </select>
           </div>
 
           <!-- Tindakan Description -->
           <div class="w-full flex-1 space-y-1">
-            <label [for]="'deskripsi-tindakan-' + j" class="text-[11px] font-semibold text-foreground">
-              Deskripsi & Aturan Pakai <span class="text-destructive">*</span>
+            <label [for]="'deskripsi-tindakan-' + j" class="text-[11px] font-semibold text-foreground flex items-center justify-between">
+              <span>Instruksi Medis & Aturan Pakai <span class="text-destructive">*</span></span>
             </label>
             <input
               hlmInput
               [id]="'deskripsi-tindakan-' + j"
               formControlName="deskripsi"
               type="text"
-              placeholder="Contoh: Paracetamol 500mg 3x1 tablet sesudah makan (3 hari)"
-              class="text-xs"
+              placeholder="Contoh: Paracetamol 500mg 3x1 tab sesudah makan (3 hari)"
+              class="text-xs text-foreground border-border bg-card"
             />
             @if (tindakanGroup.get('deskripsi')?.touched && tindakanGroup.get('deskripsi')?.invalid) {
-              <p class="text-[11px] text-destructive">Deskripsi tindakan/resep wajib diisi</p>
+              <p class="text-[11px] text-destructive font-medium">Deskripsi tindakan/resep wajib diisi</p>
             }
           </div>
 
@@ -119,7 +119,7 @@
               size="icon"
               type="button"
               (click)="onRemove(j)"
-              class="text-muted-foreground hover:text-destructive size-8"
+              class="text-muted-foreground hover:text-destructive hover:bg-destructive/10 size-8 transition-colors cursor-pointer"
               title="Hapus baris"
             >
               <ng-icon hlm size="xs" name="lucideTrash2" aria-hidden="true" />

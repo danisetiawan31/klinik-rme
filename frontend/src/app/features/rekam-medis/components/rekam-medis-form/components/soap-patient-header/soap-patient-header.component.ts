@@ -1,11 +1,12 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   signal,
 } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { lucideHistory } from '@ng-icons/lucide';
+import { lucideChevronDown, lucideHistory, lucideUser } from '@ng-icons/lucide';
 import { formatJakartaDate } from '../../../../../../core/utils/date.utils';
 import { PriorityBadgeComponent } from '../../../../../../shared/components/priority-badge/priority-badge.component';
 import { SensitiveValueComponent } from '../../../../../../shared/components/sensitive-value/sensitive-value.component';
@@ -33,6 +34,8 @@ import { RiwayatRekamMedisItem } from '../../../../rekam-medis.types';
   providers: [
     provideIcons({
       lucideHistory,
+      lucideChevronDown,
+      lucideUser,
     }),
   ],
   templateUrl: './soap-patient-header.component.html',
@@ -43,6 +46,11 @@ export class SoapPatientHeaderComponent {
   readonly riwayatList = input<RiwayatRekamMedisItem[]>([]);
 
   readonly showHistory = signal<boolean>(false);
+
+  readonly queueNumberDisplay = computed(() => {
+    const num = this.kunjungan()?.nomorAntrian;
+    return num != null ? String(num).padStart(3, '0') : '000';
+  });
 
   toggleHistory(): void {
     this.showHistory.update((prev) => !prev);

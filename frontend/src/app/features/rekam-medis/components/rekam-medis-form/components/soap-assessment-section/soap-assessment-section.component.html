@@ -1,12 +1,13 @@
-<hlm-card class="p-5 sm:p-6 space-y-4">
-  <div class="flex items-center justify-between border-b border-border/60 pb-3">
+<hlm-card class="p-5 sm:p-6 space-y-4 border-border shadow-2xs">
+  <div class="flex items-center justify-between border-b border-border/80 pb-3.5">
     <div class="space-y-0.5">
-      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2">
-        <span class="size-6 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold font-mono">A</span>
-        Diagnosis Klinis (ICD-10) <span class="text-destructive">*</span>
+      <h3 class="text-base font-heading font-bold text-foreground flex items-center gap-2.5">
+        <span class="size-7 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-700 flex items-center justify-center text-xs font-black font-mono shadow-2xs">A</span>
+        <span>Diagnosis Klinis (ICD-10)</span>
+        <span class="text-destructive">*</span>
       </h3>
       <p class="text-xs text-muted-foreground">
-        Minimal 1 diagnosis klinis. Kode ICD-10 opsional jika diagnosa deskriptif sudah jelas.
+        Minimal 1 diagnosis klinis. Kode ICD-10 opsional jika diagnosis deskriptif sudah spesifik.
       </p>
     </div>
 
@@ -16,19 +17,24 @@
       size="sm"
       type="button"
       (click)="onAdd()"
-      class="flex items-center gap-1.5 text-xs font-medium"
+      class="flex items-center gap-1.5 text-xs font-semibold border-border hover:bg-muted/60 transition-colors cursor-pointer"
     >
-      <ng-icon hlm size="xs" name="lucidePlus" aria-hidden="true" />
-      Diagnosis
+      <ng-icon hlm size="xs" name="lucidePlus" class="text-primary" aria-hidden="true" />
+      <span>Tambah Diagnosis</span>
     </button>
   </div>
 
   <div class="space-y-3">
     @for (diagGroup of diagnosisArray().controls; track $index; let i = $index) {
-      <div [formGroup]="$any(diagGroup)" class="p-3.5 rounded-xl border border-border/70 bg-muted/20 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+      <div [formGroup]="$any(diagGroup)" class="p-3.5 sm:p-4 rounded-xl border border-border bg-muted/30 flex flex-col sm:flex-row items-start sm:items-center gap-3 hover:bg-muted/40 transition-colors">
+        <!-- Number index -->
+        <span class="size-6 rounded-lg bg-card border border-border text-muted-foreground font-mono font-bold text-[11px] flex items-center justify-center shrink-0 shadow-2xs">
+          #{{ i + 1 }}
+        </span>
+
         <!-- Monospace ICD-10 Code -->
         <div class="w-full sm:w-36 shrink-0 space-y-1">
-          <label [for]="'icd-' + i" class="text-[11px] font-semibold text-muted-foreground uppercase">
+          <label [for]="'icd-' + i" class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             Kode ICD-10
           </label>
           <input
@@ -37,14 +43,14 @@
             formControlName="kodeIcd"
             type="text"
             placeholder="Mis. J00"
-            class="font-mono text-xs uppercase"
+            class="font-mono text-xs uppercase font-bold text-foreground border-border bg-card"
           />
         </div>
 
         <!-- Diagnosis Description -->
         <div class="w-full flex-1 space-y-1">
-          <label [for]="'deskripsi-' + i" class="text-[11px] font-semibold text-foreground">
-            Deskripsi Diagnosis <span class="text-destructive">*</span>
+          <label [for]="'deskripsi-' + i" class="text-[11px] font-semibold text-foreground flex items-center justify-between">
+            <span>Deskripsi Diagnosis <span class="text-destructive">*</span></span>
           </label>
           <input
             hlmInput
@@ -52,10 +58,10 @@
             formControlName="deskripsi"
             type="text"
             placeholder="Contoh: Nasofaringitis Akut (Common Cold)"
-            class="text-xs"
+            class="text-xs text-foreground border-border bg-card"
           />
           @if (diagGroup.get('deskripsi')?.touched && diagGroup.get('deskripsi')?.invalid) {
-            <p class="text-[11px] text-destructive">Deskripsi diagnosis wajib diisi</p>
+            <p class="text-[11px] text-destructive font-medium">Deskripsi diagnosis wajib diisi</p>
           }
         </div>
 
@@ -68,7 +74,7 @@
             type="button"
             (click)="onRemove(i)"
             [disabled]="diagnosisArray().length <= 1"
-            class="text-muted-foreground hover:text-destructive size-8"
+            class="text-muted-foreground hover:text-destructive hover:bg-destructive/10 size-8 transition-colors cursor-pointer"
             title="Hapus diagnosis"
           >
             <ng-icon hlm size="xs" name="lucideTrash2" aria-hidden="true" />
