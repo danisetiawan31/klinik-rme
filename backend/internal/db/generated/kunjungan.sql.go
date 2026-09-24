@@ -21,7 +21,7 @@ WHERE id = (
   LIMIT 1
   FOR UPDATE SKIP LOCKED
 )
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 `
 
 type ClaimNextKunjunganParams struct {
@@ -30,25 +30,9 @@ type ClaimNextKunjunganParams struct {
 	TanggalKunjungan pgtype.Date
 }
 
-type ClaimNextKunjunganRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) ClaimNextKunjungan(ctx context.Context, arg ClaimNextKunjunganParams) (ClaimNextKunjunganRow, error) {
+func (q *Queries) ClaimNextKunjungan(ctx context.Context, arg ClaimNextKunjunganParams) (Kunjungan, error) {
 	row := q.db.QueryRow(ctx, claimNextKunjungan, arg.DokterID, arg.KlinikID, arg.TanggalKunjungan)
-	var i ClaimNextKunjunganRow
+	var i Kunjungan
 	err := row.Scan(
 		&i.ID,
 		&i.PasienID,
@@ -61,37 +45,21 @@ func (q *Queries) ClaimNextKunjungan(ctx context.Context, arg ClaimNextKunjungan
 		&i.SkipCount,
 		&i.Status,
 		&i.DipanggilAt,
-		&i.SelesaiAt,
 		&i.CreatedAt,
+		&i.SelesaiAt,
 	)
 	return i, err
 }
 
 const getKunjunganByID = `-- name: GetKunjunganByID :one
-SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 FROM kunjungan
 WHERE id = $1
 `
 
-type GetKunjunganByIDRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) GetKunjunganByID(ctx context.Context, id int32) (GetKunjunganByIDRow, error) {
+func (q *Queries) GetKunjunganByID(ctx context.Context, id int32) (Kunjungan, error) {
 	row := q.db.QueryRow(ctx, getKunjunganByID, id)
-	var i GetKunjunganByIDRow
+	var i Kunjungan
 	err := row.Scan(
 		&i.ID,
 		&i.PasienID,
@@ -104,8 +72,8 @@ func (q *Queries) GetKunjunganByID(ctx context.Context, id int32) (GetKunjunganB
 		&i.SkipCount,
 		&i.Status,
 		&i.DipanggilAt,
-		&i.SelesaiAt,
 		&i.CreatedAt,
+		&i.SelesaiAt,
 	)
 	return i, err
 }
@@ -144,7 +112,7 @@ INSERT INTO kunjungan (
 VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 `
 
 type InsertKunjunganParams struct {
@@ -159,23 +127,7 @@ type InsertKunjunganParams struct {
 	Status           string
 }
 
-type InsertKunjunganRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) InsertKunjungan(ctx context.Context, arg InsertKunjunganParams) (InsertKunjunganRow, error) {
+func (q *Queries) InsertKunjungan(ctx context.Context, arg InsertKunjunganParams) (Kunjungan, error) {
 	row := q.db.QueryRow(ctx, insertKunjungan,
 		arg.PasienID,
 		arg.KlinikID,
@@ -187,7 +139,7 @@ func (q *Queries) InsertKunjungan(ctx context.Context, arg InsertKunjunganParams
 		arg.SkipCount,
 		arg.Status,
 	)
-	var i InsertKunjunganRow
+	var i Kunjungan
 	err := row.Scan(
 		&i.ID,
 		&i.PasienID,
@@ -200,14 +152,14 @@ func (q *Queries) InsertKunjungan(ctx context.Context, arg InsertKunjunganParams
 		&i.SkipCount,
 		&i.Status,
 		&i.DipanggilAt,
-		&i.SelesaiAt,
 		&i.CreatedAt,
+		&i.SelesaiAt,
 	)
 	return i, err
 }
 
 const listKunjunganByKlinikAndTanggal = `-- name: ListKunjunganByKlinikAndTanggal :many
-SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 FROM kunjungan
 WHERE klinik_id = $1 AND tanggal_kunjungan = $2
 ORDER BY nomor_antrian ASC
@@ -218,31 +170,15 @@ type ListKunjunganByKlinikAndTanggalParams struct {
 	TanggalKunjungan pgtype.Date
 }
 
-type ListKunjunganByKlinikAndTanggalRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) ListKunjunganByKlinikAndTanggal(ctx context.Context, arg ListKunjunganByKlinikAndTanggalParams) ([]ListKunjunganByKlinikAndTanggalRow, error) {
+func (q *Queries) ListKunjunganByKlinikAndTanggal(ctx context.Context, arg ListKunjunganByKlinikAndTanggalParams) ([]Kunjungan, error) {
 	rows, err := q.db.Query(ctx, listKunjunganByKlinikAndTanggal, arg.KlinikID, arg.TanggalKunjungan)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListKunjunganByKlinikAndTanggalRow
+	var items []Kunjungan
 	for rows.Next() {
-		var i ListKunjunganByKlinikAndTanggalRow
+		var i Kunjungan
 		if err := rows.Scan(
 			&i.ID,
 			&i.PasienID,
@@ -255,8 +191,8 @@ func (q *Queries) ListKunjunganByKlinikAndTanggal(ctx context.Context, arg ListK
 			&i.SkipCount,
 			&i.Status,
 			&i.DipanggilAt,
-			&i.SelesaiAt,
 			&i.CreatedAt,
+			&i.SelesaiAt,
 		); err != nil {
 			return nil, err
 		}
@@ -323,28 +259,12 @@ const updateKunjunganSelesai = `-- name: UpdateKunjunganSelesai :one
 UPDATE kunjungan
 SET status = 'selesai', selesai_at = now()
 WHERE id = $1
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 `
 
-type UpdateKunjunganSelesaiRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) UpdateKunjunganSelesai(ctx context.Context, id int32) (UpdateKunjunganSelesaiRow, error) {
+func (q *Queries) UpdateKunjunganSelesai(ctx context.Context, id int32) (Kunjungan, error) {
 	row := q.db.QueryRow(ctx, updateKunjunganSelesai, id)
-	var i UpdateKunjunganSelesaiRow
+	var i Kunjungan
 	err := row.Scan(
 		&i.ID,
 		&i.PasienID,
@@ -357,8 +277,8 @@ func (q *Queries) UpdateKunjunganSelesai(ctx context.Context, id int32) (UpdateK
 		&i.SkipCount,
 		&i.Status,
 		&i.DipanggilAt,
-		&i.SelesaiAt,
 		&i.CreatedAt,
+		&i.SelesaiAt,
 	)
 	return i, err
 }
@@ -367,28 +287,12 @@ const updateKunjunganSkip = `-- name: UpdateKunjunganSkip :one
 UPDATE kunjungan
 SET status = 'menunggu', skip_count = skip_count + 1
 WHERE id = $1 AND status = 'dipanggil'
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 `
 
-type UpdateKunjunganSkipRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) UpdateKunjunganSkip(ctx context.Context, id int32) (UpdateKunjunganSkipRow, error) {
+func (q *Queries) UpdateKunjunganSkip(ctx context.Context, id int32) (Kunjungan, error) {
 	row := q.db.QueryRow(ctx, updateKunjunganSkip, id)
-	var i UpdateKunjunganSkipRow
+	var i Kunjungan
 	err := row.Scan(
 		&i.ID,
 		&i.PasienID,
@@ -401,8 +305,8 @@ func (q *Queries) UpdateKunjunganSkip(ctx context.Context, id int32) (UpdateKunj
 		&i.SkipCount,
 		&i.Status,
 		&i.DipanggilAt,
-		&i.SelesaiAt,
 		&i.CreatedAt,
+		&i.SelesaiAt,
 	)
 	return i, err
 }
@@ -411,28 +315,12 @@ const updateKunjunganTidakHadir = `-- name: UpdateKunjunganTidakHadir :one
 UPDATE kunjungan
 SET status = 'tidak_hadir', selesai_at = now()
 WHERE id = $1 AND status IN ('menunggu', 'dipanggil')
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at, selesai_at
 `
 
-type UpdateKunjunganTidakHadirRow struct {
-	ID               int32
-	PasienID         int32
-	KlinikID         int32
-	DokterID         pgtype.Int4
-	TanggalKunjungan pgtype.Date
-	NomorAntrian     int32
-	IsPriority       bool
-	PriorityReason   pgtype.Text
-	SkipCount        int32
-	Status           string
-	DipanggilAt      pgtype.Timestamptz
-	SelesaiAt        pgtype.Timestamptz
-	CreatedAt        pgtype.Timestamptz
-}
-
-func (q *Queries) UpdateKunjunganTidakHadir(ctx context.Context, id int32) (UpdateKunjunganTidakHadirRow, error) {
+func (q *Queries) UpdateKunjunganTidakHadir(ctx context.Context, id int32) (Kunjungan, error) {
 	row := q.db.QueryRow(ctx, updateKunjunganTidakHadir, id)
-	var i UpdateKunjunganTidakHadirRow
+	var i Kunjungan
 	err := row.Scan(
 		&i.ID,
 		&i.PasienID,
@@ -445,8 +333,8 @@ func (q *Queries) UpdateKunjunganTidakHadir(ctx context.Context, id int32) (Upda
 		&i.SkipCount,
 		&i.Status,
 		&i.DipanggilAt,
-		&i.SelesaiAt,
 		&i.CreatedAt,
+		&i.SelesaiAt,
 	)
 	return i, err
 }
