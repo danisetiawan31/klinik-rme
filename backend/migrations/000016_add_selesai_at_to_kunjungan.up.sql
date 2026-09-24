@@ -1,0 +1,1 @@
+ALTER TABLE kunjungan ADD COLUMN selesai_at TIMESTAMPTZ;

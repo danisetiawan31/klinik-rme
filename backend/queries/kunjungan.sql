@@ -5,15 +5,15 @@ INSERT INTO kunjungan (
 VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8, $9
 )
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at;
 
 -- name: GetKunjunganByID :one
-SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at
+SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
 FROM kunjungan
 WHERE id = $1;
 
 -- name: ListKunjunganByKlinikAndTanggal :many
-SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at
+SELECT id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at
 FROM kunjungan
 WHERE klinik_id = $1 AND tanggal_kunjungan = $2
 ORDER BY nomor_antrian ASC;
@@ -35,25 +35,25 @@ WHERE id = (
   LIMIT 1
   FOR UPDATE SKIP LOCKED
 )
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at;
 
 -- name: UpdateKunjunganSkip :one
 UPDATE kunjungan
 SET status = 'menunggu', skip_count = skip_count + 1
 WHERE id = $1 AND status = 'dipanggil'
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at;
 
 -- name: UpdateKunjunganTidakHadir :one
 UPDATE kunjungan
-SET status = 'tidak_hadir'
+SET status = 'tidak_hadir', selesai_at = now()
 WHERE id = $1 AND status IN ('menunggu', 'dipanggil')
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at;
 
 -- name: UpdateKunjunganSelesai :one
 UPDATE kunjungan
-SET status = 'selesai'
+SET status = 'selesai', selesai_at = now()
 WHERE id = $1
-RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, created_at;
+RETURNING id, pasien_id, klinik_id, dokter_id, tanggal_kunjungan, nomor_antrian, is_priority, priority_reason, skip_count, status, dipanggil_at, selesai_at, created_at;
 
 -- name: GetLaporanHarian :one
 SELECT
@@ -62,5 +62,3 @@ SELECT
   COUNT(*) FILTER (WHERE status = 'tidak_hadir')::int AS total_tidak_hadir
 FROM kunjungan
 WHERE klinik_id = $1 AND tanggal_kunjungan = $2;
-
-

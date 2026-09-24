@@ -54,6 +54,7 @@ type Kunjungan struct {
 	Status           string
 	DipanggilAt      pgtype.Timestamptz
 	CreatedAt        pgtype.Timestamptz
+	SelesaiAt        pgtype.Timestamptz
 }
 
 type Pasien struct {
