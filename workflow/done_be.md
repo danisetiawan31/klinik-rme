@@ -178,5 +178,15 @@
   - `go test -v -p 1 ./...` → Seluruh backend integration & unit tests PASS 100%.
   - `node e2e-test.mjs` → 19/19 automated E2E & visual tests PASS 100%.
 
+---
 
+## Addendum — SATUSEHAT HL7 FHIR R4 Encounter Resource Mapper
 
+- **Fitur**: Implementasi mapper HL7 FHIR R4 Encounter di `internal/satusehat/encounter_mapper.go` dan suite unit test lengkap di `encounter_mapper_test.go`:
+  - **Encounter Lifecycle & Status Mapping**: Pemetaan akurat status lokal ke HL7 FHIR standard (`menunggu` → `arrived`, `dipanggil` → `in-progress`, `selesai` → `finished`, `tidak_hadir` → `cancelled`).
+  - **Kronologis `statusHistory`**: Rekam jejak transisi status antrian kunjungan dari waktu pendaftaran (`period.start` / `created_at`), pemanggilan poli (`dipanggil_at`), hingga penutupan rekam medis (`period.end` / `selesai_at`).
+  - **Standard Identifiers & CodeSystem**: Integrasi namespace identifier Kemenkes RI (`http://sys-ids.kemkes.go.id/encounter/{orgId}`), class ambulatory `AMB` (`v3-ActCode`), partisipan dokter `Practitioner/{dokterId}` (`v3-ParticipationType: ATND`), referensi subjek `Patient/{patientId}`, dan referensi lokasi `Location/{locationId}`.
+  - **Validasi Ketat**: Guard `ErrMissingIHSPatientID`, `ErrMissingIHSOrgID`, `ErrMissingSelesaiAt`, dan `ErrInvalidPeriod` (`period.end` tidak boleh mendahului `period.start`).
+- **Verifikasi**:
+  - `go test -v ./internal/satusehat/...` → 100% PASS (10 unit tests + JSON marshalling assertions).
+  - `go test -short ./...` → Seluruh suite backend PASS 100%.
